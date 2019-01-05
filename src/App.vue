@@ -1,26 +1,21 @@
 <template>
-  <div id="app">
-    Blank App
-    <router-view/>
-  </div>
+  <v-app>
+    <v-content>
+      <p>Hi, Chop Tr</p>
+      <p class="secondary--text">Secondary Color</p>
+      <p class="warn--text">Warn color</p>
+    </v-content>
+  </v-app>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-#nav {
-  padding: 30px;
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-    &.router-link-exact-active {
-      color: #42b983;
-    }
+<script lang="ts">
+import Vue from "vue";
+export default Vue.extend({
+  name: "App",
+  data() {
+    return {
+      //
+    };
   }
-}
-</style>
+});
+</script>
