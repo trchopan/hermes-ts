@@ -1,8 +1,11 @@
 # hermes-ts
 
-## Project
-
 Chop Tr's personal playground
+
+## About
+
+This is a personal playground I build to test out new things I'm learning.
+Using: Vue, Vuex, Typescript, Firebase, AutoML, etc.
 
 ## Status
 
