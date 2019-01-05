@@ -1,6 +1,7 @@
 {
   "name": "hermes-ts",
   "version": "0.1.0",
+  "author": "Chop Tr @choptr",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
