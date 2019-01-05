@@ -6,7 +6,7 @@ Chop Tr's personal playground
 
 ## Status
 
-[![CircleCI](https://circleci.com/gh/trchopan/hermes.svg?style=svg)](https://circleci.com/gh/trchopan/hermes)
+[![CircleCI](https://circleci.com/gh/trchopan/hermes-ts.svg?style=svg)](https://circleci.com/gh/trchopan/hermes-ts)
 
 ## How to
 
