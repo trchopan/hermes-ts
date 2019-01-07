@@ -1,8 +1,8 @@
 import Vue from "vue";
-import "./plugins/vuetify";
-import App from "./App.vue";
-import router, { globalGuard } from "./router";
-import store from "./store";
+import "@/plugins/vuetify";
+import App from "@/app/core/App.vue";
+import router, { globalGuard } from "@/app/core/router";
+import store from "@/app/core/store";
 
 Vue.config.productionTip = false;
 Vue.config.devtools = false;

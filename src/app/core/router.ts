@@ -2,7 +2,7 @@ import Vue from "vue";
 import VueRouter, { NavigationGuard, Route, RouteRecord } from "vue-router";
 import homeRoutes from "@/app/home/home.routes";
 import aboutRoutes from "@/app/about/about.routes";
-import { logger } from "./helpers";
+import { logger } from "@/app/shared/helpers/logger.helper";
 
 const log = logger("[vue-router]");
 const checkMetaKey = (matched: RouteRecord[], key: string) =>
@@ -13,7 +13,7 @@ export const globalGuard = (store: any): NavigationGuard => (
   from: Route,
   next: any
 ): void => {
-  log("to/from", to, from);
+  log("Navigating", to.path, from.path);
   next();
 };
 
