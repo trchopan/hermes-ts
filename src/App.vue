@@ -2,8 +2,10 @@
   <v-app>
     <v-content>
       <p>Hi, Chop Tr</p>
-      <p class="secondary--text">Secondary Color</p>
+      <router-link to="/" class="secondary--text">Home</router-link>
+      <router-link to="/about" class="secondary--text">About</router-link>
       <p class="warn--text">Warn color</p>
+      <router-view></router-view>
     </v-content>
   </v-app>
 </template>
