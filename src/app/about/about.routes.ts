@@ -1,8 +1,8 @@
 import About from "./About.vue";
 import { RouteConfig } from "vue-router";
 
-export const about: RouteConfig = {
+export default {
   path: "/about",
   name: "about",
   component: About
-};
+} as RouteConfig;
