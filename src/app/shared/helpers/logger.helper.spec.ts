@@ -8,8 +8,8 @@ test("[helpers]logger", () => {
   const obj2 = undefined;
   const obj3 = "string";
   const mockConsoleLog = jest.fn();
+  // tslint:disable-next-line:no-console
   console.log = mockConsoleLog;
-  
   process.env.NODE_ENV = "development";
   log(message, obj1, obj2, obj3);
   expect(mockConsoleLog).toBeCalled();
@@ -21,7 +21,6 @@ test("[helpers]logger", () => {
     obj2,
     obj3
   );
-
   mockConsoleLog.mockReset();
   process.env.NODE_ENV = "production";
   log(message, obj1, obj2, obj3);
