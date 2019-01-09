@@ -1,0 +1,26 @@
+@import url("https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons");
+@import "~normalize.css/normalize.css";
+
+#app {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: auto;
+}
+
+.theme--dark * > .primary--text {
+  color: #95caff !important;
+}
+
+// fade transition
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.1s ease;
+}
+.fade-enter-to,
+.fade-leave {
+  opacity: 1;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}

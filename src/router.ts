@@ -2,7 +2,7 @@ import Vue from "vue";
 import VueRouter, { NavigationGuard, Route, RouteRecord } from "vue-router";
 import homeRoutes from "@/app/home/home.routes";
 import aboutRoutes from "@/app/about/about.routes";
-import { logger } from "@/app/shared/helpers/logger.helper";
+import { logger } from "@/app/shared/logger.helper";
 
 const log = logger("[vue-router]");
 const checkMetaKey = (matched: RouteRecord[], key: string) =>
