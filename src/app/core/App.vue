@@ -1,5 +1,5 @@
 <template>
-  <v-app :dark="true">
+  <v-app :dark="darkTheme">
     <AppToolbar/>
     <AppDrawer/>
     <v-content>
@@ -34,6 +34,11 @@ export default Vue.extend({
     return {
       //
     };
+  },
+  computed: {
+    darkTheme(): boolean {
+      return this.$store.getters.darkTheme;
+    }
   },
   created() {
     this.$store.dispatch(ACTIONS.initLocalStorage);

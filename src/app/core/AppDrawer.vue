@@ -46,7 +46,7 @@ export default Vue.extend({
   name: "AppNavigationDrawer",
   computed: {
     $t(): { [key: string]: string } {
-      return this.$translate(LANGUAGES_MAP, this.$store.getters.language);
+      return this.$translate(LANGUAGES_MAP, this.$store.getters.language.value);
     },
     drawerOpen: {
       get(this: Vue): boolean {

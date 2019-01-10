@@ -16,8 +16,6 @@
     <v-spacer/>
     <v-toolbar-items>
       <v-menu
-        v-model="menuOpen"
-        :close-on-content-click="false"
         offset-y
         left
       >
@@ -25,23 +23,26 @@
           slot="activator"
           flat
         >
-          {{ language }}
-          <!-- <v-icon>language</v-icon> -->
+          <v-icon>language</v-icon>
         </v-btn>
         <v-card>
-          <v-list two-line>
-            <v-list-tile
-              avatar
-              @click="menuOpen = false"
-            >
-              <v-list-tile-title>List 1</v-list-tile-title>
-            </v-list-tile>
-            <v-list-tile
-              avatar
-              @click="menuOpen = false"
-            >
-              <v-list-tile-title>List 2</v-list-tile-title>
-            </v-list-tile>
+          <v-list>
+            <template v-for="(language, index) in languageSettings">
+              <v-list-tile
+                :key="'language-' + language.value"
+                @click="changeLanguage(language)"
+              >
+                <v-list-tile-content>
+                  <v-list-tile-title
+                    :class="{ 'primary--text': language === currentLanguage}"
+                  >{{ language.text }}</v-list-tile-title>
+                </v-list-tile-content>
+              </v-list-tile>
+              <v-divider
+                v-if="index < languageSettings.length - 1"
+                :key="'divider-'+language.value"
+              ></v-divider>
+            </template>
           </v-list>
         </v-card>
       </v-menu>
@@ -52,27 +53,26 @@
 <script>
 import Vue from "vue";
 import { ACTIONS } from "@/store/root.store";
-import { LanguageOptions } from "@/store/root.models";
+import { LANGUAGE_SETTINGS } from "@/store/root.models";
 
 export default Vue.extend({
   name: "AppToolbar",
   data: () => ({
     title: process.env.VUE_APP_TITLE,
-    menuOpen: false
+    menuOpen: false,
+    languageSettings: LANGUAGE_SETTINGS
   }),
   computed: {
-    language() {
-      switch (this.$store.getters.language) {
-        case "vi":
-          return LanguageOptions.vi;
-        case "en":
-          return LanguageOptions.en;
-      }
+    currentLanguage() {
+      return this.$store.getters.language;
     }
   },
   methods: {
     toggleDrawer() {
       this.$store.dispatch(ACTIONS.toggleDrawer);
+    },
+    changeLanguage(language) {
+      this.$store.dispatch(ACTIONS.changeLanguage, language);
     }
   }
 });

@@ -1,9 +1,15 @@
-export enum LanguageOptions {
-  vi = "🇻🇳 Tiếng Việt",
-  en = "🇬🇧 English"
+export interface ISettings {
+  value: string;
+  text: string;
+  icon?: string;
 }
 
-export enum ThemeOptions {
-  light = "Light",
-  dark = "Dark"
-}
+export const LANGUAGE_SETTINGS: ISettings[] = [
+  { value: "vi", text: "🇻🇳 Tiếng Việt" },
+  { value: "en", text: "🇬🇧 English" }
+];
+
+export const THEME_SETTINGS: ISettings[] = [
+  { value: "light", text: "Light" },
+  { value: "dark", text: "Dark" }
+];
