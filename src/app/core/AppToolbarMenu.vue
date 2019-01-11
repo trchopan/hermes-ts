@@ -65,10 +65,10 @@ export default class AppToolbarMenu extends Vue {
   public menuOpen = false;
 
   get $t(): IMappedLanguage {
-    return this.$translate(LANGUAGES_MAP, this.$store.getters.language.value);
+    return this.$translate(LANGUAGES_MAP, this.$store.state.language.value);
   }
   get currentLanguage() {
-    return this.$store.getters.language;
+    return this.$store.state.language;
   }
   get theme(): ISettings {
     return this.$store.getters.theme;

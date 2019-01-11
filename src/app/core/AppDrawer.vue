@@ -43,11 +43,11 @@ export const DRAWER_ITEMS = [
 ];
 
 @Component({
-  name: "AppNavigationDrawer"
+  name: "AppDrawer"
 })
 export default class AppDrawer extends Vue {
   get $t(): { [key: string]: string } {
-    return this.$translate(LANGUAGES_MAP, this.$store.getters.language.value);
+    return this.$translate(LANGUAGES_MAP, this.$store.state.language.value);
   }
   get drawerOpen(): boolean {
     return this.$store.getters.drawerOpen;
