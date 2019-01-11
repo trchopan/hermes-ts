@@ -1,4 +1,5 @@
 import Vue from "vue";
+import "@/class-component-hooks";
 import "@/plugins";
 import App from "@/app/core/App.vue";
 import router, { globalGuard } from "@/router";
@@ -17,5 +18,5 @@ router.beforeEach(globalGuard(store));
 new Vue({
   router,
   store,
-  render: (h) => h(App)
+  render: h => h(App)
 }).$mount("#app");
