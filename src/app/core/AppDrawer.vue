@@ -24,7 +24,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { mapState } from "vuex";
+import Component from "vue-class-component";
 import { ILanguageMap } from "@/plugins/translate";
 import { ACTIONS } from "@/store/root.store";
 
@@ -42,25 +42,23 @@ export const DRAWER_ITEMS = [
   { path: "/about", name: "about", icon: "" }
 ];
 
-export default Vue.extend({
-  name: "AppNavigationDrawer",
-  computed: {
-    $t(): { [key: string]: string } {
-      return this.$translate(LANGUAGES_MAP, this.$store.getters.language.value);
-    },
-    drawerOpen: {
-      get(this: Vue): boolean {
-        return this.$store.getters.drawerOpen;
-      },
-      set(state: boolean): void {
-        if (state !== this.$store.state.drawerOpen) {
-          this.$store.dispatch(ACTIONS.toggleDrawer);
-        }
-      }
-    },
-    drawerItems(): Array<{ path: string; name: string; icon: string }> {
-      return DRAWER_ITEMS.map((x) => ({ ...x, name: this.$t[x.name] }));
+@Component({
+  name: "AppNavigationDrawer"
+})
+export default class AppDrawer extends Vue {
+  get $t(): { [key: string]: string } {
+    return this.$translate(LANGUAGES_MAP, this.$store.getters.language.value);
+  }
+  get drawerOpen(): boolean {
+    return this.$store.getters.drawerOpen;
+  }
+  set drawerOpen(state: boolean) {
+    if (state !== this.$store.state.drawerOpen) {
+      this.$store.dispatch(ACTIONS.toggleDrawer);
     }
   }
-});
+  get drawerItems(): Array<{ path: string; name: string; icon: string }> {
+    return DRAWER_ITEMS.map(x => ({ ...x, name: this.$t[x.name] }));
+  }
+}
 </script>

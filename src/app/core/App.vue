@@ -20,30 +20,27 @@
 
 <script lang="ts">
 import Vue from "vue";
+import Component from "vue-class-component";
+import { ACTIONS } from "@/store/root.store";
 import AppToolbar from "./AppToolbar.vue";
 import AppDrawer from "./AppDrawer.vue";
-import { ACTIONS } from "@/store/root.store";
 
-export default Vue.extend({
+@Component({
   name: "App",
   components: {
     AppToolbar,
     AppDrawer
-  },
-  data() {
-    return {
-      //
-    };
-  },
-  computed: {
-    darkTheme(): boolean {
-      return this.$store.getters.darkTheme;
-    }
-  },
-  created() {
+  }
+})
+export default class App extends Vue {
+  get darkTheme(): boolean {
+    return this.$store.getters.darkTheme;
+  }
+
+  private created() {
     this.$store.dispatch(ACTIONS.initLocalStorage);
   }
-});
+}
 </script>
 
 <style lang="scss" src="@/assets/style.scss" />

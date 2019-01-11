@@ -1,5 +1,10 @@
 import _Vue from "vue";
 
+export enum COUNTRY_CODE {
+  vi = "vi",
+  en = "en"
+}
+
 export interface ILanguage {
   vi: string;
   en: string;
@@ -9,9 +14,8 @@ export interface ILanguageMap {
   [key: string]: ILanguage;
 }
 
-export enum COUNTRY_CODE {
-  vi = "vi",
-  en = "en"
+export interface IMappedLanguage {
+  [key: string]: string;
 }
 
 const NO_TRANSLATION = "(no translation)";
@@ -28,7 +32,7 @@ declare module "vue/types/vue" {
     $translate(
       languageMap: ILanguageMap,
       countryCode: COUNTRY_CODE
-    ): { [key: string]: string };
+    ): IMappedLanguage;
     $format(str: string, inputs: string[]): string;
   }
 }
@@ -38,7 +42,7 @@ export default function(Vue: typeof _Vue): void {
   Vue.prototype.$translate = (
     languageMap: ILanguageMap,
     countryCode: COUNTRY_CODE
-  ): { [key: string]: string } => {
+  ): IMappedLanguage => {
     const combinedMap: ILanguageMap = { ...languageMap, ...SHARED_TRANSLATE };
     const result = Object.keys(combinedMap).reduce(
       (acc, key) => {
@@ -48,7 +52,7 @@ export default function(Vue: typeof _Vue): void {
           NO_TRANSLATION;
         return acc;
       },
-      {} as { [key: string]: string }
+      {} as IMappedLanguage
     );
 
     return result;
