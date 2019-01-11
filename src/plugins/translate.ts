@@ -60,13 +60,6 @@ export default function(Vue: typeof _Vue): void {
 
   // Format the str which has ${0}, ${1}, etc. with inputs string array
   Vue.prototype.$format = (str: string, inputs: string[]) => {
-    if (
-      typeof str !== "string" ||
-      !inputs ||
-      !inputs.hasOwnProperty("length")
-    ) {
-      return str;
-    }
     let result = str;
     inputs.forEach(
       (input, index) => (result = result.replace(`{${index}}`, input))
