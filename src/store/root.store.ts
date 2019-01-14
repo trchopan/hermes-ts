@@ -31,11 +31,12 @@ const rootStore: StoreOptions<RootState> = {
     language: LANGUAGE_SETTINGS[0] // Vietnamese
   },
   getters: {
-    error: (state) => state.error,
-    theme: (state) => state.theme,
-    darkTheme: (state) => (state.theme === THEME_SETTINGS[0] ? false : true),
-    drawerOpen: (state) => state.drawerOpen,
-    language: (state) => state.language
+    error: state => state.error,
+    theme: state => state.theme,
+    darkTheme: state =>
+      state.theme.value == THEME_SETTINGS[0].value ? false : true,
+    drawerOpen: state => state.drawerOpen,
+    language: state => state.language
   },
   actions: {
     [ACTIONS.initLocalStorage]: ({ commit, dispatch }) => {
