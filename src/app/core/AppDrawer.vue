@@ -3,21 +3,50 @@
     v-model="drawerOpen"
     app
     clipped
-    width="230"
+    width="240"
   >
     <v-list class="pa-0">
-      <v-list-tile
-        v-for="(item, index) in drawerItems"
-        :key="'drawer-' + item.name + '-' + index"
-        avatar
-        :to="item.path"
-      >
-        <v-list-tile-avatar>
-          <v-icon>{{ item.icon }}</v-icon>
-        </v-list-tile-avatar>
-        <v-list-tile-title>{{ item.name }}</v-list-tile-title>
-      </v-list-tile>
-      <v-divider/>
+      <template v-for="(item, index) in drawerItems">
+        <v-list-tile
+          v-if="!item.children"
+          :key="'drawer-' + item.name + index"
+          :to="item.path"
+        >
+          <v-list-tile-action>
+            <v-icon v-if="item.icon">{{ item.icon }}</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>{{ item.name }}</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+        <v-list-group
+          v-if="item.children"
+          :key="'drawer-' + item.name + index"
+        >
+          <v-list-tile
+            avatar
+            slot="activator"
+          >
+            <v-list-tile-action>
+              <v-icon v-if="item.icon">{{ item.icon }}</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-content>
+              <v-list-tile-title>{{ item.name }}</v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+          <v-list-tile
+            v-for="(child, i) in item.children"
+            :key="'child-' + item.name + child.name + i"
+            :to="child.path"
+          >
+            <v-list-tile-action></v-list-tile-action>
+            <v-list-tile-content>
+              <v-list-tile-title>{{ child.name }}</v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+          <v-divider/>
+        </v-list-group>
+      </template>
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -25,29 +54,64 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import { ILanguageMap } from "@/plugins/translate";
+import { ILanguageMap, IMappedLanguage } from "@/plugins/translate";
 import { ACTIONS } from "@/store/root.store";
 
 export const LANGUAGES_MAP: ILanguageMap = {
   home: { vi: "Trang chủ", en: "Home" },
-  dashboard: { vi: "Bảng điều khiển", en: "Dashboard" },
-  user: { vi: "Quản lý người dùng", en: "User management" },
-  about: { vi: "Về chúng tôi", en: "About" }
+  playground: { vi: "Sân chơi", en: "Playground" },
+  authSystem: { vi: "Xác thực tài khoản", en: "Authentication System" },
+  machineLearning: { vi: "Máy tính tự học", en: "Machine Learning" }
 };
 
-export const DRAWER_ITEMS = [
+interface IDrawerItem {
+  path?: string;
+  name: string;
+  icon?: string;
+  children?: IDrawerItem[];
+}
+
+export const DRAWER_ITEMS: IDrawerItem[] = [
   { path: "/", name: "home", icon: "home" },
-  { path: "/dashboard", name: "dashboard", icon: "dashboard" },
-  { path: "/user", name: "user", icon: "account_circle" },
-  { path: "/about", name: "about", icon: "" }
+  {
+    name: "playground",
+    icon: "dashboard",
+    children: [
+      { path: "auth-system", name: "authSystem" },
+      { path: "machine-learning", name: "machineLearning" }
+    ]
+  }
 ];
+
+const mapper = (item: IDrawerItem, languageMap: IMappedLanguage) => ({
+  ...item,
+  name: languageMap[item.name]
+});
+
+function reducer(
+  items: IDrawerItem[],
+  itemsLanguage: IMappedLanguage
+): IDrawerItem[] {
+  const result = items.reduce((acc, cur) => {
+    if (!cur.children) {
+      return acc.concat(mapper(cur, itemsLanguage));
+    } else {
+      const children = reducer(cur.children, itemsLanguage);
+      return acc.concat({ ...mapper(cur, itemsLanguage), children });
+    }
+  }, new Array<IDrawerItem>());
+  return result;
+}
 
 @Component({
   name: "AppDrawer"
 })
 export default class AppDrawer extends Vue {
-  get $t(): { [key: string]: string } {
+  get $t(): IMappedLanguage {
     return this.$translate(LANGUAGES_MAP, this.$store.state.language.value);
+  }
+  get drawerItems(): IDrawerItem[] {
+    return reducer(DRAWER_ITEMS, this.$t);
   }
   get drawerOpen(): boolean {
     return this.$store.getters.drawerOpen;
@@ -56,9 +120,6 @@ export default class AppDrawer extends Vue {
     if (state !== this.$store.state.drawerOpen) {
       this.$store.dispatch(ACTIONS.toggleDrawer);
     }
-  }
-  get drawerItems(): Array<{ path: string; name: string; icon: string }> {
-    return DRAWER_ITEMS.map(x => ({ ...x, name: this.$t[x.name] }));
   }
 }
 </script>

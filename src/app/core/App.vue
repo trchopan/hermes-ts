@@ -3,10 +3,7 @@
     <AppToolbar/>
     <AppDrawer/>
     <v-content>
-      <v-container
-        fluid
-        class="white--text"
-      >
+      <v-container fluid>
         <transition
           name="fade"
           mode="out-in"
