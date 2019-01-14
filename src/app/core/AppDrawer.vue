@@ -56,39 +56,14 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import { ILanguageMap, IMappedLanguage } from "@/plugins/translate";
 import { ACTIONS } from "@/store/root.store";
+import { LANGUAGES_MAP, DRAWER_ITEMS, IDrawerItem } from "./AppDrawer.models";
 
-export const LANGUAGES_MAP: ILanguageMap = {
-  home: { vi: "Trang chủ", en: "Home" },
-  playground: { vi: "Sân chơi", en: "Playground" },
-  authSystem: { vi: "Xác thực tài khoản", en: "Authentication System" },
-  machineLearning: { vi: "Máy tính tự học", en: "Machine Learning" }
-};
-
-interface IDrawerItem {
-  path?: string;
-  name: string;
-  icon?: string;
-  children?: IDrawerItem[];
-}
-
-export const DRAWER_ITEMS: IDrawerItem[] = [
-  { path: "/", name: "home", icon: "home" },
-  {
-    name: "playground",
-    icon: "dashboard",
-    children: [
-      { path: "auth-system", name: "authSystem" },
-      { path: "machine-learning", name: "machineLearning" }
-    ]
-  }
-];
-
-const mapper = (item: IDrawerItem, languageMap: IMappedLanguage) => ({
+export const mapper = (item: IDrawerItem, languageMap: IMappedLanguage) => ({
   ...item,
   name: languageMap[item.name]
 });
 
-function reducer(
+export function reducer(
   items: IDrawerItem[],
   itemsLanguage: IMappedLanguage
 ): IDrawerItem[] {
