@@ -34,7 +34,7 @@ const rootStore: StoreOptions<RootState> = {
     error: state => state.error,
     theme: state => state.theme,
     darkTheme: state =>
-      state.theme.value == THEME_SETTINGS[0].value ? false : true,
+      state.theme.value === THEME_SETTINGS[0].value ? false : true,
     drawerOpen: state => state.drawerOpen,
     language: state => state.language
   },
