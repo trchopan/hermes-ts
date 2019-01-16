@@ -35,7 +35,7 @@ export default class App extends Vue {
   public darkTheme!: boolean;
 
   private created() {
-    this.$store.dispatch(ACTIONS.initLocalStorage);
+    this.$store.dispatch(ACTIONS.initializeApp);
     if (this.$vuetify.breakpoint.lgAndUp) {
       this.$store.dispatch(ACTIONS.toggleDrawer);
     }

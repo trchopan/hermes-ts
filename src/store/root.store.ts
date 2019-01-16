@@ -1,5 +1,5 @@
 export const ACTIONS = {
-  initLocalStorage: "initLocalStorage",
+  initializeApp: "initializeApp",
   catchError: "catchError",
   dismissError: "dismissError",
   clearError: "clearError",
@@ -40,7 +40,7 @@ const rootStore: StoreOptions<RootState> = {
       state.theme.value === THEME_SETTINGS[0].value ? false : true
   },
   actions: {
-    [ACTIONS.initLocalStorage]: ({ commit, dispatch }) => {
+    [ACTIONS.initializeApp]: ({ commit, dispatch }) => {
       if (window.localStorage !== undefined) {
         commit("localStorageAvailable");
         const theme = localStorage.getItem("theme");
