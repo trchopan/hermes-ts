@@ -36,6 +36,9 @@ export default class App extends Vue {
 
   private created() {
     this.$store.dispatch(ACTIONS.initLocalStorage);
+    if (this.$vuetify.breakpoint.lgAndUp) {
+      this.$store.dispatch(ACTIONS.toggleDrawer);
+    }
   }
 }
 </script>
