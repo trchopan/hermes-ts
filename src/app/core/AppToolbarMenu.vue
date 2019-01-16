@@ -16,7 +16,7 @@
         <v-list-tile>
           <v-list-tile-content>
             <v-select
-              :value="currentLanguage"
+              :value="language"
               :items="languageSettings"
               :label="$t.selectLanguage"
               @change="changeLanguage($event)"
@@ -43,13 +43,15 @@
 <script lang="ts">
 import Vue from "vue";
 import {
-  ISettings,
   LANGUAGE_SETTINGS,
-  THEME_SETTINGS
+  THEME_SETTINGS,
+  IThemeSetting,
+  ILanguageSetting
 } from "@/store/root.models";
 import { ACTIONS } from "@/store/root.store";
-import { ILanguageMap, IMappedLanguage } from "@/plugins/translate";
 import Component from "vue-class-component";
+import { State } from "vuex-class";
+import { ILanguageMap, IMappedLanguage } from "@/plugins/translate";
 
 const LANGUAGES_MAP: ILanguageMap = {
   selectLanguage: { vi: "Chọn ngôn ngữ", en: "Select language" },
@@ -60,24 +62,23 @@ const LANGUAGES_MAP: ILanguageMap = {
   name: "AppToolbarMenu"
 })
 export default class AppToolbarMenu extends Vue {
+  @State("language")
+  public language!: ILanguageSetting;
+  @State("theme")
+  public theme!: IThemeSetting;
+
   public languageSettings = LANGUAGE_SETTINGS;
   public themeSettings = THEME_SETTINGS;
   public menuOpen = false;
 
   get $t(): IMappedLanguage {
-    return this.$translate(LANGUAGES_MAP, this.$store.state.language.value);
-  }
-  get currentLanguage() {
-    return this.$store.state.language;
-  }
-  get theme(): ISettings {
-    return this.$store.getters.theme;
+    return this.$translate(LANGUAGES_MAP, this.language.value);
   }
   public changeLanguage(language: string) {
     const foundLanguage = LANGUAGE_SETTINGS.find(x => x.value === language);
     this.$store.dispatch(ACTIONS.changeLanguage, foundLanguage);
   }
-  public changeTheme(theme: ISettings) {
+  public changeTheme(theme: IThemeSetting) {
     this.$store.dispatch(ACTIONS.changeTheme, theme);
   }
 }

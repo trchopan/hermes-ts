@@ -56,13 +56,17 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
+import { State } from "vuex-class";
 import { Route } from "vue-router";
 import { LANGUAGES_MAP, SKILLS } from "./Home.models";
+import { ILanguageSetting, LANGUAGE_SETTINGS } from "@/store/root.models";
 
 @Component({
   name: "Home"
 })
 export default class Home extends Vue {
+  @State("language")
+  public language!: ILanguageSetting;
   public skills = SKILLS;
 
   public beforeRouteEnter(to: Route, from: Route, next: any) {
@@ -75,7 +79,7 @@ export default class Home extends Vue {
   }
 
   get $t() {
-    return this.$translate(LANGUAGES_MAP, this.$store.state.language.value);
+    return this.$translate(LANGUAGES_MAP, this.language.value);
   }
 
   public openInNew(link: string) {

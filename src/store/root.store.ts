@@ -9,7 +9,12 @@ export const ACTIONS = {
 };
 
 import { logger } from "@/app/shared/logger.helper";
-import { LANGUAGE_SETTINGS, THEME_SETTINGS, ISettings } from "./root.models";
+import {
+  LANGUAGE_SETTINGS,
+  THEME_SETTINGS,
+  IThemeSetting,
+  ILanguageSetting
+} from "./root.models";
 import { StoreOptions } from "vuex";
 
 const log = logger("[rootStore]");
@@ -17,9 +22,9 @@ const log = logger("[rootStore]");
 export interface RootState {
   error: any[];
   localStorageStatus: boolean;
-  theme: ISettings;
+  theme: IThemeSetting;
   drawerOpen: boolean;
-  language: ISettings;
+  language: ILanguageSetting;
 }
 
 const rootStore: StoreOptions<RootState> = {
@@ -31,12 +36,8 @@ const rootStore: StoreOptions<RootState> = {
     language: LANGUAGE_SETTINGS[0] // Vietnamese
   },
   getters: {
-    error: state => state.error,
-    theme: state => state.theme,
     darkTheme: state =>
-      state.theme.value === THEME_SETTINGS[0].value ? false : true,
-    drawerOpen: state => state.drawerOpen,
-    language: state => state.language
+      state.theme.value === THEME_SETTINGS[0].value ? false : true
   },
   actions: {
     [ACTIONS.initLocalStorage]: ({ commit, dispatch }) => {

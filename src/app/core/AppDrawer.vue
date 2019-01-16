@@ -1,6 +1,6 @@
 <template>
   <v-navigation-drawer
-    v-model="drawerOpen"
+    v-model="drawerStatus"
     app
     clipped
     width="240"
@@ -54,8 +54,10 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
+import { State } from "vuex-class";
 import { ILanguageMap, IMappedLanguage } from "@/plugins/translate";
 import { ACTIONS } from "@/store/root.store";
+import { ILanguageSetting } from "@/store/root.models";
 import { LANGUAGES_MAP, DRAWER_ITEMS, IDrawerItem } from "./AppDrawer.models";
 
 export const mapper = (item: IDrawerItem, languageMap: IMappedLanguage) => ({
@@ -82,17 +84,22 @@ export function reducer(
   name: "AppDrawer"
 })
 export default class AppDrawer extends Vue {
+  @State("language")
+  public language!: ILanguageSetting;
+  @State("drawerOpen")
+  public drawerOpen!: boolean;
+
   get $t(): IMappedLanguage {
-    return this.$translate(LANGUAGES_MAP, this.$store.state.language.value);
+    return this.$translate(LANGUAGES_MAP, this.language.value);
   }
   get drawerItems(): IDrawerItem[] {
     return reducer(DRAWER_ITEMS, this.$t);
   }
-  get drawerOpen(): boolean {
-    return this.$store.getters.drawerOpen;
+  get drawerStatus(): boolean {
+    return this.drawerOpen;
   }
-  set drawerOpen(state: boolean) {
-    if (state !== this.$store.state.drawerOpen) {
+  set drawerStatus(state: boolean) {
+    if (state !== this.drawerOpen) {
       this.$store.dispatch(ACTIONS.toggleDrawer);
     }
   }

@@ -31,7 +31,7 @@ declare module "vue/types/vue" {
     $myPlugin: string;
     $translate(
       languageMap: ILanguageMap,
-      countryCode: COUNTRY_CODE
+      countryCode: string
     ): IMappedLanguage;
     $format(str: string, inputs: string[]): string;
   }
