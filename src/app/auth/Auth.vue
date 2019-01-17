@@ -1,7 +1,8 @@
 <template>
   <div>
     <section id="introduciton">
-      <h1 class="title primary--text text-xs-center">{{ $t.introduciton }}</h1>
+      <h1 class="display-1 primary--text">{{ $t.auth }}</h1>
+      <P>{{ $t.introduciton }}</P>
     </section>
   </div>
 </template>
