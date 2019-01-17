@@ -1,7 +1,6 @@
 import Vue from "vue";
 import VueRouter, { NavigationGuard, Route, RouteRecord } from "vue-router";
 import homeRoutes from "@/app/home/home.routes";
-import aboutRoutes from "@/app/about/about.routes";
 import authRoutes from "@/app/auth/auth.routes";
 import { logger } from "@/app/shared/logger.helper";
 
@@ -23,5 +22,5 @@ Vue.use(VueRouter);
 export default new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
-  routes: [homeRoutes, aboutRoutes, authRoutes]
+  routes: [homeRoutes, authRoutes].flat()
 });
