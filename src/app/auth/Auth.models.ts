@@ -11,5 +11,17 @@ export const LANGUAGES_MAP: ILanguageMap = {
       "Sau khi bạn đăng ký và đăng nhập, bạn có thể chat với tôi. Hân hạnh làm quen :)",
     en:
       "After sign up and login, you can join a chat room with me. Nice to meet you :)"
-  }
+  },
+  signInEmail: {
+    vi: "Đăng nhập bằng Email",
+    en: "Sign in with Email"
+  },
+  signInPhone: {
+    vi: "Đăng nhập bằng Điện thoại",
+    en: "Sign in with Phone"
+  },
+  signUpEmail: {
+    vi: "Đăng ký bằng Email",
+    en: "Sign up with Email"
+  },
 };

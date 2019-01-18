@@ -4,6 +4,28 @@
       <h1 class="display-1 primary--text">{{ $t.auth }}</h1>
       <P>{{ $t.introduciton }}</P>
     </section>
+    <section id="actions">
+      <v-layout
+        align-center
+        justify-center
+        column
+        fill-height
+      >
+        <v-btn
+          color="primary"
+          class="text-none"
+        >{{ $t.signInEmail }}</v-btn>
+        <v-btn
+          color="secondary"
+          class="text-none"
+        >{{ $t.signInPhone }}</v-btn>
+        <v-btn
+          color="primary"
+          class="text-none"
+          outline
+        >{{ $t.signUpEmail }}</v-btn>
+      </v-layout>
+    </section>
   </div>
 </template>
 
@@ -27,3 +49,9 @@ export default class Auth extends Vue {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.v-btn {
+  width: 15rem;
+}
+</style>
