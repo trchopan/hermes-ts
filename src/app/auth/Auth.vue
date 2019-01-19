@@ -39,7 +39,9 @@ import { ILanguageMap } from "@/plugins/translate";
 import { LANGUAGES_MAP } from "./Auth.models";
 import { AUTH_SIGN_UP_EMAIL_ROUTE } from "@/app/auth/auth.routes";
 
-@Component({})
+@Component({
+  name: "Auth"
+})
 export default class Auth extends Vue {
   @State("language")
   public language!: ILanguageSetting;
