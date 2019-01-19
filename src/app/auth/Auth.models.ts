@@ -8,9 +8,9 @@ export const LANGUAGES_MAP: ILanguageMap = {
   },
   introduciton: {
     vi:
-      "Sau khi bạn đăng ký và đăng nhập, bạn có thể chat với tôi. Hân hạnh làm quen :)",
+      "Sau khi bạn đăng ký và đăng nhập, bạn có thể tham gia vào các phòng chat. Hân hạnh làm quen :)",
     en:
-      "After sign up and login, you can join a chat room with me. Nice to meet you :)"
+      "After sign up and login, you can join chats. Nice to meet you :)"
   },
   signInEmail: {
     vi: "Đăng nhập bằng Email",
