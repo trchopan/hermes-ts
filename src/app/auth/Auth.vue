@@ -23,6 +23,7 @@
           color="primary"
           class="text-none"
           outline
+          :to="signUpEmailRoute"
         >{{ $t.signUpEmail }}</v-btn>
       </v-layout>
     </section>
@@ -36,13 +37,13 @@ import { State } from "vuex-class";
 import { ILanguageSetting, LANGUAGE_SETTINGS } from "@/store/root.models";
 import { ILanguageMap } from "@/plugins/translate";
 import { LANGUAGES_MAP } from "./Auth.models";
+import { AUTH_SIGN_UP_EMAIL_ROUTE } from "@/app/auth/auth.routes";
 
-@Component({
-  name: "Auth"
-})
+@Component({})
 export default class Auth extends Vue {
   @State("language")
   public language!: ILanguageSetting;
+  public signUpEmailRoute: string = AUTH_SIGN_UP_EMAIL_ROUTE;
 
   get $t() {
     return this.$translate(LANGUAGES_MAP, this.language.value);
