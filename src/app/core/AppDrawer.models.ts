@@ -1,4 +1,5 @@
 import { ILanguageMap } from "@/plugins/translate";
+import { AUTH_ROUTE } from "@/app/auth/auth.routes";
 
 export const LANGUAGES_MAP: ILanguageMap = {
   home: { vi: "Trang chủ", en: "Home" },
@@ -20,7 +21,7 @@ export const DRAWER_ITEMS: IDrawerItem[] = [
     name: "playground",
     icon: "dashboard",
     children: [
-      { path: "auth-system", name: "authSystem" },
+      { path: AUTH_ROUTE, name: "authSystem" },
       { path: "machine-learning", name: "machineLearning" }
     ]
   }
