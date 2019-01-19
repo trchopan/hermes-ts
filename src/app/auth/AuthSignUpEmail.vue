@@ -72,6 +72,7 @@ import { State } from "vuex-class";
 import { ILanguageSetting } from "@/store/root.models";
 import { LANGUAGES_MAP } from "./AuthSignUpEmail.models";
 import { validateEmail } from "@/app/shared/validate-email.helper";
+import { ITextFieldRule } from "@/app/shared/types";
 
 @Component({
   name: "AuthSignUpEmail"
@@ -82,17 +83,15 @@ export default class AuthSignUpEmail extends Vue {
   public fromValid: boolean = true;
   public email: string = "";
   public password: string = "";
-  public emailRules: any[] = [];
-  public passwordRules: any[] = [];
-  public repasswordRules: any[] = [];
+  public emailRules: ITextFieldRule[] = [];
+  public passwordRules: ITextFieldRule[] = [];
+  public repasswordRules: ITextFieldRule[] = [];
 
   public created() {
-    this.emailRules = [(v: string) => validateEmail(v) || this.$t.invalidEmail];
-    this.passwordRules = [
-      (v: string) => (v && v.length > 3) || this.$t.invalidPassword
-    ];
+    this.emailRules = [v => validateEmail(v) || this.$t.invalidEmail];
+    this.passwordRules = [v => (v && v.length > 3) || this.$t.invalidPassword];
     this.repasswordRules = [
-      (v: string) => (v && v === this.password) || this.$t.invalidRepassword
+      v => (v && v === this.password) || this.$t.invalidRepassword
     ];
   }
 
