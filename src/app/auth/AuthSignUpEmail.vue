@@ -85,7 +85,7 @@ import { ITextFieldRule } from "@/app/shared/types";
 import { fireAuth, ReCaptchaVerifier } from "@/firebase";
 import Recaptcha from "@/app/shared/Recaptcha.vue";
 import { ERROR_ACTIONS } from "@/store/error.store";
-import { AUTH_SIGN_IN_EMAIL_ROUTE } from '@/app/auth/auth.routes';
+import { AUTH_SIGN_IN_EMAIL_ROUTE } from "@/app/auth/auth.routes";
 
 @Component({
   name: "AuthSignUpEmail",
@@ -114,7 +114,7 @@ export default class AuthSignUpEmail extends Vue {
 
   public mounted() {
     if (this.user) {
-      this.$router.replace("/chat")
+      this.$router.replace("/chat");
     }
   }
 

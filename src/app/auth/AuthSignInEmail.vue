@@ -99,7 +99,7 @@ export default class AuthSignInEmail extends Vue {
 
   public mounted() {
     if (this.user) {
-      this.$router.replace("/chat")
+      this.$router.replace("/chat");
     }
   }
 
@@ -114,7 +114,7 @@ export default class AuthSignInEmail extends Vue {
     if ((this.$refs.form as any).validate()) {
       try {
         await fireAuth.signInWithEmailAndPassword(this.email, this.password);
-        this.$router.replace("/chat")
+        this.$router.replace("/chat");
       } catch (error) {
         this.$store.dispatch(ERROR_ACTIONS.catchError, error);
       }
