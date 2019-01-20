@@ -2,6 +2,14 @@
 import { ILanguageMap } from "@/plugins/translate";
 
 export const LANGUAGES_MAP: ILanguageMap = {
+  hasAccount: {
+    vi: "Bạn đã có tài khoản?",
+    en: "Already has an account?"
+  },
+  signIn: {
+    vi: "Đăng nhập",
+    en: "Sign In"
+  },
   signUp: {
     vi: "Đăng ký",
     en: "Sign Up"
@@ -29,5 +37,9 @@ export const LANGUAGES_MAP: ILanguageMap = {
   invalidRepassword: {
     vi: "Mật khẩu không khớp",
     en: "Password is not match"
+  },
+  passwordMustNotEmpty: {
+    vi: "Mật khẩu không được trống",
+    en: "Password must not be empty"
   }
 };

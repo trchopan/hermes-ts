@@ -50,6 +50,7 @@
               validate-on-blur
               type="password"
             ></v-text-field>
+            <Recaptcha @response="recaptchaed($event)"/>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -57,10 +58,18 @@
               form="sign-up-form"
               color="secondary"
               type="submit"
-            >{{ $t.signUp}}</v-btn>
+            >{{ $t.signUp }}</v-btn>
           </v-card-actions>
         </v-form>
       </v-card>
+      <div class="text-xs-center mt-3">
+        <p>{{ $t.hasAccount }}</p>
+        <v-btn
+          color="primary"
+          outline
+          to="/sign-in-email"
+        >{{ $t.signIn }}</v-btn>
+      </div>
     </v-flex>
   </v-layout>
 </template>
@@ -69,23 +78,31 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { State } from "vuex-class";
-import { ILanguageSetting } from "@/store/root.models";
 import { LANGUAGES_MAP } from "./AuthSignUpEmail.models";
+import { ILanguageSetting } from "@/store/root.models";
 import { validateEmail } from "@/app/shared/validate-email.helper";
 import { ITextFieldRule } from "@/app/shared/types";
+import { fireAuth, ReCaptchaVerifier } from "@/firebase";
+import Recaptcha from "@/app/shared/Recaptcha.vue";
+import { ERROR_ACTIONS } from "@/store/error.store";
+import { AUTH_SIGN_IN_EMAIL_ROUTE } from '@/app/auth/auth.routes';
 
 @Component({
-  name: "AuthSignUpEmail"
+  name: "AuthSignUpEmail",
+  components: { Recaptcha }
 })
 export default class AuthSignUpEmail extends Vue {
   @State("language")
   public language!: ILanguageSetting;
+  @State("user")
+  public user!: firebase.User;
   public fromValid: boolean = true;
   public email: string = "";
   public password: string = "";
   public emailRules: ITextFieldRule[] = [];
   public passwordRules: ITextFieldRule[] = [];
   public repasswordRules: ITextFieldRule[] = [];
+  public signInEmailRoute: string = AUTH_SIGN_IN_EMAIL_ROUTE;
 
   public created() {
     this.emailRules = [v => validateEmail(v) || this.$t.invalidEmail];
@@ -95,12 +112,31 @@ export default class AuthSignUpEmail extends Vue {
     ];
   }
 
+  public mounted() {
+    if (this.user) {
+      this.$router.replace("/chat")
+    }
+  }
+
   get $t() {
     return this.$translate(LANGUAGES_MAP, this.language.value);
   }
 
-  public submit() {
+  public async submit() {
     // TODO: Check validate using this.$refs.form.validate() then submit
+    if ((this.$refs.form as any).validate()) {
+      try {
+        const user = await fireAuth.createUserWithEmailAndPassword(
+          this.email,
+          this.password
+        );
+        if (user) {
+          this.$router.replace("/chat");
+        }
+      } catch (error) {
+        this.$store.dispatch(ERROR_ACTIONS.catchError, error);
+      }
+    }
   }
 }
 </script>
