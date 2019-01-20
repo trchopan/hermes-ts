@@ -19,9 +19,10 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { Getter } from "vuex-class";
-import { ACTIONS } from "@/store/root.store";
+import { ROOT_ACTIONS } from "@/store/root.store";
 import AppToolbar from "./AppToolbar.vue";
 import AppDrawer from "./AppDrawer.vue";
+import { fireAuth } from "@/firebase";
 
 @Component({
   name: "App",
@@ -35,10 +36,13 @@ export default class App extends Vue {
   public darkTheme!: boolean;
 
   private created() {
-    this.$store.dispatch(ACTIONS.initializeApp);
+    this.$store.dispatch(ROOT_ACTIONS.initializeApp);
     if (this.$vuetify.breakpoint.lgAndUp) {
-      this.$store.dispatch(ACTIONS.toggleDrawer);
+      this.$store.dispatch(ROOT_ACTIONS.toggleDrawer);
     }
+    fireAuth.onAuthStateChanged(user => {
+      this.$store.dispatch(ROOT_ACTIONS.changeUser, user);
+    });
   }
 }
 </script>

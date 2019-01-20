@@ -23,7 +23,7 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import { ACTIONS } from "@/store/root.store";
+import { ROOT_ACTIONS } from "@/store/root.store";
 import { LANGUAGE_SETTINGS } from "@/store/root.models";
 import { ILanguage } from "@/plugins/translate";
 import AppToolbarMenu from "./AppToolbarMenu.vue";
@@ -38,7 +38,7 @@ export default class AppToolbar extends Vue {
   public title = process.env.VUE_APP_TITLE;
   public menuOpen = false;
   public toggleDrawer() {
-    this.$store.dispatch(ACTIONS.toggleDrawer);
+    this.$store.dispatch(ROOT_ACTIONS.toggleDrawer);
   }
 }
 </script>

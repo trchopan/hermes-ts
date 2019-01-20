@@ -1,13 +1,4 @@
-export const ACTIONS = {
-  initializeApp: "initializeApp",
-  catchError: "catchError",
-  dismissError: "dismissError",
-  clearError: "clearError",
-  changeLanguage: "changeLanguage",
-  changeTheme: "changeTheme",
-  toggleDrawer: "toggleDrawer"
-};
-
+import { StoreOptions } from "vuex";
 import { logger } from "@/app/shared/logger.helper";
 import {
   LANGUAGE_SETTINGS,
@@ -15,85 +6,93 @@ import {
   IThemeSetting,
   ILanguageSetting
 } from "./root.models";
-import { StoreOptions } from "vuex";
+import errorStore from "./error.store";
 
 const log = logger("[rootStore]");
 
+export const ROOT_ACTIONS = {
+  initializeApp: "initializeApp",
+  changeLanguage: "changeLanguage",
+  changeTheme: "changeTheme",
+  toggleDrawer: "toggleDrawer",
+  registerRecaptcha: "registerRecaptcha",
+  changeUser: "changeUser"
+};
+
+export interface IRecaptchaData {
+  recaptcha: firebase.auth.RecaptchaVerifier;
+  widgetId: number;
+  token: string;
+}
+
+export interface IUser {
+  uid: string;
+  email?: string;
+  phone?: string;
+}
+
 export interface RootState {
-  error: any[];
   localStorageStatus: boolean;
   theme: IThemeSetting;
   drawerOpen: boolean;
   language: ILanguageSetting;
+  recaptcha: IRecaptchaData | undefined;
+  user: firebase.User | null;
 }
 
 const rootStore: StoreOptions<RootState> = {
   state: {
-    error: [],
     localStorageStatus: false,
     theme: THEME_SETTINGS[0], // Light theme
     drawerOpen: false,
-    language: LANGUAGE_SETTINGS[0] // Vietnamese
+    language: LANGUAGE_SETTINGS[0], // Vietnamese
+    recaptcha: undefined,
+    user: null
   },
   getters: {
     darkTheme: state =>
       state.theme.value === THEME_SETTINGS[0].value ? false : true
   },
   actions: {
-    [ACTIONS.initializeApp]: ({ commit, dispatch }) => {
+    [ROOT_ACTIONS.initializeApp]: ({ commit, dispatch }) => {
       if (window.localStorage !== undefined) {
         commit("localStorageAvailable");
         const theme = localStorage.getItem("theme");
         if (theme) {
-          dispatch(ACTIONS.changeTheme, JSON.parse(theme));
+          dispatch(ROOT_ACTIONS.changeTheme, JSON.parse(theme));
         }
         const language = localStorage.getItem("language");
         if (language) {
-          dispatch(ACTIONS.changeLanguage, JSON.parse(language));
+          dispatch(ROOT_ACTIONS.changeLanguage, JSON.parse(language));
         }
       } else {
         log("No Web Storage support");
       }
     },
-    [ACTIONS.catchError]: ({ commit }, error) => {
-      commit("errorCatched", error);
-    },
-    [ACTIONS.dismissError]: ({ commit }, errorCode) => {
-      commit("errorDismissed", errorCode);
-    },
-    [ACTIONS.clearError]: ({ commit }) => {
-      commit("errorCleared");
-    },
-    [ACTIONS.changeLanguage]: ({ commit }, language) => {
+    [ROOT_ACTIONS.changeLanguage]: ({ commit }, language: ILanguageSetting) => {
       commit("languageChanged", language);
     },
-    [ACTIONS.changeTheme]: ({ commit }, theme) => commit("themeChanged", theme),
-    [ACTIONS.toggleDrawer]: ({ commit }) => commit("drawerToggled")
+    [ROOT_ACTIONS.changeTheme]: ({ commit }, theme) =>
+      commit("themeChanged", theme),
+    [ROOT_ACTIONS.toggleDrawer]: ({ commit }) => commit("drawerToggled"),
+    [ROOT_ACTIONS.registerRecaptcha]: ({ commit }, data: IRecaptchaData) =>
+      commit("captchaTokenRegistered", data),
+    [ROOT_ACTIONS.changeUser]: ({ commit }, user: firebase.User) =>
+      commit("userChanged", user)
   },
   mutations: {
     localStorageAvailable(state) {
       state.localStorageStatus = true;
+      log("LocalStorage available");
     },
-    errorCatched(state, error) {
-      state.error = state.error.concat(error);
-      log("Error catched", error);
-    },
-    errorDismissed(state, errorIndex) {
-      state.error = state.error.splice(errorIndex, 1);
-      log("Error dismissed", errorIndex);
-    },
-    errorCleared(state) {
-      state.error = [];
-      log("Error cleared");
-    },
-    themeChanged(state, theme) {
+    themeChanged(state, theme: IThemeSetting) {
       state.theme = theme;
       if (state.localStorageStatus) {
         localStorage.setItem("theme", JSON.stringify(theme));
       }
       log("Theme changed", theme);
     },
-    languageChanged(state, language) {
+    languageChanged(state, language: ILanguageSetting) {
       state.language = language;
       if (state.localStorageStatus) {
         localStorage.setItem("language", JSON.stringify(language));
@@ -103,7 +102,18 @@ const rootStore: StoreOptions<RootState> = {
     drawerToggled(state) {
       state.drawerOpen = !state.drawerOpen;
       log("Drawer toggled", state.drawerOpen);
+    },
+    captchaTokenRegistered(state, data: IRecaptchaData) {
+      state.recaptcha = data;
+      log("Captcha data registered", state.recaptcha);
+    },
+    userChanged(state, user: firebase.User) {
+      state.user = user;
+      log("User changed", state.user);
     }
+  },
+  modules: {
+    errorStore
   }
 };
 
