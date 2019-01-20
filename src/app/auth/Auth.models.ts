@@ -24,4 +24,12 @@ export const LANGUAGES_MAP: ILanguageMap = {
     vi: "Đăng ký bằng Email",
     en: "Sign up with Email"
   },
+  signOut: {
+    vi: "Đăng xuất",
+    en: "Sign Out"
+  },
+  joinChat: {
+    vi: "Tham gia chat",
+    en: "Join chat"
+  }
 };

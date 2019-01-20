@@ -56,7 +56,7 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import { State } from "vuex-class";
 import { ILanguageMap, IMappedLanguage } from "@/plugins/translate";
-import { ACTIONS } from "@/store/root.store";
+import { ROOT_ACTIONS } from "@/store/root.store";
 import { ILanguageSetting } from "@/store/root.models";
 import { LANGUAGES_MAP, DRAWER_ITEMS, IDrawerItem } from "./AppDrawer.models";
 
@@ -100,7 +100,7 @@ export default class AppDrawer extends Vue {
   }
   set drawerStatus(state: boolean) {
     if (state !== this.drawerOpen) {
-      this.$store.dispatch(ACTIONS.toggleDrawer);
+      this.$store.dispatch(ROOT_ACTIONS.toggleDrawer);
     }
   }
 }

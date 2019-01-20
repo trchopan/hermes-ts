@@ -48,7 +48,7 @@ import {
   IThemeSetting,
   ILanguageSetting
 } from "@/store/root.models";
-import { ACTIONS } from "@/store/root.store";
+import { ROOT_ACTIONS } from "@/store/root.store";
 import Component from "vue-class-component";
 import { State } from "vuex-class";
 import { ILanguageMap, IMappedLanguage } from "@/plugins/translate";
@@ -76,10 +76,10 @@ export default class AppToolbarMenu extends Vue {
   }
   public changeLanguage(language: string) {
     const foundLanguage = LANGUAGE_SETTINGS.find(x => x.value === language);
-    this.$store.dispatch(ACTIONS.changeLanguage, foundLanguage);
+    this.$store.dispatch(ROOT_ACTIONS.changeLanguage, foundLanguage);
   }
   public changeTheme(theme: IThemeSetting) {
-    this.$store.dispatch(ACTIONS.changeTheme, theme);
+    this.$store.dispatch(ROOT_ACTIONS.changeTheme, theme);
   }
 }
 </script>
