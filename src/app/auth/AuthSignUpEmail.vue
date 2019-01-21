@@ -78,7 +78,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { State } from "vuex-class";
-import { LANGUAGES_MAP } from "./AuthSignUpEmail.models";
+import { LANGUAGES_MAP } from "./Auth.models";
 import { ILanguageSetting } from "@/store/root.models";
 import { validateEmail } from "@/app/shared/validate-email.helper";
 import { ITextFieldRule } from "@/app/shared/types";

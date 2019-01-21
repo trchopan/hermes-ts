@@ -20,7 +20,7 @@
             dark
             color="primary"
           >
-            <v-toolbar-title>{{ $t.signUpForm }}</v-toolbar-title>
+            <v-toolbar-title>{{ $t.signIn }}</v-toolbar-title>
           </v-toolbar>
           <v-card-text>
             <v-text-field
@@ -72,7 +72,7 @@ import Recaptcha from "@/app/shared/Recaptcha.vue";
 import { ILanguageSetting } from "@/store/root.models";
 import { ITextFieldRule } from "@/app/shared/types";
 import { validateEmail } from "@/app/shared/validate-email.helper";
-import { LANGUAGES_MAP } from "./AuthSignUpEmail.models";
+import { LANGUAGES_MAP } from "./Auth.models";
 import { fireAuth } from "@/firebase";
 import { ERROR_ACTIONS } from "@/store/error.store";
 import { AUTH_SIGN_UP_EMAIL_ROUTE } from "@/app/auth/auth.routes";
