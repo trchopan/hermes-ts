@@ -49,6 +49,7 @@
               form="sign-up-form"
               color="secondary"
               type="submit"
+              :loading="loading"
             >{{ $t.signIn }}</v-btn>
           </v-card-actions>
         </v-form>
@@ -68,6 +69,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { State } from "vuex-class";
+import { Watch } from "vue-property-decorator";
 import Recaptcha from "@/app/shared/Recaptcha.vue";
 import { ILanguageSetting } from "@/store/root.models";
 import { ITextFieldRule } from "@/app/shared/types";
@@ -76,6 +78,7 @@ import { LANGUAGES_MAP } from "./Auth.models";
 import { fireAuth } from "@/firebase";
 import { ERROR_ACTIONS } from "@/store/error.store";
 import { AUTH_SIGN_UP_EMAIL_ROUTE } from "@/app/auth/auth.routes";
+import { IRecaptchaData } from "@/store/root.store";
 
 @Component({
   name: "AuthSignInEmail",
@@ -84,6 +87,8 @@ import { AUTH_SIGN_UP_EMAIL_ROUTE } from "@/app/auth/auth.routes";
 export default class AuthSignInEmail extends Vue {
   @State("language")
   public language!: ILanguageSetting;
+  @State("recaptcha")
+  public recaptcha!: IRecaptchaData;
   @State("user")
   public user!: firebase.User;
   public fromValid: boolean = true;
@@ -93,12 +98,23 @@ export default class AuthSignInEmail extends Vue {
   public passwordRules: ITextFieldRule[] = [];
   public signUpEmailRoute: string = AUTH_SIGN_UP_EMAIL_ROUTE;
 
+  private _loading: boolean = false;
+
   get $t() {
     return this.$translate(LANGUAGES_MAP, this.language.value);
   }
 
-  public mounted() {
-    if (this.user) {
+  get loading(): boolean {
+    return !(this.recaptcha && !!this.recaptcha.verifier) || this._loading;
+  }
+
+  set loading(value: boolean) {
+    this._loading = value;
+  }
+
+  @Watch("user")
+  public onUserChange(val: firebase.User, oldVal: firebase.User) {
+    if (val) {
       this.$router.replace("/chat");
     }
   }
