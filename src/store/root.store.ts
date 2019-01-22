@@ -20,7 +20,7 @@ export const ROOT_ACTIONS = {
 };
 
 export interface IRecaptchaData {
-  recaptcha: firebase.auth.RecaptchaVerifier;
+  verifier: firebase.auth.RecaptchaVerifier;
   widgetId: number;
   token: string;
 }
