@@ -26,8 +26,8 @@ const actions: ActionTree<ErrorState, RootState> = {
   [ERROR_ACTIONS.catchError]: ({ commit }, error) => {
     commit("errorCatched", error);
   },
-  [ERROR_ACTIONS.dismissError]: ({ commit }, errorCode) => {
-    commit("errorDismissed", errorCode);
+  [ERROR_ACTIONS.dismissError]: ({ commit }, errorIndex) => {
+    commit("errorDismissed", errorIndex);
   },
   [ERROR_ACTIONS.clearError]: ({ commit }) => {
     commit("errorCleared");
