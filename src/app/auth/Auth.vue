@@ -22,7 +22,6 @@
         <v-btn
           color="secondary"
           class="text-none"
-          :to="signInPhoneRoute"
         >{{ $t.signInPhone }}</v-btn>
         <v-btn
           color="primary"
@@ -63,8 +62,7 @@ import { ILanguageMap } from "@/plugins/translate";
 import { LANGUAGES_MAP } from "./Auth.models";
 import {
   AUTH_SIGN_UP_EMAIL_ROUTE,
-  AUTH_SIGN_IN_EMAIL_ROUTE,
-  AUTH_SIGN_IN_PHONE_ROUTE
+  AUTH_SIGN_IN_EMAIL_ROUTE
 } from "@/app/auth/auth.routes";
 import { fireAuth } from "@/firebase";
 import { ERROR_ACTIONS } from "@/store/error.store";
@@ -79,7 +77,6 @@ export default class Auth extends Vue {
   public user!: firebase.User;
   public signUpEmailRoute: string = AUTH_SIGN_UP_EMAIL_ROUTE;
   public signInEmailRoute: string = AUTH_SIGN_IN_EMAIL_ROUTE;
-  public signInPhoneRoute: string = AUTH_SIGN_IN_PHONE_ROUTE;
 
   get $t() {
     return this.$translate(LANGUAGES_MAP, this.language.value);

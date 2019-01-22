@@ -4,8 +4,8 @@
 
 <script lang="ts">
 import Vue from "vue";
-import Component from "vue-class-component";
 import { firebaseApp, ReCaptchaVerifier } from "@/firebase";
+import Component from "vue-class-component";
 import { ROOT_ACTIONS, IRecaptchaData } from "@/store/root.store";
 
 @Component({
@@ -13,17 +13,18 @@ import { ROOT_ACTIONS, IRecaptchaData } from "@/store/root.store";
 })
 export default class Recaptcha extends Vue {
   public async mounted() {
-    const verifier = new ReCaptchaVerifier("recaptcha-container", {
+    const recaptcha = new ReCaptchaVerifier("recaptcha-container", {
       size: "invisible"
     });
-    const widgetId = await verifier.render();
-    const token = await verifier.verify();
+    const widgetId = await recaptcha.render();
+    const token = await recaptcha.verify();
     const data: IRecaptchaData = {
-      verifier,
+      recaptcha,
       widgetId,
       token
     };
     this.$store.dispatch(ROOT_ACTIONS.registerRecaptcha, data);
+    // this.$emit("response", token);
   }
 }
 </script>
