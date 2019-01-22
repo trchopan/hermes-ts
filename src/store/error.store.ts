@@ -35,9 +35,9 @@ const actions: ActionTree<ErrorState, RootState> = {
 };
 
 const mutations: MutationTree<ErrorState> = {
-  errorCatched(state, error) {
+  errorCatched(state, error: Error) {
     state.error = state.error.concat(error);
-    log("Error catched", error);
+    log("Error catched", error.message);
   },
   errorDismissed(state, errorIndex) {
     state.error = state.error.splice(errorIndex, 1);

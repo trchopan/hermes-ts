@@ -58,6 +58,7 @@
               form="sign-up-form"
               color="secondary"
               type="submit"
+              :loading="loading"
             >{{ $t.signUp }}</v-btn>
           </v-card-actions>
         </v-form>
@@ -79,6 +80,7 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import { State } from "vuex-class";
 import { LANGUAGES_MAP } from "./Auth.models";
+import { Watch } from "vue-property-decorator";
 import { ILanguageSetting } from "@/store/root.models";
 import { validateEmail } from "@/app/shared/validate-email.helper";
 import { ITextFieldRule } from "@/app/shared/types";
@@ -86,6 +88,7 @@ import { fireAuth, ReCaptchaVerifier } from "@/firebase";
 import Recaptcha from "@/app/shared/Recaptcha.vue";
 import { ERROR_ACTIONS } from "@/store/error.store";
 import { AUTH_SIGN_IN_EMAIL_ROUTE } from "@/app/auth/auth.routes";
+import { IRecaptchaData } from "@/store/root.store";
 
 @Component({
   name: "AuthSignUpEmail",
@@ -94,6 +97,8 @@ import { AUTH_SIGN_IN_EMAIL_ROUTE } from "@/app/auth/auth.routes";
 export default class AuthSignUpEmail extends Vue {
   @State("language")
   public language!: ILanguageSetting;
+  @State("recaptcha")
+  public recaptcha!: IRecaptchaData;
   @State("user")
   public user!: firebase.User;
   public fromValid: boolean = true;
@@ -104,6 +109,8 @@ export default class AuthSignUpEmail extends Vue {
   public repasswordRules: ITextFieldRule[] = [];
   public signInEmailRoute: string = AUTH_SIGN_IN_EMAIL_ROUTE;
 
+  private _loading: boolean = false;
+
   public created() {
     this.emailRules = [v => validateEmail(v) || this.$t.invalidEmail];
     this.passwordRules = [v => (v && v.length > 3) || this.$t.invalidPassword];
@@ -112,8 +119,17 @@ export default class AuthSignUpEmail extends Vue {
     ];
   }
 
-  public mounted() {
-    if (this.user) {
+  get loading(): boolean {
+    return !(this.recaptcha && !!this.recaptcha.verifier) || this._loading;
+  }
+
+  set loading(value: boolean) {
+    this._loading = value;
+  }
+
+  @Watch("user")
+  public onUserChange(val: firebase.User, oldVal: firebase.User) {
+    if (val) {
       this.$router.replace("/chat");
     }
   }
@@ -123,7 +139,6 @@ export default class AuthSignUpEmail extends Vue {
   }
 
   public async submit() {
-    // TODO: Check validate using this.$refs.form.validate() then submit
     if ((this.$refs.form as any).validate()) {
       try {
         const user = await fireAuth.createUserWithEmailAndPassword(

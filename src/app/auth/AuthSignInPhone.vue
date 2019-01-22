@@ -115,6 +115,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { State } from "vuex-class";
+import { Watch } from "vue-property-decorator";
 import { ILanguageSetting } from "@/store/root.models";
 import { LANGUAGES_MAP } from "./Auth.models";
 import Recaptcha from "@/app/shared/Recaptcha.vue";
@@ -134,6 +135,8 @@ export default class AuthSignInPhone extends Vue {
   public language!: ILanguageSetting;
   @State("recaptcha")
   public recaptcha!: IRecaptchaData;
+  @State("user")
+  public user!: firebase.User;
   public formValid: boolean = true;
   public phone: string = "";
   public phoneRules: ITextFieldRule[] = [];
@@ -163,6 +166,13 @@ export default class AuthSignInPhone extends Vue {
 
   set loading(value: boolean) {
     this._loading = value;
+  }
+
+  @Watch("user")
+  public onUserChange(val: firebase.User, oldVal: firebase.User) {
+    if (val) {
+      this.$router.replace("/chat");
+    }
   }
 
   public async submit() {
