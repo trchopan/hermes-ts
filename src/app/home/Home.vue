@@ -58,7 +58,7 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import { State } from "vuex-class";
 import { Route } from "vue-router";
-import { LANGUAGES_MAP, SKILLS } from "./Home.models";
+import { LANGUAGES_MAP, SKILLS } from "./home.models";
 import { ILanguageSetting, LANGUAGE_SETTINGS } from "@/store/root.models";
 
 @Component({

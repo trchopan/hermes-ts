@@ -11,42 +11,6 @@ export const LANGUAGES_MAP: ILanguageMap = {
       "Sau khi bạn đăng ký và đăng nhập, bạn có thể tham gia vào các phòng chat. Hân hạnh làm quen :)",
     en: "After sign up and login, you can join chats. Nice to meet you :)"
   },
-  phoneNumber: {
-    vi: "Số điện thoại",
-    en: "Phone number"
-  },
-  phoneDescription: {
-    vi:
-      "Sau khi nhập số điện thoại bạn sẽ nhận một tin nhắn xác nhận từ Google. Vui lòng điền mã số xác nhận vào ô tiếp theo.",
-    en:
-      "After submit a phone number you will receive a message from Google. Please enter the verification code into the next field."
-  },
-  sendCode: {
-    vi: "Gởi tin nhắn",
-    en: "Send code"
-  },
-  resendCode: {
-    vi: "Gởi lại mã",
-    en: "Resend code"
-  },
-  invalidPhone: {
-    vi: "Số điện thoại phải có 9 hoặc 10 chữ số",
-    en: "Phone number must have 9 or 10 numbers"
-  },
-  confirmCode: {
-    vi: "Mã xác nhận",
-    en: "Confirmation code"
-  },
-  confirmCodeDescription: {
-    vi:
-      "Mã xác nhận đã được gởi đến số điện thoại ({0}). Bạn vui lòng kiểm tra tin nhắn điện thoại và nhập mã vào ô bên dưới.",
-    en:
-      "Confirmation code has been sent to the phone number {0}. Please check your phone message and enter the code below."
-  },
-  invalidConfirmCode: {
-    vi: "Vui lòng nhập mã xác nhận",
-    en: "Please enter the confirmation code"
-  },
   signInEmail: {
     vi: "Đăng nhập bằng Email",
     en: "Sign in with Email"
