@@ -1,6 +1,7 @@
 import Vue from "vue";
 import "@/class-component-hooks";
 import "@/plugins";
+import "@/filters";
 import App from "@/app/core/App.vue";
 import router, { globalGuard } from "@/router";
 import store from "@/store";
