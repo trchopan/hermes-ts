@@ -22,7 +22,6 @@ import { Getter } from "vuex-class";
 import { ROOT_ACTIONS } from "@/store/root.store";
 import AppToolbar from "./AppToolbar.vue";
 import AppDrawer from "./AppDrawer.vue";
-import { fireAuth } from "@/firebase";
 
 @Component({
   name: "App",
@@ -40,9 +39,6 @@ export default class App extends Vue {
     if (this.$vuetify.breakpoint.lgAndUp) {
       this.$store.dispatch(ROOT_ACTIONS.toggleDrawer);
     }
-    fireAuth.onAuthStateChanged(user => {
-      this.$store.dispatch(ROOT_ACTIONS.changeUser, user);
-    });
   }
 }
 </script>

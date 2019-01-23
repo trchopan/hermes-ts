@@ -1,9 +1,12 @@
 import Vue from "vue";
 import "@/class-component-hooks";
 import "@/plugins";
+import "@/filters";
 import App from "@/app/core/App.vue";
 import router, { globalGuard } from "@/router";
 import store from "@/store";
+import { fireAuth } from "@/firebase";
+import { ROOT_ACTIONS } from "@/store/root.store";
 
 Vue.config.productionTip = false;
 Vue.config.devtools = false;
@@ -15,8 +18,19 @@ console.log(`author %c${process.env.VUE_APP_AUTHOR}`, "color: #159cd8;");
 
 router.beforeEach(globalGuard(store));
 
-new Vue({
-  router,
-  store,
-  render: h => h(App)
-}).$mount("#app");
+let inited = false;
+fireAuth.onAuthStateChanged(user => {
+  store.dispatch(ROOT_ACTIONS.changeUser, user);
+  if (!inited) {
+    init();
+  }
+});
+
+function init() {
+  inited = true;
+  new Vue({
+    router,
+    store,
+    render: h => h(App)
+  }).$mount("#app");
+}
