@@ -1,5 +1,5 @@
 <template>
-  <ChatName/>
+  <ChatProfile/>
 </template>
 
 <script lang="ts">
@@ -9,11 +9,11 @@ import { State } from "vuex-class";
 import { ILanguageSetting } from "@/store/root.models";
 import { Watch } from "vue-property-decorator";
 import { LANGUAGES_MAP } from "@/app/chat/chat.models";
-import ChatName from "./ChatName.vue";
+import ChatProfile from "./ChatProfile.vue";
 
 @Component({
   name: "Chat",
-  components: { ChatName }
+  components: { ChatProfile }
 })
 export default class Chat extends Vue {
   @State("language")
