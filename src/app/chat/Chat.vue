@@ -1,5 +1,5 @@
 <template>
-  <pre>Hi {{ user | json }}</pre>
+  <ChatName/>
 </template>
 
 <script lang="ts">
@@ -9,9 +9,11 @@ import { State } from "vuex-class";
 import { ILanguageSetting } from "@/store/root.models";
 import { Watch } from "vue-property-decorator";
 import { LANGUAGES_MAP } from "@/app/chat/chat.models";
+import ChatName from "./ChatName.vue";
 
 @Component({
-  name: "Chat"
+  name: "Chat",
+  components: { ChatName }
 })
 export default class Chat extends Vue {
   @State("language")
