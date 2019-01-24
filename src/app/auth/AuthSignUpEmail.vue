@@ -50,7 +50,6 @@
               validate-on-blur
               type="password"
             ></v-text-field>
-            <Recaptcha @response="recaptchaed($event)"/>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -72,6 +71,7 @@
         >{{ $t.signIn }}</v-btn>
       </div>
     </v-flex>
+    <Recaptcha/>
   </v-layout>
 </template>
 
