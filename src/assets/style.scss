@@ -7,6 +7,14 @@
   margin: auto;
 }
 
+#app > * {
+  user-select: none;
+}
+
+.selectable {
+  user-select: all;
+}
+
 .theme--dark * > .primary--text {
   color: #95caff !important;
 }
