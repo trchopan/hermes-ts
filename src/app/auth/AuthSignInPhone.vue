@@ -106,8 +106,8 @@
           </v-form>
         </v-card>
       </transition>
-      <Recaptcha/>
     </v-flex>
+    <Recaptcha/>
   </v-layout>
 </template>
 
