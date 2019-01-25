@@ -10,6 +10,10 @@ export const LANGUAGES_MAP: ILanguageMap = {
     vi: "Tên gọi",
     en: "Display Name"
   },
+  invalidDisplayName: {
+    vi: "Tên gọi phải nhiều hơn 3 ký tự",
+    en: "Display Name must longer than 3 characters"
+  },
   change: {
     vi: "Thay đổi",
     en: "Change"

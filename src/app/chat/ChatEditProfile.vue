@@ -2,8 +2,8 @@
   <v-card class="elevation-12">
     <v-form
       v-model="formValid"
-      id="profile-update-form"
-      ref="form"
+      id="edit-profile-form"
+      ref="editProfileForm"
       lazy-validation
       @submit.prevent="update()"
     >
@@ -31,11 +31,12 @@
           disabled
         ></v-text-field>
         <v-text-field
-          v-model="userName"
+          v-model="displayName"
           prepend-icon="person"
-          name="user-name"
+          name="display-name"
           :label="$t.displayName"
           type="text"
+          :rules="displayNameRules"
           validate-on-blur
           required
         ></v-text-field>
@@ -80,7 +81,7 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn
-          form="profile-update-form"
+          form="edit-profile-form"
           color="secondary"
           type="submit"
           :loading="loading"
@@ -102,6 +103,7 @@ import {
 } from "@/app/chat/chat.models";
 import { ERROR_ACTIONS } from "@/store/error.store";
 import { Watch } from "vue-property-decorator";
+import { ITextFieldRule } from '@/app/shared/types';
 
 @Component({
   name: "ChatEditProfile"
@@ -116,23 +118,27 @@ export default class ChatEditProfile extends Vue {
   public isSelecting: boolean = false;
   public profileImagesList: string[] = PROFILE_IMAGES_LIST;
   public selectedImage: string | null = null;
+  public displayNameRules: ITextFieldRule[] = []
 
-  private _userName: string | null = null;
+  private _displayName: string | null = null;
 
   get $t() {
     return this.$translate(LANGUAGES_MAP, this.language.value);
   }
 
-  get userName(): string | null {
+  get displayName(): string | null {
     return this.user.displayName;
   }
 
-  set userName(name: string | null) {
-    this._userName = name;
+  set displayName(name: string | null) {
+    this._displayName = name;
   }
 
   public created() {
     this.selectedImage = this.user.photoURL || EMPTY_PROFILE_IMAGE;
+    this.displayNameRules = [
+      v => (v && v.length > 3) || this.$t.invalidDisplayName
+    ]
   }
 
   public select(image: string) {
@@ -141,16 +147,18 @@ export default class ChatEditProfile extends Vue {
   }
 
   public async update() {
-    try {
-      this.loading = true;
-      await this.user.updateProfile({
-        displayName: this._userName,
-        photoURL: this.selectedImage
-      });
-      this.loading = false;
-      this.$emit("profileUpdated", true);
-    } catch (error) {
-      this.$store.dispatch(ERROR_ACTIONS.catchError, error);
+    if ((this.$refs.editProfileForm as any).validate()) {
+      try {
+        this.loading = true;
+        await this.user.updateProfile({
+          displayName: this._displayName,
+          photoURL: this.selectedImage
+        });
+        this.loading = false;
+        this.$emit("profileUpdated", true);
+      } catch (error) {
+        this.$store.dispatch(ERROR_ACTIONS.catchError, error);
+      }
     }
   }
 }
