@@ -11,6 +11,10 @@
   user-select: none;
 }
 
+button:focus {
+  outline: 0;
+}
+
 .selectable {
   user-select: all;
 }

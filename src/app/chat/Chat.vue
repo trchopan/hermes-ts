@@ -1,5 +1,14 @@
 <template>
-  <ChatProfile/>
+  <div>
+    <v-dialog
+      v-model="editDialog"
+      max-width="500"
+    >
+      <v-btn slot="activator">{{ $t.change }}</v-btn>
+      <ChatEditProfile @profileUpdated="editDialog = false"/>
+    </v-dialog>
+    <ChatRoom/>
+  </div>
 </template>
 
 <script lang="ts">
@@ -21,16 +30,18 @@ export default class Chat extends Vue {
   public language!: ILanguageSetting;
   @State("user")
   public user!: firebase.User;
-  public editingProfile: boolean = false;
+  public editDialog: boolean = false;
 
   get $t() {
     return this.$translate(LANGUAGES_MAP, this.language.value);
   }
 
-  @Watch("user")
-  public onUserChange(val: firebase.User, oldVal: firebase.User) {
-    if (val) {
+  public mounted() {
+    if (!this.user) {
       this.$router.replace("/auth");
+    }
+    if (this.user && !this.user.displayName) {
+      this.editDialog = true;
     }
   }
 }

@@ -1,97 +1,93 @@
 <template>
-  <v-layout
-    align-center
-    justify-center
-  >
-    <v-flex
-      xs12
-      sm6
-      md4
+  <v-card class="elevation-12">
+    <v-form
+      v-model="formValid"
+      id="profile-update-form"
+      ref="form"
+      lazy-validation
+      @submit.prevent="update()"
     >
-      <v-card class="elevation-12">
-        <v-form
-          v-model="formValid"
-          id="profile-update-form"
-          ref="form"
-          lazy-validation
-          @submit.prevent="update()"
-        >
-          <v-toolbar
-            dark
-            color="primary"
+      <v-toolbar
+        dark
+        color="primary"
+      >
+        <v-toolbar-title>{{ $t.editProfile }}</v-toolbar-title>
+      </v-toolbar>
+      <v-card-text>
+        <v-text-field
+          v-if="user.email"
+          prepend-icon="email"
+          :label="$t.email"
+          :value="user.email"
+          type="text"
+          disabled
+        ></v-text-field>
+        <v-text-field
+          v-if="user.phoneNumber"
+          prepend-icon="phone"
+          :label="$t.phone"
+          :value="user.phoneNumber"
+          type="text"
+          disabled
+        ></v-text-field>
+        <v-text-field
+          v-model="userName"
+          prepend-icon="person"
+          name="user-name"
+          :label="$t.displayName"
+          type="text"
+          validate-on-blur
+          required
+        ></v-text-field>
+        <v-fade-transition mode="out-in">
+          <div
+            :key="'selected-image-'+selectedImage"
+            class="selected-image"
           >
-            <v-toolbar-title>{{ $t.editProfile }}</v-toolbar-title>
-          </v-toolbar>
-          <v-card-text>
-            <v-text-field
-              v-if="user.email"
-              prepend-icon="email"
-              :label="$t.email"
-              :value="user.email"
-              type="text"
-              disabled
-            ></v-text-field>
-            <v-text-field
-              v-if="user.phoneNumber"
-              prepend-icon="phone"
-              :label="$t.phone"
-              :value="user.phoneNumber"
-              type="text"
-              disabled
-            ></v-text-field>
-            <v-text-field
-              v-model="userName"
-              prepend-icon="person"
-              name="user-name"
-              :label="$t.displayName"
-              type="text"
-              validate-on-blur
-              required
-            ></v-text-field>
-            <v-fade-transition mode="out-in">
-              <div
-                :key="'selected-image-'+selectedImage"
-                class="selected-image"
+            <img
+              :src="'images/'+selectedImage"
+              alt="Selected Image"
+              @click="isSelecting = !isSelecting"
+            >
+            <button
+              class="change-button white--text"
+              type="button"
+              @click="isSelecting = !isSelecting"
+            >{{ $t.change }}</button>
+          </div>
+        </v-fade-transition>
+        <v-expand-transition>
+          <div
+            v-show="isSelecting"
+            key="image-list"
+            class="image-list"
+          >
+            <div
+              v-for="(image, index) in profileImagesList"
+              :key="'image-' + index"
+              class="image-container"
+            >
+              <img
+                :src="'images/'+image"
+                @mouseover="$event.target.classList.add('elevation-12')"
+                @mouseleave="$event.target.classList.remove('elevation-12')"
+                @click="select(image)"
               >
-                <img
-                  :src="'images/'+selectedImage"
-                  alt="Selected Image"
-                  @click="isSelecting = true"
-                >
-                <button
-                  class="change-button white--text"
-                  @click="isSelecting = true"
-                >{{ $t.change }}</button>
-              </div>
-            </v-fade-transition>
-            <v-expand-transition>
-              <div
-                v-show="isSelecting"
-                key="image-list"
-                class="image-list"
-              >
-                <img
-                  v-for="(image, index) in profileImagesList"
-                  :key="'image-' + index"
-                  :src="'images/'+image"
-                  @click="select(image)"
-                >
-              </div>
-            </v-expand-transition>
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn
-              form="profile-update-form"
-              color="secondary"
-              type="submit"
-              :loading="loading"
-            >{{ $t.update }}</v-btn>
-          </v-card-actions>
-        </v-form>
-      </v-card>
-    </v-flex>
-  </v-layout>
+            </div>
+          </div>
+        </v-expand-transition>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn
+          form="profile-update-form"
+          color="secondary"
+          type="submit"
+          :loading="loading"
+        >{{ $t.update }}</v-btn>
+      </v-card-actions>
+    </v-form>
+  </v-card>
 </template>
 
 <script lang="ts">
@@ -152,6 +148,7 @@ export default class ChatEditProfile extends Vue {
         photoURL: this.selectedImage
       });
       this.loading = false;
+      this.$emit("profileUpdated", true);
     } catch (error) {
       this.$store.dispatch(ERROR_ACTIONS.catchError, error);
     }
@@ -183,10 +180,20 @@ export default class ChatEditProfile extends Vue {
   margin-top: 1rem;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
-  img {
+  .image-container {
     width: 100%;
-    border-radius: 50%;
     padding: 0.5rem;
+    img {
+      border-radius: 50%;
+      width: 100%;
+      filter: brightness(60%);
+      transition: all 150ms ease-in;
+    }
+    img:hover {
+      cursor: pointer;
+      transform: scale(1.05);
+      filter: brightness(100%);
+    }
   }
 }
 </style>
