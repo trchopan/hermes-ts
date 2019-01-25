@@ -9,17 +9,19 @@ import { State } from "vuex-class";
 import { ILanguageSetting } from "@/store/root.models";
 import { Watch } from "vue-property-decorator";
 import { LANGUAGES_MAP } from "@/app/chat/chat.models";
-import ChatProfile from "./ChatProfile.vue";
+import ChatEditProfile from "./ChatEditProfile.vue";
+import ChatRoom from "./ChatRoom.vue";
 
 @Component({
   name: "Chat",
-  components: { ChatProfile }
+  components: { ChatEditProfile, ChatRoom }
 })
 export default class Chat extends Vue {
   @State("language")
   public language!: ILanguageSetting;
   @State("user")
   public user!: firebase.User;
+  public editingProfile: boolean = false;
 
   get $t() {
     return this.$translate(LANGUAGES_MAP, this.language.value);

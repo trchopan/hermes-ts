@@ -108,9 +108,9 @@ import { ERROR_ACTIONS } from "@/store/error.store";
 import { Watch } from "vue-property-decorator";
 
 @Component({
-  name: "ChatProfile"
+  name: "ChatEditProfile"
 })
-export default class ChatProfile extends Vue {
+export default class ChatEditProfile extends Vue {
   @State("language")
   public language!: ILanguageSetting;
   @State("user")
