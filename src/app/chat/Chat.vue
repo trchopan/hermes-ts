@@ -3,7 +3,7 @@
     align-center
     justify-center
   >
-    <v-flex>
+    <v-flex v-if="user">
       <ChatEditProfile/>
       <ChatRoomDrawer/>
       <router-view></router-view>
