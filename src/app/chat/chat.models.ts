@@ -21,6 +21,10 @@ export const LANGUAGES_MAP: ILanguageMap = {
   update: {
     vi: "Cập nhật",
     en: "Update"
+  },
+  signOut: {
+    vi: "Đăng xuất",
+    en: "Sign Out"
   }
 };
 

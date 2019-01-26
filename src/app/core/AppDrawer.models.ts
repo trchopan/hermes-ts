@@ -1,9 +1,10 @@
 import { ILanguageMap } from "@/plugins/translate";
-import { AUTH_ROUTE } from "@/app/auth/auth.routes";
+import { CHAT_ROUTE } from "@/app/chat/chat.routes";
 
 export const LANGUAGES_MAP: ILanguageMap = {
   home: { vi: "Trang chủ", en: "Home" },
   playground: { vi: "Sân chơi", en: "Playground" },
+  chat: { vi: "Chat", en: "Chat" },
   authSystem: { vi: "Xác thực tài khoản", en: "Authentication System" },
   machineLearning: { vi: "Máy tính tự học", en: "Machine Learning" }
 };
@@ -21,7 +22,7 @@ export const DRAWER_ITEMS: IDrawerItem[] = [
     name: "playground",
     icon: "dashboard",
     children: [
-      { path: AUTH_ROUTE, name: "authSystem" },
+      { path: CHAT_ROUTE, name: "chat" },
       { path: "machine-learning", name: "machineLearning" }
     ]
   }
