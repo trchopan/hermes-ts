@@ -61,7 +61,11 @@ export const LANGUAGES_MAP: ILanguageMap = {
   },
   signOut: {
     vi: "Đăng xuất",
-    en: "Sign Out"
+    en: "Sign out"
+  },
+  signingOut: {
+    vi: "Đăng xuất...",
+    en: "Signing out..."
   },
   joinChat: {
     vi: "Tham gia chat",
