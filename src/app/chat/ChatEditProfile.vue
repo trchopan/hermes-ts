@@ -103,7 +103,7 @@ import {
 } from "@/app/chat/chat.models";
 import { ERROR_ACTIONS } from "@/store/error.store";
 import { Watch } from "vue-property-decorator";
-import { ITextFieldRule } from '@/app/shared/types';
+import { ITextFieldRule } from "@/app/shared/types";
 
 @Component({
   name: "ChatEditProfile"
@@ -118,7 +118,7 @@ export default class ChatEditProfile extends Vue {
   public isSelecting: boolean = false;
   public profileImagesList: string[] = PROFILE_IMAGES_LIST;
   public selectedImage: string | null = null;
-  public displayNameRules: ITextFieldRule[] = []
+  public displayNameRules: ITextFieldRule[] = [];
 
   private _displayName: string | null = null;
 
@@ -138,7 +138,7 @@ export default class ChatEditProfile extends Vue {
     this.selectedImage = this.user.photoURL || EMPTY_PROFILE_IMAGE;
     this.displayNameRules = [
       v => (v && v.length > 3) || this.$t.invalidDisplayName
-    ]
+    ];
   }
 
   public select(image: string) {
