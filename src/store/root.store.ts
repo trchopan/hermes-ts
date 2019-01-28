@@ -6,9 +6,9 @@ import {
   IThemeSetting,
   ILanguageSetting
 } from "./root.models";
-import errorStore from "./error.store";
 
 const log = logger("[rootStore]");
+const logError = logger("[rootStore]", "#ff3333");
 
 export const ROOT_ACTIONS = {
   initializeApp: "initializeApp",
@@ -19,8 +19,8 @@ export const ROOT_ACTIONS = {
   changeUser: "changeUser",
   changeLoadingMessage: "changeLoadingMessage",
   finishLoading: "finishLoading",
-  changeErrorMessage: "changeErrorMessage",
-  clearErrorMessage: "clearErrorMessage"
+  changeError: "changeError",
+  clearError: "clearError"
 };
 
 export interface IRecaptchaData {
@@ -29,10 +29,9 @@ export interface IRecaptchaData {
   token: string;
 }
 
-export interface IUser {
-  uid: string;
-  email?: string;
-  phone?: string;
+export interface IError {
+  message: string;
+  code: string;
 }
 
 export interface RootState {
@@ -43,7 +42,7 @@ export interface RootState {
   recaptcha: IRecaptchaData | undefined;
   user: firebase.User | null;
   loadingMessage: string | null;
-  errorMessage: string | null;
+  error: IError | null;
 }
 
 const rootStore: StoreOptions<RootState> = {
@@ -55,13 +54,13 @@ const rootStore: StoreOptions<RootState> = {
     recaptcha: undefined,
     user: null,
     loadingMessage: null,
-    errorMessage: null
+    error: null
   },
   getters: {
     darkTheme: state =>
       state.theme.value === THEME_SETTINGS[0].value ? false : true,
     appLoading: state => !!state.loadingMessage,
-    appErroring: state => !!state.errorMessage
+    appErroring: state => !!state.error
   },
   actions: {
     [ROOT_ACTIONS.initializeApp]: ({ commit, dispatch }) => {
@@ -93,16 +92,16 @@ const rootStore: StoreOptions<RootState> = {
       commit("loadingMessageChanged", message),
     [ROOT_ACTIONS.finishLoading]: ({ commit }) =>
       commit("loadingMessageChanged", null),
-    [ROOT_ACTIONS.changeErrorMessage]: (
+    [ROOT_ACTIONS.changeError]: (
       { commit, dispatch },
-      message: string | null
+      error: IError | null
     ) => {
       dispatch(ROOT_ACTIONS.finishLoading);
-      commit("errorMessageChanged", message);
+      commit("errorChanged", error);
     },
-    [ROOT_ACTIONS.clearErrorMessage]: ({ commit, dispatch }) => {
+    [ROOT_ACTIONS.clearError]: ({ commit, dispatch }) => {
       dispatch(ROOT_ACTIONS.finishLoading);
-      commit("errorMessageChanged", null);
+      commit("errorChanged", null);
     }
   },
   mutations: {
@@ -140,13 +139,10 @@ const rootStore: StoreOptions<RootState> = {
       state.loadingMessage = message;
       log("Loading message changed", state.loadingMessage);
     },
-    errorMessageChanged(state, message: string | null) {
-      state.errorMessage = message;
-      log("Error message changed", state.errorMessage);
+    errorChanged(state, error: IError | null) {
+      state.error = error;
+      logError("Error changed", state.error);
     }
-  },
-  modules: {
-    errorStore
   }
 };
 
