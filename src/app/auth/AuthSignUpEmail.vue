@@ -3,7 +3,9 @@
     align-center
     justify-center
   >
+    <Recaptcha @ready="finishLoadingRecaptcha = true"/>
     <v-flex
+      v-if="finishLoadingRecaptcha"
       xs12
       sm6
       md4
@@ -71,7 +73,6 @@
         >{{ $t.signIn }}</v-btn>
       </div>
     </v-flex>
-    <Recaptcha/>
   </v-layout>
 </template>
 
@@ -85,10 +86,10 @@ import { ILanguageSetting } from "@/store/root.models";
 import { validateEmail } from "@/app/shared/validate-email.helper";
 import { ITextFieldRule } from "@/app/shared/types";
 import { fireAuth, ReCaptchaVerifier } from "@/firebase";
-import Recaptcha from "@/app/shared/Recaptcha.vue";
-import { ERROR_ACTIONS } from "@/store/error.store";
-import { AUTH_SIGN_IN_EMAIL_ROUTE } from "@/app/auth/auth.routes";
-import { IRecaptchaData } from "@/store/root.store";
+import Recaptcha from "./Recaptcha.vue";
+import { AUTH_SIGN_IN_EMAIL_ROUTE, AUTH_ROUTE } from "@/app/auth/auth.routes";
+import { IRecaptchaData, ROOT_ACTIONS } from "@/store/root.store";
+import { CHAT_ROUTE } from "@/app/chat/chat.routes";
 
 @Component({
   name: "AuthSignUpEmail",
@@ -101,6 +102,7 @@ export default class AuthSignUpEmail extends Vue {
   public recaptcha!: IRecaptchaData;
   @State("user")
   public user!: firebase.User;
+  public finishLoadingRecaptcha: boolean = false;
   public fromValid: boolean = true;
   public email: string = "";
   public password: string = "";
@@ -130,7 +132,7 @@ export default class AuthSignUpEmail extends Vue {
   @Watch("user")
   public onUserChange(val: firebase.User, oldVal: firebase.User) {
     if (val) {
-      this.$router.replace("/chat");
+      this.$router.replace(CHAT_ROUTE);
     }
   }
 
@@ -141,15 +143,19 @@ export default class AuthSignUpEmail extends Vue {
   public async submit() {
     if ((this.$refs.form as any).validate()) {
       try {
-        const user = await fireAuth.createUserWithEmailAndPassword(
+        this.$store.dispatch(
+          ROOT_ACTIONS.changeLoadingMessage,
+          this.$t.signingUp
+        );
+        await fireAuth.createUserWithEmailAndPassword(
           this.email,
           this.password
         );
-        if (user) {
-          this.$router.replace("/chat");
-        }
+        this.$store.dispatch(ROOT_ACTIONS.finishLoading);
+        this.$router.replace(CHAT_ROUTE);
       } catch (error) {
-        this.$store.dispatch(ERROR_ACTIONS.catchError, error);
+        error.message = this.$t.unableSignUp;
+        this.$store.dispatch(ROOT_ACTIONS.changeError, error);
       }
     }
   }

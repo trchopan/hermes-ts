@@ -47,7 +47,7 @@
           color="primary"
           class="text-none"
           outline
-          @click="signOut()"
+          :to="signOutRoute"
         >{{ $t.signOut }}</v-btn>
       </v-layout>
     </section>
@@ -64,10 +64,10 @@ import { LANGUAGES_MAP } from "./Auth.models";
 import {
   AUTH_SIGN_UP_EMAIL_ROUTE,
   AUTH_SIGN_IN_EMAIL_ROUTE,
-  AUTH_SIGN_IN_PHONE_ROUTE
+  AUTH_SIGN_IN_PHONE_ROUTE,
+  AUTH_SIGN_OUT_ROUTE
 } from "@/app/auth/auth.routes";
 import { fireAuth } from "@/firebase";
-import { ERROR_ACTIONS } from "@/store/error.store";
 
 @Component({
   name: "Auth"
@@ -80,17 +80,10 @@ export default class Auth extends Vue {
   public signUpEmailRoute: string = AUTH_SIGN_UP_EMAIL_ROUTE;
   public signInEmailRoute: string = AUTH_SIGN_IN_EMAIL_ROUTE;
   public signInPhoneRoute: string = AUTH_SIGN_IN_PHONE_ROUTE;
+  public signOutRoute: string = AUTH_SIGN_OUT_ROUTE;
 
   get $t() {
     return this.$translate(LANGUAGES_MAP, this.language.value);
-  }
-
-  public async signOut() {
-    try {
-      await fireAuth.signOut();
-    } catch (error) {
-      this.$store.dispatch(ERROR_ACTIONS.catchError, error);
-    }
   }
 }
 </script>
