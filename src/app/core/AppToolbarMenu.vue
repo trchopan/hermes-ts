@@ -52,7 +52,7 @@ import { ROOT_ACTIONS } from "@/store/root.store";
 import Component from "vue-class-component";
 import { State } from "vuex-class";
 import { IMappedLanguage } from "@/plugins/translate";
-import { LANGUAGES_MAP } from '@/app/core/app.models';
+import { LANGUAGES_MAP } from "@/app/core/app.models";
 
 @Component({
   name: "AppToolbarMenu"

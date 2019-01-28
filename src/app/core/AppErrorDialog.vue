@@ -33,7 +33,7 @@ import { State, Getter } from "vuex-class";
 import { IMappedLanguage } from "@/plugins/translate";
 import { ILanguageSetting } from "@/store/root.models";
 import { ROOT_ACTIONS, IError } from "@/store/root.store";
-import { LANGUAGES_MAP } from '@/app/core/app.models';
+import { LANGUAGES_MAP } from "@/app/core/app.models";
 
 @Component({
   name: "AppErrorDialog"
