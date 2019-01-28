@@ -58,7 +58,8 @@ import { State } from "vuex-class";
 import { ILanguageMap, IMappedLanguage } from "@/plugins/translate";
 import { ROOT_ACTIONS } from "@/store/root.store";
 import { ILanguageSetting } from "@/store/root.models";
-import { LANGUAGES_MAP, DRAWER_ITEMS, IDrawerItem } from "./AppDrawer.models";
+import { LANGUAGES_MAP } from "@/app/core/app.models";
+import { CHAT_ROUTE } from "@/app/chat/chat.routes";
 
 export const mapper = (item: IDrawerItem, languageMap: IMappedLanguage) => ({
   ...item,
@@ -79,6 +80,25 @@ export function reducer(
   }, new Array<IDrawerItem>());
   return result;
 }
+
+export interface IDrawerItem {
+  path?: string;
+  name: string;
+  icon?: string;
+  children?: IDrawerItem[];
+}
+
+export const DRAWER_ITEMS: IDrawerItem[] = [
+  { path: "/", name: "home", icon: "home" },
+  {
+    name: "playground",
+    icon: "dashboard",
+    children: [
+      { path: CHAT_ROUTE, name: "chat" },
+      { path: "machine-learning", name: "machineLearning" }
+    ]
+  }
+];
 
 @Component({
   name: "AppDrawer"

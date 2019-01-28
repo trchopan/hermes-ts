@@ -24,8 +24,6 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { ROOT_ACTIONS } from "@/store/root.store";
-import { LANGUAGE_SETTINGS } from "@/store/root.models";
-import { ILanguage } from "@/plugins/translate";
 import AppToolbarMenu from "./AppToolbarMenu.vue";
 
 @Component({

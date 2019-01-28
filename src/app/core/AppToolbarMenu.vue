@@ -51,12 +51,8 @@ import {
 import { ROOT_ACTIONS } from "@/store/root.store";
 import Component from "vue-class-component";
 import { State } from "vuex-class";
-import { ILanguageMap, IMappedLanguage } from "@/plugins/translate";
-
-const LANGUAGES_MAP: ILanguageMap = {
-  selectLanguage: { vi: "Chọn ngôn ngữ", en: "Select language" },
-  lightOut: { vi: "Tắt đèn", en: "Light out" }
-};
+import { IMappedLanguage } from "@/plugins/translate";
+import { LANGUAGES_MAP } from '@/app/core/app.models';
 
 @Component({
   name: "AppToolbarMenu"

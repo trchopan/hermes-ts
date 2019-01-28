@@ -30,20 +30,10 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { State, Getter } from "vuex-class";
-import { ILanguageMap, IMappedLanguage } from "@/plugins/translate";
+import { IMappedLanguage } from "@/plugins/translate";
 import { ILanguageSetting } from "@/store/root.models";
 import { ROOT_ACTIONS, IError } from "@/store/root.store";
-
-const LANGUAGES_MAP: ILanguageMap = {
-  notice: {
-    vi: "Thông báo",
-    en: "Notice"
-  },
-  dismiss: {
-    vi: "Đóng",
-    en: "Dismiss"
-  }
-};
+import { LANGUAGES_MAP } from '@/app/core/app.models';
 
 @Component({
   name: "AppErrorDialog"
