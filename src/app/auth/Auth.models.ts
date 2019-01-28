@@ -25,6 +25,14 @@ export const LANGUAGES_MAP: ILanguageMap = {
     vi: "Gởi tin nhắn",
     en: "Send code"
   },
+  sendingVerificationCode: {
+    vi: "Đang gởi mã xác nhận",
+    en: "Sending verification code"
+  },
+  unableSendVerificationCode: {
+    vi: "Khổng thể gởi mã xác nhận",
+    en: "Unable to send verification code"
+  },
   resendCode: {
     vi: "Gởi lại mã",
     en: "Resend code"
@@ -41,11 +49,23 @@ export const LANGUAGES_MAP: ILanguageMap = {
     vi:
       "Mã xác nhận đã được gởi đến số điện thoại ({0}). Bạn vui lòng kiểm tra tin nhắn điện thoại và nhập mã vào ô bên dưới.",
     en:
-      "Confirmation code has been sent to the phone number {0}. Please check your phone message and enter the code below."
+      "Confirmation code has been sent to the phone number ({0}). Please check your phone message and enter the code below."
   },
-  invalidConfirmCode: {
+  confirmingVerfificationCode: {
+    vi: "Đang xác nhận mã",
+    en: "Confirming verification code"
+  },
+  enterConfirmationCode: {
     vi: "Vui lòng nhập mã xác nhận",
     en: "Please enter the confirmation code"
+  },
+  invalidVerificationCode: {
+    vi: "Mã xác nhận không chính xác",
+    en: "Invalid verification code"
+  },
+  unableVerifyCode: {
+    vi: "Không thể xác nhận mã",
+    en: "Unable to verify code"
   },
   signInEmail: {
     vi: "Đăng nhập bằng Email",
@@ -67,6 +87,10 @@ export const LANGUAGES_MAP: ILanguageMap = {
     vi: "Đăng xuất...",
     en: "Signing out..."
   },
+  signOutError: {
+    vi: "Lỗi đăng xuất. Vui lòng tải lại trang.",
+    en: "Error signing out. Please refesh the page."
+  },
   joinChat: {
     vi: "Tham gia chat",
     en: "Join chat"
@@ -79,13 +103,29 @@ export const LANGUAGES_MAP: ILanguageMap = {
     vi: "Đăng nhập",
     en: "Sign In"
   },
+  signingIn: {
+    vi: "Đăng nhập...",
+    en: "Sign In..."
+  },
+  signInError: {
+    vi: "Lỗi đăng nhập. Vui lòng tải lại trang.",
+    en: "Error signing in. Please refesh the page."
+  },
   signUp: {
     vi: "Đăng ký",
     en: "Sign Up"
   },
+  signingUp: {
+    vi: "Đăng ký...",
+    en: "Sign Up..."
+  },
   signUpForm: {
     vi: "Mẫu đăng ký",
     en: "Sign up form"
+  },
+  unableSignUp: {
+    vi: "Không thể đăng ký. Vui lòng tải lại trang.",
+    en: "Unable to sign up. Please refesh the page."
   },
   password: {
     vi: "Mật khẩu",

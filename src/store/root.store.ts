@@ -6,9 +6,9 @@ import {
   IThemeSetting,
   ILanguageSetting
 } from "./root.models";
-import errorStore from "./error.store";
 
 const log = logger("[rootStore]");
+const logError = logger("[rootStore]", "#ff3333");
 
 export const ROOT_ACTIONS = {
   initializeApp: "initializeApp",
@@ -16,7 +16,11 @@ export const ROOT_ACTIONS = {
   changeTheme: "changeTheme",
   toggleDrawer: "toggleDrawer",
   registerRecaptcha: "registerRecaptcha",
-  changeUser: "changeUser"
+  changeUser: "changeUser",
+  changeLoadingMessage: "changeLoadingMessage",
+  finishLoading: "finishLoading",
+  changeError: "changeError",
+  clearError: "clearError"
 };
 
 export interface IRecaptchaData {
@@ -25,10 +29,9 @@ export interface IRecaptchaData {
   token: string;
 }
 
-export interface IUser {
-  uid: string;
-  email?: string;
-  phone?: string;
+export interface IError {
+  message: string;
+  code: string;
 }
 
 export interface RootState {
@@ -38,6 +41,8 @@ export interface RootState {
   language: ILanguageSetting;
   recaptcha: IRecaptchaData | undefined;
   user: firebase.User | null;
+  loadingMessage: string | null;
+  error: IError | null;
 }
 
 const rootStore: StoreOptions<RootState> = {
@@ -47,11 +52,15 @@ const rootStore: StoreOptions<RootState> = {
     drawerOpen: false,
     language: LANGUAGE_SETTINGS[0], // Vietnamese
     recaptcha: undefined,
-    user: null
+    user: null,
+    loadingMessage: null,
+    error: null
   },
   getters: {
     darkTheme: state =>
-      state.theme.value === THEME_SETTINGS[0].value ? false : true
+      state.theme.value === THEME_SETTINGS[0].value ? false : true,
+    appLoading: state => !!state.loadingMessage,
+    appErroring: state => !!state.error
   },
   actions: {
     [ROOT_ACTIONS.initializeApp]: ({ commit, dispatch }) => {
@@ -78,7 +87,22 @@ const rootStore: StoreOptions<RootState> = {
     [ROOT_ACTIONS.registerRecaptcha]: ({ commit }, data: IRecaptchaData) =>
       commit("captchaTokenRegistered", data),
     [ROOT_ACTIONS.changeUser]: ({ commit }, user: firebase.User) =>
-      commit("userChanged", user)
+      commit("userChanged", user),
+    [ROOT_ACTIONS.changeLoadingMessage]: ({ commit }, message: string | null) =>
+      commit("loadingMessageChanged", message),
+    [ROOT_ACTIONS.finishLoading]: ({ commit }) =>
+      commit("loadingMessageChanged", null),
+    [ROOT_ACTIONS.changeError]: (
+      { commit, dispatch },
+      error: IError | null
+    ) => {
+      dispatch(ROOT_ACTIONS.finishLoading);
+      commit("errorChanged", error);
+    },
+    [ROOT_ACTIONS.clearError]: ({ commit, dispatch }) => {
+      dispatch(ROOT_ACTIONS.finishLoading);
+      commit("errorChanged", null);
+    }
   },
   mutations: {
     localStorageAvailable(state) {
@@ -110,10 +134,15 @@ const rootStore: StoreOptions<RootState> = {
     userChanged(state, user: firebase.User) {
       state.user = user;
       log("User changed", state.user);
+    },
+    loadingMessageChanged(state, message: string | null) {
+      state.loadingMessage = message;
+      log("Loading message changed", state.loadingMessage);
+    },
+    errorChanged(state, error: IError | null) {
+      state.error = error;
+      logError("Error changed", state.error);
     }
-  },
-  modules: {
-    errorStore
   }
 };
 

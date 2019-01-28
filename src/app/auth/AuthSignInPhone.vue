@@ -3,7 +3,9 @@
     align-center
     justify-center
   >
+    <Recaptcha @ready="finishLoadingRecaptcha = true"/>
     <v-flex
+      v-if="finishLoadingRecaptcha"
       xs12
       sm6
       md4
@@ -51,7 +53,6 @@
                 form="sign-in-form"
                 color="secondary"
                 type="submit"
-                :loading="loading"
               >{{ $t.sendCode }}</v-btn>
             </v-card-actions>
           </v-form>
@@ -93,21 +94,18 @@
                 color="primary"
                 outline
                 type="button"
-                :loading="loading"
                 @click="reset()"
               >{{ $t.resendCode }}</v-btn>
               <v-btn
                 form="confirm-form"
                 color="secondary"
                 type="submit"
-                :loading="loading"
               >{{ $t.signIn }}</v-btn>
             </v-card-actions>
           </v-form>
         </v-card>
       </transition>
     </v-flex>
-    <Recaptcha/>
   </v-layout>
 </template>
 
@@ -118,11 +116,12 @@ import { State } from "vuex-class";
 import { Watch } from "vue-property-decorator";
 import { ILanguageSetting } from "@/store/root.models";
 import { LANGUAGES_MAP } from "./Auth.models";
-import Recaptcha from "@/app/shared/Recaptcha.vue";
+import Recaptcha from "./Recaptcha.vue";
 import { ITextFieldRule } from "@/app/shared/types";
 import { fireAuth } from "@/firebase";
-import { IRecaptchaData } from "@/store/root.store";
-import { ERROR_ACTIONS } from "@/store/error.store";
+import { IRecaptchaData, ROOT_ACTIONS } from "@/store/root.store";
+import { AUTH_ROUTE } from "@/app/auth/auth.routes";
+import { CHAT_ROUTE } from "@/app/chat/chat.routes";
 
 export const COUNTRY_CODE = "+84";
 
@@ -137,6 +136,7 @@ export default class AuthSignInPhone extends Vue {
   public recaptcha!: IRecaptchaData;
   @State("user")
   public user!: firebase.User;
+  public finishLoadingRecaptcha: boolean = false;
   public formValid: boolean = true;
   public phone: string = "";
   public phoneRules: ITextFieldRule[] = [];
@@ -145,14 +145,12 @@ export default class AuthSignInPhone extends Vue {
   public confirmCodeRules: ITextFieldRule[] = [];
   public phoneNumberSubmited: boolean = false;
 
-  private _loading: boolean = false;
-
   public created() {
     this.phoneRules = [
       v => (v && v.length >= 9 && v.length <= 10) || this.$t.invalidPhone
     ];
     this.confirmCodeRules = [
-      v => (v && v.length > 0) || this.$t.invalidConfirmCode
+      v => (v && v.length > 0) || this.$t.enterConfirmationCode
     ];
   }
 
@@ -160,49 +158,53 @@ export default class AuthSignInPhone extends Vue {
     return this.$translate(LANGUAGES_MAP, this.language.value);
   }
 
-  get loading(): boolean {
-    return !(this.recaptcha && !!this.recaptcha.verifier) || this._loading;
-  }
-
-  set loading(value: boolean) {
-    this._loading = value;
-  }
-
   @Watch("user")
   public onUserChange(val: firebase.User, oldVal: firebase.User) {
     if (val) {
-      this.$router.replace("/chat");
+      this.$router.replace(CHAT_ROUTE);
     }
   }
 
   public async submit() {
     if ((this.$refs.signInForm as any).validate()) {
-      this.loading = true;
+      this.phone = COUNTRY_CODE + this.phone;
       try {
         // Send SMS
+        this.$store.dispatch(
+          ROOT_ACTIONS.changeLoadingMessage,
+          this.$t.sendingVerificationCode
+        );
         this.confirmationResult = await fireAuth.signInWithPhoneNumber(
-          COUNTRY_CODE + this.phone,
+          this.phone,
           this.recaptcha.verifier
         );
         this.phoneNumberSubmited = true;
+        this.$store.dispatch(ROOT_ACTIONS.finishLoading);
       } catch (error) {
         // SMS is not sent
-        this.$store.dispatch(ERROR_ACTIONS.catchError, error);
-      } finally {
-        this.loading = false;
+        error.message = this.$t.unableSendVerificationCode;
+        this.$store.dispatch(ROOT_ACTIONS.changeError, error);
       }
     }
   }
 
   public async confirm() {
     if ((this.$refs.confirmForm as any).validate() && this.confirmationResult) {
-      this.loading = true;
       try {
+        this.$store.dispatch(
+          ROOT_ACTIONS.changeLoadingMessage,
+          this.$t.confirmingVerfificationCode
+        );
         const user = await this.confirmationResult.confirm(this.confirmCode);
+        this.$store.dispatch(ROOT_ACTIONS.finishLoading);
       } catch (error) {
-        this.$store.dispatch(ERROR_ACTIONS.catchError, error);
-      } finally {
-        this.loading = false;
+        if (error.code === "auth/invalid-verification-code") {
+          error.message = this.$t.invalidVerificationCode;
+          this.$store.dispatch(ROOT_ACTIONS.changeError, error);
+        } else {
+          error.message = this.$t.unableVerifyCode;
+          this.$store.dispatch(ROOT_ACTIONS.changeError, error);
+        }
       }
     }
   }

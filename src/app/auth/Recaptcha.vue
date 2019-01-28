@@ -7,16 +7,40 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import { firebaseApp, ReCaptchaVerifier } from "@/firebase";
 import { ROOT_ACTIONS, IRecaptchaData } from "@/store/root.store";
-import { ERROR_ACTIONS } from "@/store/error.store";
+import { State } from "vuex-class";
+import { ILanguageSetting } from "@/store/root.models";
+import { ILanguageMap } from "@/plugins/translate";
+
+const LANGUAGES_MAP: ILanguageMap = {
+  verifyRecaptcha: {
+    vi: "Đang xác lập Recaptcha...",
+    en: "Verifying Recaptcha..."
+  },
+  errorRegisterCaptcha: {
+    vi: "Không thể xác lập Recaptcha",
+    en: "Unable to verify Recaptcha"
+  }
+};
 
 @Component({
   name: "Recaptcha"
 })
 export default class Recaptcha extends Vue {
+  @State("language")
+  public language!: ILanguageSetting;
+
+  get $t() {
+    return this.$translate(LANGUAGES_MAP, this.language.value);
+  }
+
   public async mounted() {
     const verifier = new ReCaptchaVerifier("recaptcha-container", {
       size: "invisible"
     });
+    this.$store.dispatch(
+      ROOT_ACTIONS.changeLoadingMessage,
+      this.$t.verifyRecaptcha
+    );
     try {
       const widgetId = await verifier.render();
       const token = await verifier.verify();
@@ -26,8 +50,11 @@ export default class Recaptcha extends Vue {
         token
       };
       this.$store.dispatch(ROOT_ACTIONS.registerRecaptcha, data);
+      this.$emit("ready", true);
+      this.$store.dispatch(ROOT_ACTIONS.finishLoading);
     } catch (error) {
-      this.$store.dispatch(ERROR_ACTIONS.catchError, error);
+      error.message = this.$t.errorRegisterCaptcha;
+      this.$store.dispatch(ROOT_ACTIONS.changeError, error);
     }
   }
 

@@ -4,6 +4,8 @@
     <AppDrawer/>
     <v-content>
       <v-container fluid>
+        <AppLoadingDialog/>
+        <AppErrorDialog/>
         <transition
           name="fade"
           mode="out-in"
@@ -22,12 +24,16 @@ import { Getter } from "vuex-class";
 import { ROOT_ACTIONS } from "@/store/root.store";
 import AppToolbar from "./AppToolbar.vue";
 import AppDrawer from "./AppDrawer.vue";
+import AppLoadingDialog from "./AppLoadingDialog.vue";
+import AppErrorDialog from "./AppErrorDialog.vue";
 
 @Component({
   name: "App",
   components: {
     AppToolbar,
-    AppDrawer
+    AppDrawer,
+    AppLoadingDialog,
+    AppErrorDialog
   }
 })
 export default class App extends Vue {
