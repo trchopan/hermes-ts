@@ -80,13 +80,13 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { State } from "vuex-class";
-import { LANGUAGES_MAP } from "./Auth.models";
+import { LANGUAGES_MAP } from "@/app/auth/auth.models";
 import { Watch } from "vue-property-decorator";
 import { ILanguageSetting } from "@/store/root.models";
 import { validateEmail } from "@/app/shared/validate-email.helper";
 import { ITextFieldRule } from "@/app/shared/types";
 import { fireAuth, ReCaptchaVerifier } from "@/firebase";
-import Recaptcha from "./Recaptcha.vue";
+import Recaptcha from "@/app/auth/Recaptcha.vue";
 import { AUTH_SIGN_IN_EMAIL_ROUTE, AUTH_ROUTE } from "@/app/auth/auth.routes";
 import { IRecaptchaData, ROOT_ACTIONS } from "@/store/root.store";
 import { CHAT_ROUTE } from "@/app/chat/chat.routes";

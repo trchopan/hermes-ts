@@ -94,14 +94,12 @@
             color="primary"
             type="button"
             outline
-            :loading="loading"
             :to="authSignOutRoute"
           >{{ $t.signOut }}</v-btn>
           <v-btn
             form="edit-profile-form"
             color="secondary"
             type="submit"
-            :loading="loading"
           >{{ $t.update }}</v-btn>
         </v-card-actions>
       </v-form>
@@ -119,10 +117,10 @@ import {
   EMPTY_PROFILE_IMAGE,
   PROFILE_IMAGES_LIST
 } from "@/app/chat/chat.models";
-import { ERROR_ACTIONS } from "@/store/error.store";
 import { Watch } from "vue-property-decorator";
 import { ITextFieldRule } from "@/app/shared/types";
 import { AUTH_SIGN_OUT_ROUTE } from "@/app/auth/auth.routes";
+import { ROOT_ACTIONS } from "@/store/root.store";
 
 @Component({
   name: "ChatEditProfile"
@@ -134,7 +132,6 @@ export default class ChatEditProfile extends Vue {
   public user!: firebase.User;
   public dialogOpen: boolean = false;
   public formValid: boolean = true;
-  public loading: boolean = false;
   public isSelecting: boolean = false;
   public profileImagesList: string[] = PROFILE_IMAGES_LIST;
   public selectedImage: string | null = null;
@@ -173,15 +170,19 @@ export default class ChatEditProfile extends Vue {
   public async update() {
     if ((this.$refs.editProfileForm as any).validate()) {
       try {
-        this.loading = true;
+        this.$store.dispatch(
+          ROOT_ACTIONS.changeLoadingMessage,
+          this.$t.updatingProfile
+        );
         await this.user.updateProfile({
           displayName: this._displayName,
           photoURL: this.selectedImage
         });
-        this.loading = false;
+        this.$store.dispatch(ROOT_ACTIONS.finishLoading);
         this.dialogOpen = false;
       } catch (error) {
-        this.$store.dispatch(ERROR_ACTIONS.catchError, error);
+        error.message = this.$t.unableUpdateProfile;
+        this.$store.dispatch(ROOT_ACTIONS.changeError, error);
       }
     }
   }

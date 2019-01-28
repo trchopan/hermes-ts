@@ -5,7 +5,7 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import { State } from "vuex-class";
 import { ILanguageSetting } from "@/store/root.models";
-import { LANGUAGES_MAP } from "@/app/auth/Auth.models";
+import { LANGUAGES_MAP } from "@/app/auth/auth.models";
 import { fireAuth } from "@/firebase";
 import { ROOT_ACTIONS } from "@/store/root.store";
 import { AUTH_ROUTE } from "@/app/auth/auth.routes";

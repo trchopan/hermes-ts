@@ -60,7 +60,7 @@ import Component from "vue-class-component";
 import { State } from "vuex-class";
 import { ILanguageSetting, LANGUAGE_SETTINGS } from "@/store/root.models";
 import { ILanguageMap } from "@/plugins/translate";
-import { LANGUAGES_MAP } from "./Auth.models";
+import { LANGUAGES_MAP } from "@/app/auth/auth.models";
 import {
   AUTH_SIGN_UP_EMAIL_ROUTE,
   AUTH_SIGN_IN_EMAIL_ROUTE,
