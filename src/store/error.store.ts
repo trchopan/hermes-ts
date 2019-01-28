@@ -2,7 +2,7 @@ import { GetterTree, ActionTree, MutationTree } from "vuex";
 import { RootState } from "./root.store";
 import { logger } from "@/app/shared/logger.helper";
 
-const log = logger("[errorStore]");
+const log = logger("[errorStore]", true);
 
 const namespace = "error";
 
@@ -37,7 +37,7 @@ const actions: ActionTree<ErrorState, RootState> = {
 const mutations: MutationTree<ErrorState> = {
   errorCatched(state, error: Error) {
     state.error = state.error.concat(error);
-    log("Error catched", error.message);
+    log("Error catched", error);
   },
   errorDismissed(state, errorIndex) {
     state.error = state.error.splice(errorIndex, 1);
