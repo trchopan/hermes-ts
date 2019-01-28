@@ -1,5 +1,5 @@
 export const DEFAULT_LOGGER_FORMAT =
-  "padding: 0 0.3rem;background: #ff3333; color: white;";
+  "padding: 0 0.3rem;background: #333333; color: white;";
 export const MANUAL_LOGGER_FORMAT =
   "padding: 0 0.3rem;background: {color}; color: white;";
 

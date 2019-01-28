@@ -1,7 +1,8 @@
-import { logger, DEFAULT_LOGGER_FORMAT } from "./logger.helper";
+import { logger } from "./logger.helper";
 
 describe("[helpers]logger", () => {
   const className = "Class Name";
+  const defaultFormat = "padding: 0 0.3rem;background: #333333; color: white;";
   const manualColor = "#ff3333";
   const expectManualFormat =
     "padding: 0 0.3rem;background: #ff3333; color: white;";
@@ -20,7 +21,7 @@ describe("[helpers]logger", () => {
     expect(mockConsoleLog).toBeCalled();
     expect(mockConsoleLog).toBeCalledWith(
       "%c" + className,
-      DEFAULT_LOGGER_FORMAT,
+      defaultFormat,
       message,
       obj1,
       obj2,
