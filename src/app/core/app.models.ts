@@ -37,6 +37,10 @@ export const LANGUAGES_MAP: ILanguageMap = {
   lightOut: {
     vi: "Tắt đèn",
     en: "Light out"
+  },
+  signOut: {
+    vi: "Đăng xuất",
+    en: "Sign Out"
   }
 };
 
