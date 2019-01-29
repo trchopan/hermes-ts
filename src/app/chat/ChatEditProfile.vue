@@ -108,7 +108,7 @@ import Component from "vue-class-component";
 import { ILanguageSetting } from "@/store/root.models";
 import {
   LANGUAGES_MAP,
-  EMPTY_PROFILE_IMAGE,
+  DEFAULT_PROFILE_IMAGE,
   PROFILE_IMAGES_LIST
 } from "@/app/chat/chat.models";
 import { Watch } from "vue-property-decorator";
@@ -155,7 +155,7 @@ export default class ChatEditProfile extends Vue {
   }
 
   public created() {
-    this.selectedImage = this.user.photoURL || EMPTY_PROFILE_IMAGE;
+    this.selectedImage = this.user.photoURL || DEFAULT_PROFILE_IMAGE;
     this.displayNameRules = [
       v => (v && v.length > 3) || this.$t.invalidDisplayName
     ];

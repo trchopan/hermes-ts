@@ -14,7 +14,7 @@ export const globalGuard = (store: any): NavigationGuard => (
   from: Route,
   next: any
 ): void => {
-  log("Navigating", from.path, to.path);
+  log("Navigating from to", from.path, to.path);
   next();
 };
 
