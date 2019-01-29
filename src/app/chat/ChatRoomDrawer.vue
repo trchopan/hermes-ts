@@ -160,8 +160,6 @@ export default class ChatRoomDrawer extends Vue {
             new Date(b.metadata.lastSignInTime).getTime() -
             new Date(a.metadata.lastSignInTime).getTime()
         );
-
-      console.log(this.usersList);
     } catch (error) {
       error.message = this.$t.errorGettingUsersList;
       this.$store.dispatch(ROOT_ACTIONS.changeError, error);
