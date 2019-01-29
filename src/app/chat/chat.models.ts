@@ -29,10 +29,6 @@ export const LANGUAGES_MAP: ILanguageMap = {
   unableUpdateProfile: {
     vi: "Không thể cập nhật thông tin tài khoản",
     en: "Unable to update profile information"
-  },
-  signOut: {
-    vi: "Đăng xuất",
-    en: "Sign Out"
   }
 };
 

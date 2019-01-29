@@ -36,6 +36,15 @@
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
+      <v-card-actions v-if="user">
+        <v-spacer></v-spacer>
+        <v-btn
+          color="primary"
+          type="button"
+          outline
+          :to="authSignOutRoute"
+        >{{ $t.signOut }}</v-btn>
+      </v-card-actions>
     </v-card>
   </v-menu>
 </template>
@@ -53,6 +62,7 @@ import Component from "vue-class-component";
 import { State } from "vuex-class";
 import { IMappedLanguage } from "@/plugins/translate";
 import { LANGUAGES_MAP } from "@/app/core/app.models";
+import { AUTH_SIGN_OUT_ROUTE } from "@/app/auth/auth.routes";
 
 @Component({
   name: "AppToolbarMenu"
@@ -62,7 +72,10 @@ export default class AppToolbarMenu extends Vue {
   public language!: ILanguageSetting;
   @State("theme")
   public theme!: IThemeSetting;
+  @State("user")
+  public user!: firebase.User;
 
+  public authSignOutRoute = AUTH_SIGN_OUT_ROUTE;
   public languageSettings = LANGUAGE_SETTINGS;
   public themeSettings = THEME_SETTINGS;
   public menuOpen = false;

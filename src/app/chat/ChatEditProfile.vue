@@ -91,12 +91,6 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
-            color="primary"
-            type="button"
-            outline
-            :to="authSignOutRoute"
-          >{{ $t.signOut }}</v-btn>
-          <v-btn
             form="edit-profile-form"
             color="secondary"
             type="submit"
