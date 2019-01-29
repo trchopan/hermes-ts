@@ -76,10 +76,26 @@ export const LANGUAGES_MAP: ILanguageMap = {
   owner: {
     vi: "Chủ phòng",
     en: "Owner"
+  },
+  usersList: {
+    vi: "Danh sách người dùng",
+    en: "Users list"
+  },
+  noName: {
+    vi: "(Chưa có tên)",
+    en: "(No name)"
+  },
+  errorGettingUsersList: {
+    vi: "Lỗi truy xuất Danh sách người dùng",
+    en: "Error getting Users list"
+  },
+  joined: {
+    vi: "Tham gia",
+    en: "Joined"
   }
 };
 
-export const EMPTY_PROFILE_IMAGE: string = "stanlee.jpg";
+export const DEFAULT_PROFILE_IMAGE: string = "stanlee.jpg";
 
 export const PROFILE_IMAGES_LIST: string[] = [
   "laracroft.jpg",
@@ -108,4 +124,16 @@ export interface IChatRoom {
   name: string;
   owner: string;
   participants: string[];
+}
+
+export interface IUser {
+  uid: string;
+  displayName: string;
+  photoURL: string;
+  email: string;
+  phoneNumber: string;
+  metadata: {
+    creationTime: string;
+    lastSignInTime: string;
+  };
 }
