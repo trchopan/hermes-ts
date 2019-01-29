@@ -154,7 +154,7 @@ export default class ChatRoomDrawer extends Vue {
       this.loadingUserList = true;
       const result = await listUsersCallable();
       this.usersList = (result.data.users as IUser[])
-        .filter(x => x.uid != this.user.uid)
+        .filter(x => x.uid !== this.user.uid)
         .sort(
           (a, b) =>
             new Date(b.metadata.lastSignInTime).getTime() -
