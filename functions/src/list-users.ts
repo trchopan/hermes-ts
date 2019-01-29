@@ -12,7 +12,7 @@ export async function listUsersHandler(data: any, context: CallableContext) {
       const result = await admin.auth().listUsers();
       return {
         pageToken: result.pageToken,
-        user: result.users.map(user => ({
+        users: result.users.map(user => ({
           uid: user.uid,
           displayName: user.displayName,
           photoURL: user.photoURL,
