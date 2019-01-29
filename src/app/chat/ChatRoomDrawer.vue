@@ -4,7 +4,7 @@
       icon
       @click="rightDrawer = !rightDrawer"
     >
-      <v-icon>menu</v-icon>
+      <v-icon>chat</v-icon>
     </v-btn>
     <v-navigation-drawer
       v-model="rightDrawer"
