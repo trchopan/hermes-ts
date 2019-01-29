@@ -14,19 +14,25 @@ Using: Vue, Vuex, Typescript, Firebase, AutoML, etc.
 ## How to
 
 - Create a [Firebase](https://console.firebase.google.com) project
-- Get the Firebase webapp initialize info from the Project Settings and paste into firebase.conf.js
-- Project need to be upgrade to Paid Plan as it will request external source for reCaptcha
-- Recaptcha client key is in `.env`
-- ReCaptcha server secret key is in `functions/src/secrets.ts`
+- Get the Firebase webapp initialize info from the Project Settings and paste
+  into firebase.conf.js
 
-### Client
+### Serve devployment enviroment
+
 ```
 npm install
 npm run test:unit
 npm run serve
 ```
-### Server
+
+### Deploy
+
+Require [Firebase CLI](https://firebase.google.com/docs/cli/)
+
 ```
-cd functions
-npm run serve
+npm run deploy
+```
+or
+```
+firebase deploy --only hosting
 ```
