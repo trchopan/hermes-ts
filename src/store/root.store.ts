@@ -99,10 +99,7 @@ const rootStore: StoreOptions<RootState> = {
       dispatch(ROOT_ACTIONS.finishLoading);
       commit("errorChanged", error);
     },
-    [ROOT_ACTIONS.clearError]: ({ commit, dispatch }) => {
-      dispatch(ROOT_ACTIONS.finishLoading);
-      commit("errorChanged", null);
-    }
+    [ROOT_ACTIONS.clearError]: ({ commit }) => commit("errorChanged", null)
   },
   mutations: {
     localStorageAvailable(state) {
@@ -141,7 +138,10 @@ const rootStore: StoreOptions<RootState> = {
     },
     errorChanged(state, error: IError | null) {
       state.error = error;
-      logError("Error changed", state.error);
+      logError(
+        "Error changed",
+        state.error ? `${state.error.code}: ${state.error.message}` : null
+      );
     }
   }
 };
