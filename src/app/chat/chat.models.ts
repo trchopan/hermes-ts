@@ -2,6 +2,7 @@
 import { ILanguageMap } from "@/plugins/translate";
 
 export const LANGUAGES_MAP: ILanguageMap = {
+  // ChatEditProfile
   editProfile: {
     vi: "Thay đổi thông tin tài khoản",
     en: "Edit profile information"
@@ -29,7 +30,39 @@ export const LANGUAGES_MAP: ILanguageMap = {
   unableUpdateProfile: {
     vi: "Không thể cập nhật thông tin tài khoản",
     en: "Unable to update profile information"
+  },
+  // End of ChatEditProfile
+
+  // ChatCreateRoom
+  createChatRoom: {
+    vi: "Tạo phòng chat",
+    en: "Create chat room"
+  },
+  chatRoomName: {
+    vi: "Tên phòng chat",
+    en: "Chat room name"
+  },
+  create: {
+    vi: "Tạo",
+    en: "Create"
+  },
+  creatingChatRoom: {
+    vi: "Đang tạo phòng chat...",
+    en: "Creating chat room..."
+  },
+  unableCreateChatRoom: {
+    vi: "Không tạo được phòng chat",
+    en: "Unable to create chat room"
+  },
+  cancel: {
+    vi: "Huỷ bỏ",
+    en: "Cancel"
+  },
+  roomNameMustLongerThanThree: {
+    vi: "Tên phòng phải có nhiều hơn 3 ký tự",
+    en: "Room name must be longer than 3 characters"
   }
+  // End of ChatCreateRoom
 };
 
 export const EMPTY_PROFILE_IMAGE: string = "stanlee.jpg";
@@ -53,3 +86,5 @@ export const PROFILE_IMAGES_LIST: string[] = [
   "kusanagi.jpg",
   "ryogi.jpg"
 ];
+
+export const CHATROOM_COLLECTION = "chatrooms";
