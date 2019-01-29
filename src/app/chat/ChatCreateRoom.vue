@@ -90,7 +90,7 @@ export default class ChatCreateRoom extends Vue {
         await fireStore.collection(CHATROOM_COLLECTION).add({
           name: this.chatRoomName,
           owner: this.user.uid,
-          paticipants: [this.user.uid]
+          participants: [this.user.uid]
         });
         this.$store.dispatch(ROOT_ACTIONS.finishLoading);
       } catch (error) {

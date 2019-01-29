@@ -61,8 +61,22 @@ export const LANGUAGES_MAP: ILanguageMap = {
   roomNameMustLongerThanThree: {
     vi: "Tên phòng phải có nhiều hơn 3 ký tự",
     en: "Room name must be longer than 3 characters"
-  }
+  },
   // End of ChatCreateRoom
+
+  // ChatRoomDrawer
+  chatRooms: {
+    vi: "Phòng chat",
+    en: "Chat rooms"
+  },
+  participants: {
+    vi: "Người tham gia",
+    en: "Participants"
+  },
+  owner: {
+    vi: "Chủ phòng",
+    en: "Owner"
+  }
 };
 
 export const EMPTY_PROFILE_IMAGE: string = "stanlee.jpg";
@@ -88,3 +102,10 @@ export const PROFILE_IMAGES_LIST: string[] = [
 ];
 
 export const CHATROOM_COLLECTION = "chatrooms";
+
+export interface IChatRoom {
+  id: string;
+  name: string;
+  owner: string;
+  participants: string[];
+}
