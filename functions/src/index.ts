@@ -1,8 +1,9 @@
-import * as functions from 'firebase-functions';
+import * as functions from "firebase-functions";
+import * as admin from "firebase-admin";
+import { listUsersHandler } from "./list-users";
 
-// // Start writing Firebase Functions
-// // https://firebase.google.com/docs/functions/typescript
-//
-// export const helloWorld = functions.https.onRequest((request, response) => {
-//  response.send("Hello from Firebase!");
-// });
+admin.initializeApp(functions.config().firebase);
+const firestore = admin.firestore();
+firestore.settings({ timestampsInSnapshots: true });
+
+export const listUsers = functions.https.onCall(listUsersHandler);
