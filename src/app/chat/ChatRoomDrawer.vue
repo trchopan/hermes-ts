@@ -91,7 +91,7 @@ import { State } from "vuex-class";
 import { ILanguageSetting } from "@/store/root.models";
 import {
   LANGUAGES_MAP,
-  CHATROOM_COLLECTION,
+  CHATROOMS_COLLECTION,
   IChatRoom,
   IUser,
   DEFAULT_PROFILE_IMAGE
@@ -141,7 +141,7 @@ export default class ChatRoomDrawer extends Vue {
 
   public queryChatRooms() {
     return fireStore
-      .collection(CHATROOM_COLLECTION)
+      .collection(CHATROOMS_COLLECTION)
       .where("participants", "array-contains", this.user.uid)
       .onSnapshot(snapshot => {
         if (!snapshot.empty) {

@@ -117,7 +117,8 @@ export const PROFILE_IMAGES_LIST: string[] = [
   "ryogi.jpg"
 ];
 
-export const CHATROOM_COLLECTION = "chatrooms";
+export const CHATROOMS_COLLECTION = "chatrooms";
+export const CHATS_COLLECTION = "chats";
 
 export interface IChatRoom {
   id: string;
@@ -136,4 +137,12 @@ export interface IUser {
     creationTime: string;
     lastSignInTime: string;
   };
+}
+
+export interface IChatContent {
+  _id?: string;
+  senderId: string;
+  message: string;
+  timestamp: number;
+  delivered: boolean;
 }
