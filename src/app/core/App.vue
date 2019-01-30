@@ -3,7 +3,7 @@
     <AppToolbar/>
     <AppDrawer/>
     <v-content>
-      <v-container fluid>
+      <v-container fluid fill-height>
         <AppLoadingDialog/>
         <AppErrorDialog/>
         <transition
