@@ -1,7 +1,40 @@
 <template>
-  <v-layout column>
+  <v-layout
+    ref="chatView"
+    column
+  >
     <v-flex>
-      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nemo sunt enim mollitia natus, repellat voluptas similique a ex magni excepturi reiciendis officiis quae unde ipsam provident optio fugiat deserunt. Dignissimos amet aliquid alias cupiditate nisi eligendi nam voluptates ipsa, pariatur unde nostrum saepe ratione a hic consequatur, odit architecto cum corrupti labore blanditiis neque ipsam. Commodi assumenda facere sint, numquam voluptas porro doloribus similique blanditiis eaque non velit error nemo fugiat nihil dignissimos. Quam quisquam deleniti dolores, nemo reiciendis accusantium iste quod quo reprehenderit ex perspiciatis modi dolorem in voluptatem veniam, perferendis corrupti quos, qui recusandae officiis iusto eveniet! Dignissimos ut id atque expedita at ratione omnis repellendus, quas rerum ab laudantium doloremque iste architecto illo distinctio quibusdam possimus, quis obcaecati tenetur debitis vitae, minus nesciunt hic veritatis. Incidunt, obcaecati autem modi eos laudantium debitis ratione recusandae saepe sequi libero culpa natus repellat sint! Corrupti odio amet culpa quas a tempore, error commodi quo, iure nihil est beatae totam eum aspernatur nemo quibusdam quaerat, illum blanditiis quos consequuntur obcaecati saepe. Saepe itaque nesciunt, sunt facere nihil dignissimos voluptatum at ea aliquam cum ducimus quidem excepturi. Placeat delectus quisquam eaque eum blanditiis illo! Voluptatibus vel enim veritatis facilis iste ipsum architecto, et fugiat porro odit, illum repudiandae obcaecati sed adipisci suscipit, quaerat modi delectus quo nostrum officia. Deserunt consequatur sit at facere, voluptatibus tempore libero harum molestias illum temporibus amet quo maiores dicta natus, atque dignissimos dolore culpa ipsum dolor quam. Repellendus placeat ullam laudantium non? Iste cumque repudiandae consequatur optio pariatur non obcaecati aut omnis laboriosam nulla dicta eius, nostrum possimus dolorum iusto. Magni et voluptatem illo voluptas sed veniam est dolores, doloribus ratione explicabo porro voluptates odio voluptate vel voluptatum accusantium quas enim officia quia nam deleniti quaerat nulla minima vitae. Qui soluta nihil debitis laboriosam, odit, enim officiis nostrum, voluptatum praesentium optio itaque dolores. Suscipit dignissimos quidem, sint hic vitae nostrum est molestias quae, perferendis excepturi autem cupiditate repellat? Quam amet accusantium aspernatur doloremque culpa voluptatum laudantium tempora cumque repellat! Sed nemo temporibus vel enim quae quam. Est magnam nemo consequatur reprehenderit error eos sunt quisquam illo sed sequi quod, nesciunt cumque enim perferendis aut neque quis officiis aperiam ad doloremque assumenda quae quibusdam dolor? Tempora reprehenderit pariatur amet, voluptas in, illo autem velit eaque sapiente, harum provident. Vitae ullam unde accusantium commodi, adipisci quasi soluta esse odio fuga molestias suscipit nostrum culpa aspernatur necessitatibus illum natus maxime id tempora hic quaerat! Consequuntur voluptate odit nobis aperiam minima dolorum molestias vitae numquam, quod voluptates suscipit dicta, labore dolor, itaque aliquam? Aspernatur sit incidunt deleniti et pariatur consectetur nostrum labore commodi animi eveniet facilis, cumque, repudiandae nihil iusto hic dolorum dicta praesentium tenetur sequi. Provident, optio impedit nisi dolor iusto soluta minus, obcaecati, commodi ab dolore consequuntur debitis non quisquam ut autem excepturi modi iste in. Consectetur itaque commodi nihil fugiat in. Et at sapiente aliquid incidunt recusandae libero pariatur voluptatem corrupti in nihil quisquam sunt tempora voluptate assumenda repellendus, inventore rem enim dolor debitis consequatur veniam nesciunt distinctio! Ipsam nesciunt, nam asperiores quisquam consequatur magnam et? Facilis aperiam nemo deleniti odit quo nisi libero accusamus omnis, qui illo inventore ducimus dicta minima quibusdam, tempora ab magnam, harum enim nam fugit? Excepturi autem et est eaque rerum, enim cupiditate reiciendis quas quasi nisi illo suscipit nulla laboriosam quia neque eveniet quod necessitatibus. Voluptatem expedita necessitatibus pariatur, tempora laborum quis consequuntur accusamus facilis exercitationem architecto repellendus quasi cum culpa, amet omnis suscipit natus libero provident asperiores voluptas maxime vero tempore et iure. Quae et at consectetur deserunt magni ipsa, laudantium ratione mollitia sunt illum tempore necessitatibus nobis nostrum eligendi voluptatibus omnis error non eum repudiandae! Harum ipsam consectetur vitae maiores, voluptatum cum debitis, esse nulla sequi molestias consequatur. Optio possimus ipsum totam ducimus aperiam nobis, repellat aspernatur quisquam temporibus repudiandae deserunt ab magni molestiae impedit omnis et nemo quis? Distinctio recusandae maiores sunt laborum quam incidunt eaque animi! Nostrum laudantium adipisci excepturi incidunt nesciunt officiis facere tenetur ab, cupiditate aliquam aliquid dolore modi fuga deleniti neque ut nihil, saepe amet nam blanditiis est maxime dolorem? Veniam dignissimos ipsa incidunt dolorem accusamus in voluptate facere sunt rerum deserunt laboriosam quae, eos amet doloremque cum dolor ducimus vero vitae possimus iure eius officiis minus fugit velit. Nam voluptates ex fugiat, itaque repellat ullam magnam corrupti dolores quibusdam expedita? Autem soluta, dignissimos esse sunt libero asperiores a odit odio recusandae similique in veritatis tenetur rerum debitis dolorum reiciendis, sint voluptatum at hic id voluptas error ratione ea? Quisquam ab corrupti at dicta, quibusdam veritatis non voluptas neque voluptatibus. Facere modi cum saepe aspernatur, rem beatae blanditiis? Laudantium, sequi. Quibusdam itaque sed quasi dolorem dolorum, rerum asperiores id alias tempora animi hic, atque explicabo. Illum nisi dolorem tempora eius ipsum ab quidem at iste? Ex vel suscipit hic obcaecati fugiat illum mollitia quos dolorem cupiditate omnis, voluptas a, perspiciatis et. Perferendis eveniet possimus quo est excepturi enim architecto deleniti accusantium, molestias incidunt debitis. Officiis assumenda provident totam tempore sequi dicta voluptatum sit quasi maiores voluptate. Excepturi sed alias accusamus, voluptas modi cumque suscipit. Quisquam voluptatem pariatur quas vitae dolores labore aperiam esse quae, at suscipit ipsa, ipsam sunt aspernatur delectus veritatis corrupti distinctio eaque, voluptates possimus voluptatum deleniti quidem illum tenetur deserunt? Inventore officia atque dignissimos magni ipsum? Odit perspiciatis voluptatibus voluptate voluptatem, quisquam facere ipsa nemo autem doloribus sequi, repellat consequuntur quia cum quo earum eum veniam voluptatum libero. Eius enim autem est aperiam rerum repellendus ab laborum, eligendi assumenda officia tempore voluptatem iure sit error quibusdam dolore nemo ratione iusto esse? Delectus fugit ad quaerat sed! Id quia magnam praesentium, dicta consequatur illum totam ipsum, ullam magni quam hic! Quia deleniti nulla assumenda sit ipsa beatae doloribus reprehenderit consectetur voluptatibus. Aut molestias maxime eum labore, tenetur placeat beatae in numquam, at mollitia id quam odit architecto earum debitis, natus incidunt. Qui debitis quas hic rem id. Corporis reiciendis excepturi nihil, eaque cupiditate, ex atque necessitatibus doloribus a commodi beatae id dignissimos ipsum cum. Nihil iure accusantium amet facilis neque quo! Enim, aliquam?</p>
+      <p v-if="!chatContents.length">(No chat)</p>
+      <v-layout
+        v-for="chat in chatContents"
+        :key="'chat-' + chat.timestamp"
+        align-center
+      >
+        <v-spacer v-if="chat.senderId === user.uid"></v-spacer>
+        <!-- TODO: Avatar here should be of the sender avatar not the current user -->
+        <v-avatar
+          v-else
+          size="3rem"
+        >
+          <img
+            :src="'/images/'+user.photoURL"
+            alt="User avatar"
+          >
+        </v-avatar>
+        <v-card
+          dark
+          class="ma-2"
+          :color="chat.senderId === user.uid ? 'primary' : 'secondary'"
+        >
+          <v-card-text>
+            <div>{{ chat.message }}</div>
+            <div
+              class="font-weight-light caption"
+              :class="chat.senderId === user.uid ? 'text-xs-right' : ''"
+            >{{ chat.timestamp | dateFormat(language.value) }} {{ chat.senderId === user.uid && chat.delivered ? "✓": ""}}</div>
+          </v-card-text>
+        </v-card>
+      </v-layout>
     </v-flex>
   </v-layout>
 </template>
@@ -10,24 +43,84 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { fireStore } from "@/firebase";
-import { CHATROOM_COLLECTION } from "@/app/chat/chat.models";
+import {
+  CHATROOMS_COLLECTION,
+  CHATS_COLLECTION,
+  IChatContent
+} from "@/app/chat/chat.models";
 import { State } from "vuex-class";
+import { ILanguageSetting } from "@/store/root.models";
+import { Watch } from "vue-property-decorator";
 
 @Component({
   name: "ChatUser"
 })
 export default class ChatUser extends Vue {
+  @State("language")
+  public language!: ILanguageSetting;
   @State("user")
   public user!: firebase.User;
+  public chatContents: IChatContent[] = [];
+
+  private chatDocumentName: string = "";
+  // To be called to finish the query before the component is destroyed
+  private chatContentsQuery: any = null;
 
   public created() {
-    // fireStore
-    //   .collection(CHATROOM_COLLECTION)
-    //   .where(this.user.uid, "==", true)
-    //   .where(this.$route.params.id, "==", true)
-    //   .onSnapshot(result => {
-    //     console.log("woot", result.docs);
-    //   });
+    this.chatContentsQuery = this.queryChatContents();
+  }
+
+  @Watch("chatContents")
+  private onChatContentsChanged(value: IChatContent[], oldVal: IChatContent[]) {
+    setTimeout(() => {
+      this.scrollDown();
+    }, 200);
+  }
+
+  public destroyed() {
+    this.chatContentsQuery();
+  }
+
+  public scrollDown() {
+    const chatView = this.$refs.chatView as any;
+    console.log("woot", chatView.scrollTop, chatView.scrollHeight, chatView);
+    chatView.scroll({
+      top: chatView.scrollHeight,
+      behavior: "smooth"
+    });
+  }
+
+  private queryChatContents() {
+    this.chatDocumentName =
+      this.user.uid > this.$route.params.id
+        ? this.user.uid + this.$route.params.id
+        : this.$route.params.id + this.user.uid;
+    return fireStore
+      .collection(CHATROOMS_COLLECTION)
+      .doc(this.chatDocumentName)
+      .collection(CHATS_COLLECTION)
+      .orderBy("timestamp")
+      .limit(50)
+      .onSnapshot(result => {
+        this.chatContents = result.empty
+          ? []
+          : result.docs.map(
+              doc => ({ _id: doc.id, ...doc.data() } as IChatContent)
+            );
+        const markForDelivered = this.chatContents
+          .filter(x => x.senderId != this.user.uid && !x.delivered)
+          .map(chat =>
+            fireStore
+              .collection(CHATROOMS_COLLECTION)
+              .doc(this.chatDocumentName)
+              .collection(CHATS_COLLECTION)
+              .doc(chat._id)
+              .update({ delivered: true })
+          );
+        if (markForDelivered.length > 0) {
+          Promise.all(markForDelivered);
+        }
+      });
   }
 }
 </script>

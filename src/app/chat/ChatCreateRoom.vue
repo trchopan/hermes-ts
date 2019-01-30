@@ -55,7 +55,7 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import { State } from "vuex-class";
 import { ILanguageSetting } from "@/store/root.models";
-import { LANGUAGES_MAP, CHATROOM_COLLECTION } from "@/app/chat/chat.models";
+import { LANGUAGES_MAP, CHATROOMS_COLLECTION } from "@/app/chat/chat.models";
 import { fireStore } from "@/firebase";
 import { ITextFieldRule } from "@/app/shared/types";
 import { ROOT_ACTIONS } from "@/store/root.store";
@@ -90,7 +90,7 @@ export default class ChatCreateRoom extends Vue {
           ROOT_ACTIONS.changeLoadingMessage,
           this.$t.creatingChatRoom
         );
-        await fireStore.collection(CHATROOM_COLLECTION).add({
+        await fireStore.collection(CHATROOMS_COLLECTION).add({
           name: this.chatRoomName,
           owner: this.user.uid,
           participants: [this.user.uid]

@@ -1,22 +1,19 @@
 <template>
   <v-layout
     column
-    align-start
-    justify-center
     fill-height
+    :class="$vuetify.breakpoint.mdAndUp ? 'px-5': ''"
   >
-    <v-layout
-      v-if="user"
-      shrink
-    >
-      <ChatEditProfile/>
-      <ChatRoomDrawer class="d-inline-block"/>
-    </v-layout>
     <router-view class="chat-view"></router-view>
-    <v-layout shrink>
-      <div
-        style="background: grey"
-      >Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorum voluptatem delectus expedita distinctio repudiandae quibusdam sapiente! Laborum praesentium ut dolores.</div>
+    <v-layout
+      shrink
+      justify-center
+      align-center
+      class="mt-2"
+    >
+      <ChatEditProfile class="mr-2"/>
+      <ChatInput/>
+      <ChatRoomDrawer class="d-inline-block"/>
     </v-layout>
   </v-layout>
 </template>
@@ -28,16 +25,16 @@ import { State } from "vuex-class";
 import { ILanguageSetting } from "@/store/root.models";
 import { Watch } from "vue-property-decorator";
 import { LANGUAGES_MAP } from "@/app/chat/chat.models";
-import ChatRoom from "./ChatRoom.vue";
 import ChatRoomDrawer from "./ChatRoomDrawer.vue";
 import ChatEditProfile from "./ChatEditProfile.vue";
+import ChatInput from "./ChatInput.vue";
 
 @Component({
   name: "Chat",
   components: {
-    ChatRoom,
     ChatRoomDrawer,
-    ChatEditProfile
+    ChatEditProfile,
+    ChatInput
   }
 })
 export default class Chat extends Vue {
