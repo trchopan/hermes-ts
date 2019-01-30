@@ -83,7 +83,6 @@ export default class ChatUser extends Vue {
 
   public scrollDown() {
     const chatView = this.$refs.chatView as any;
-    console.log("woot", chatView.scrollTop, chatView.scrollHeight, chatView);
     chatView.scroll({
       top: chatView.scrollHeight,
       behavior: "smooth"
