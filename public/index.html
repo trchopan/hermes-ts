@@ -111,7 +111,7 @@
     <script>
       var initMessage = "Cười phát sống thêm ít phút nào";
       var language = JSON.parse(localStorage.getItem("language"));
-      if (language.value === "en") {
+      if (language && language.value === "en") {
         initMessage = "Let's put a smile on that face";
       }
       document.querySelector(
