@@ -70,7 +70,7 @@ export const LANGUAGES_MAP: ILanguageMap = {
     en: "Chat rooms"
   },
   participants: {
-    vi: "Người tham gia",
+    vi: "Thành viên",
     en: "Participants"
   },
   owner: {

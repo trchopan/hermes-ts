@@ -1,5 +1,5 @@
 <template>
-  <div class="ctn">
+  <div>
     <v-btn
       icon
       dark
@@ -14,26 +14,22 @@
       temporary
       fixed
     >
-      <v-list class="pa-0">
-        <v-list-tile>
-          <v-list-tile-content>
-            <ChatCreateRoom class="mx-auto"/>
-          </v-list-tile-content>
-        </v-list-tile>
-      </v-list>
       <v-list subheader>
-        <v-subheader>{{ $t.chatRooms }}</v-subheader>
+        <v-subheader>
+          <span>{{ $t.chatRooms }}</span>
+          <v-spacer></v-spacer>
+          <ChatCreateRoom/>
+        </v-subheader>
         <v-list-tile
           v-for="room in joinedChatRooms"
           :key="'joined-' + room.id"
           :to="chatRoomRoute + room.id"
-          avatar
         >
-          <v-list-tile-avatar>
-            <v-icon v-if="user.uid === room.owner">account_circle</v-icon>
-          </v-list-tile-avatar>
           <v-list-tile-content>
-            <v-list-tile-title>{{ room.name }}</v-list-tile-title>
+            <v-list-tile-title>
+              <span v-if="user.uid === room.owner">👑</span>
+              <span>{{ room.name }}</span>
+            </v-list-tile-title>
             <v-list-tile-sub-title>{{ $t.participants }}: {{ room.participants.length }}</v-list-tile-sub-title>
           </v-list-tile-content>
           <v-list-tile-action v-if="$route.params.id === room.id">
@@ -55,6 +51,14 @@
             :size="20"
             color="#9e9e9e"
           ></v-progress-circular>
+          <v-btn
+            v-else
+            icon
+            flat
+            @click="loadUsersList()"
+          >
+            <v-icon>refresh</v-icon>
+          </v-btn>
         </v-subheader>
         <v-list-tile
           v-for="user in usersList"
@@ -108,27 +112,35 @@ import { ROOT_ACTIONS } from "@/store/root.store";
   }
 })
 export default class ChatRoomDrawer extends Vue {
-  @State("language")
-  public language!: ILanguageSetting;
   @State("user")
   public user!: firebase.User;
   public chatRoomRoute = `${CHAT_ROUTE}/${CHAT_ROOM_ROUTE.replace(":id", "")}`;
   public chatUserRoute = `${CHAT_ROUTE}/${CHAT_USER_ROUTE.replace(":id", "")}`;
   public defaultProfileImage = DEFAULT_PROFILE_IMAGE;
+  public listUsersCallable = fireFunctions.httpsCallable("listUsers");
   public rightDrawer: boolean = false;
   public ownerChatRooms: IChatRoom[] = [];
   public joinedChatRooms: IChatRoom[] = [];
   public usersList: IUser[] = [];
   public loadingUserList: boolean = false;
 
-  private chatRoomQuery: any = null;
+  @State("language")
+  public language!: ILanguageSetting;
 
   get $t() {
     return this.$translate(LANGUAGES_MAP, this.language.value);
   }
 
+  // To be called to finish the query before the component is destroyed
+  private chatRoomsQuery: any = null;
+
   public async created() {
-    this.chatRoomQuery = fireStore
+    this.chatRoomsQuery = this.queryChatRooms();
+    await this.loadUsersList();
+  }
+
+  public queryChatRooms() {
+    return fireStore
       .collection(CHATROOM_COLLECTION)
       .where("participants", "array-contains", this.user.uid)
       .onSnapshot(snapshot => {
@@ -148,11 +160,12 @@ export default class ChatRoomDrawer extends Vue {
             );
         }
       });
+  }
 
-    const listUsersCallable = fireFunctions.httpsCallable("listUsers");
+  public async loadUsersList() {
     try {
       this.loadingUserList = true;
-      const result = await listUsersCallable();
+      const result = await this.listUsersCallable();
       this.usersList = (result.data.users as IUser[])
         .filter(x => x.uid !== this.user.uid)
         .sort(
@@ -173,13 +186,7 @@ export default class ChatRoomDrawer extends Vue {
   }
 
   public destroyed() {
-    this.chatRoomQuery();
+    this.chatRoomsQuery();
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.ctn {
-  display: inline-block;
-}
-</style>

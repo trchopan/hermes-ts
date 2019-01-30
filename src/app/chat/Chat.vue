@@ -5,7 +5,7 @@
   >
     <v-flex v-if="user">
       <ChatEditProfile/>
-      <ChatRoomDrawer/>
+      <ChatRoomDrawer class="d-inline-block"/>
       <router-view></router-view>
     </v-flex>
   </v-layout>

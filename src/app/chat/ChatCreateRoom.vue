@@ -5,8 +5,11 @@
   >
     <v-btn
       slot="activator"
-      outline
-    >{{ $t.createChatRoom }}</v-btn>
+      icon
+      flat
+    >
+      <v-icon>add</v-icon>
+    </v-btn>
     <v-card class="elevation-12">
       <v-form
         v-model="formValid"
