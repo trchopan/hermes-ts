@@ -1,13 +1,23 @@
 <template>
   <v-layout
-    align-center
+    column
+    align-start
     justify-center
+    fill-height
   >
-    <v-flex v-if="user">
+    <v-layout
+      v-if="user"
+      shrink
+    >
       <ChatEditProfile/>
       <ChatRoomDrawer class="d-inline-block"/>
-      <router-view></router-view>
-    </v-flex>
+    </v-layout>
+    <router-view class="chat-view"></router-view>
+    <v-layout shrink>
+      <div
+        style="background: grey"
+      >Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorum voluptatem delectus expedita distinctio repudiandae quibusdam sapiente! Laborum praesentium ut dolores.</div>
+    </v-layout>
   </v-layout>
 </template>
 
@@ -49,4 +59,8 @@ export default class Chat extends Vue {
 </script>
 
 <style lang="scss" scoped>
+.chat-view {
+  height: 0;
+  overflow-y: scroll;
+}
 </style>
