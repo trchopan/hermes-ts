@@ -6,6 +6,7 @@ import {
   IThemeSetting,
   ILanguageSetting
 } from "./root.models";
+import { IRecaptchaData } from "@/app/auth/auth.models";
 
 const log = logger("[rootStore]");
 const logError = logger("[rootStore]", "#ff3333");
@@ -22,12 +23,6 @@ export const ROOT_ACTIONS = {
   changeError: "changeError",
   clearError: "clearError"
 };
-
-export interface IRecaptchaData {
-  verifier: firebase.auth.RecaptchaVerifier;
-  widgetId: number;
-  token: string;
-}
 
 export interface IError {
   message: string;

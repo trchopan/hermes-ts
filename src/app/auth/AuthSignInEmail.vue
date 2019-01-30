@@ -47,6 +47,11 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
+              type="button"
+              flat
+              :to="authRoute"
+            >{{ $t.goBack }}</v-btn>
+            <v-btn
               form="sign-up-form"
               color="secondary"
               type="submit"
@@ -75,10 +80,10 @@ import Recaptcha from "@/app/auth/Recaptcha.vue";
 import { ILanguageSetting } from "@/store/root.models";
 import { ITextFieldRule } from "@/app/shared/types";
 import { validateEmail } from "@/app/shared/validate-email.helper";
-import { LANGUAGES_MAP } from "@/app/auth/auth.models";
+import { LANGUAGES_MAP, IRecaptchaData } from "@/app/auth/auth.models";
 import { fireAuth } from "@/firebase";
 import { AUTH_SIGN_UP_EMAIL_ROUTE, AUTH_ROUTE } from "@/app/auth/auth.routes";
-import { IRecaptchaData, ROOT_ACTIONS } from "@/store/root.store";
+import { ROOT_ACTIONS } from "@/store/root.store";
 import { CHAT_ROUTE } from "@/app/chat/chat.routes";
 
 @Component({
@@ -92,13 +97,14 @@ export default class AuthSignInEmail extends Vue {
   public recaptcha!: IRecaptchaData;
   @State("user")
   public user!: firebase.User;
+  public authRoute = AUTH_ROUTE;
+  public signUpEmailRoute = AUTH_SIGN_UP_EMAIL_ROUTE;
   public finishLoadingRecaptcha: boolean = false;
   public fromValid: boolean = true;
   public email: string = "";
   public password: string = "";
   public emailRules: ITextFieldRule[] = [];
   public passwordRules: ITextFieldRule[] = [];
-  public signUpEmailRoute: string = AUTH_SIGN_UP_EMAIL_ROUTE;
 
   private _loading: boolean = false;
 
@@ -114,18 +120,14 @@ export default class AuthSignInEmail extends Vue {
     this._loading = value;
   }
 
-  @Watch("user")
-  public onUserChange(val: firebase.User, oldVal: firebase.User) {
-    if (val) {
-      this.$router.replace(CHAT_ROUTE);
-    }
-  }
-
   public created() {
     this.emailRules = [v => validateEmail(v) || this.$t.invalidEmail];
     this.passwordRules = [
       v => (v && v.length > 3) || this.$t.passwordMustNotEmpty
     ];
+    if (this.user) {
+      this.$router.replace(CHAT_ROUTE);
+    }
   }
 
   public async submit() {

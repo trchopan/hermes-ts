@@ -56,10 +56,14 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
+              type="button"
+              flat
+              :to="authRoute"
+            >{{ $t.goBack }}</v-btn>
+            <v-btn
               form="sign-up-form"
               color="secondary"
               type="submit"
-              :loading="loading"
             >{{ $t.signUp }}</v-btn>
           </v-card-actions>
         </v-form>
@@ -69,7 +73,7 @@
         <v-btn
           color="primary"
           outline
-          to="/sign-in-email"
+          :to="signInEmailRoute"
         >{{ $t.signIn }}</v-btn>
       </div>
     </v-flex>
@@ -80,7 +84,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { State } from "vuex-class";
-import { LANGUAGES_MAP } from "@/app/auth/auth.models";
+import { LANGUAGES_MAP, IRecaptchaData } from "@/app/auth/auth.models";
 import { Watch } from "vue-property-decorator";
 import { ILanguageSetting } from "@/store/root.models";
 import { validateEmail } from "@/app/shared/validate-email.helper";
@@ -88,7 +92,7 @@ import { ITextFieldRule } from "@/app/shared/types";
 import { fireAuth, ReCaptchaVerifier } from "@/firebase";
 import Recaptcha from "@/app/auth/Recaptcha.vue";
 import { AUTH_SIGN_IN_EMAIL_ROUTE, AUTH_ROUTE } from "@/app/auth/auth.routes";
-import { IRecaptchaData, ROOT_ACTIONS } from "@/store/root.store";
+import { ROOT_ACTIONS } from "@/store/root.store";
 import { CHAT_ROUTE } from "@/app/chat/chat.routes";
 
 @Component({
@@ -102,6 +106,7 @@ export default class AuthSignUpEmail extends Vue {
   public recaptcha!: IRecaptchaData;
   @State("user")
   public user!: firebase.User;
+  public authRoute = AUTH_ROUTE;
   public finishLoadingRecaptcha: boolean = false;
   public fromValid: boolean = true;
   public email: string = "";
@@ -111,27 +116,13 @@ export default class AuthSignUpEmail extends Vue {
   public repasswordRules: ITextFieldRule[] = [];
   public signInEmailRoute: string = AUTH_SIGN_IN_EMAIL_ROUTE;
 
-  private _loading: boolean = false;
-
   public created() {
     this.emailRules = [v => validateEmail(v) || this.$t.invalidEmail];
     this.passwordRules = [v => (v && v.length > 3) || this.$t.invalidPassword];
     this.repasswordRules = [
       v => (v && v === this.password) || this.$t.invalidRepassword
     ];
-  }
-
-  get loading(): boolean {
-    return !(this.recaptcha && !!this.recaptcha.verifier) || this._loading;
-  }
-
-  set loading(value: boolean) {
-    this._loading = value;
-  }
-
-  @Watch("user")
-  public onUserChange(val: firebase.User, oldVal: firebase.User) {
-    if (val) {
+    if (this.user) {
       this.$router.replace(CHAT_ROUTE);
     }
   }

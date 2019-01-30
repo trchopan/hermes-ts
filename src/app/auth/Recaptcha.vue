@@ -6,10 +6,11 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { firebaseApp, ReCaptchaVerifier } from "@/firebase";
-import { ROOT_ACTIONS, IRecaptchaData } from "@/store/root.store";
+import { ROOT_ACTIONS } from "@/store/root.store";
 import { State } from "vuex-class";
 import { ILanguageSetting } from "@/store/root.models";
 import { ILanguageMap } from "@/plugins/translate";
+import { IRecaptchaData } from "@/app/auth/auth.models";
 
 const LANGUAGES_MAP: ILanguageMap = {
   verifyRecaptcha: {

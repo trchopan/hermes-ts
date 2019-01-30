@@ -99,6 +99,10 @@ export const LANGUAGES_MAP: ILanguageMap = {
     vi: "Bạn đã có tài khoản?",
     en: "Already has an account?"
   },
+  goBack: {
+    vi: "Quay lại",
+    en: "Go back"
+  },
   signIn: {
     vi: "Đăng nhập",
     en: "Sign In"
@@ -152,3 +156,9 @@ export const LANGUAGES_MAP: ILanguageMap = {
     en: "Password must not be empty"
   }
 };
+
+export interface IRecaptchaData {
+  verifier: firebase.auth.RecaptchaVerifier;
+  widgetId: number;
+  token: string;
+}

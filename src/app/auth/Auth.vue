@@ -1,5 +1,9 @@
 <template>
-  <div>
+  <v-layout
+    column
+    align-center
+    justify-start
+  >
     <section id="introduciton">
       <h1 class="display-1 primary--text">{{ $t.auth }}</h1>
       <P>{{ $t.introduciton }}</P>
@@ -51,7 +55,7 @@
         >{{ $t.signOut }}</v-btn>
       </v-layout>
     </section>
-  </div>
+  </v-layout>
 </template>
 
 <script lang="ts">

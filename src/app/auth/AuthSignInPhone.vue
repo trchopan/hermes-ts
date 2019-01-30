@@ -50,6 +50,11 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn
+                type="button"
+                flat
+                :to="authRoute"
+              >{{ $t.goBack }}</v-btn>
+              <v-btn
                 form="sign-in-form"
                 color="secondary"
                 type="submit"
@@ -115,11 +120,11 @@ import Component from "vue-class-component";
 import { State } from "vuex-class";
 import { Watch } from "vue-property-decorator";
 import { ILanguageSetting } from "@/store/root.models";
-import { LANGUAGES_MAP } from "@/app/auth/auth.models";
+import { LANGUAGES_MAP, IRecaptchaData } from "@/app/auth/auth.models";
 import Recaptcha from "@/app/auth/Recaptcha.vue";
 import { ITextFieldRule } from "@/app/shared/types";
 import { fireAuth } from "@/firebase";
-import { IRecaptchaData, ROOT_ACTIONS } from "@/store/root.store";
+import { ROOT_ACTIONS } from "@/store/root.store";
 import { AUTH_ROUTE } from "@/app/auth/auth.routes";
 import { CHAT_ROUTE } from "@/app/chat/chat.routes";
 
@@ -136,6 +141,7 @@ export default class AuthSignInPhone extends Vue {
   public recaptcha!: IRecaptchaData;
   @State("user")
   public user!: firebase.User;
+  public authRoute = AUTH_ROUTE;
   public finishLoadingRecaptcha: boolean = false;
   public formValid: boolean = true;
   public phone: string = "";
@@ -152,17 +158,13 @@ export default class AuthSignInPhone extends Vue {
     this.confirmCodeRules = [
       v => (v && v.length > 0) || this.$t.enterConfirmationCode
     ];
+    if (this.user) {
+      this.$router.replace(CHAT_ROUTE);
+    }
   }
 
   get $t() {
     return this.$translate(LANGUAGES_MAP, this.language.value);
-  }
-
-  @Watch("user")
-  public onUserChange(val: firebase.User, oldVal: firebase.User) {
-    if (val) {
-      this.$router.replace(CHAT_ROUTE);
-    }
   }
 
   public async submit() {
@@ -197,6 +199,7 @@ export default class AuthSignInPhone extends Vue {
         );
         const user = await this.confirmationResult.confirm(this.confirmCode);
         this.$store.dispatch(ROOT_ACTIONS.finishLoading);
+        this.$router.replace(CHAT_ROUTE);
       } catch (error) {
         if (error.code === "auth/invalid-verification-code") {
           error.message = this.$t.invalidVerificationCode;
