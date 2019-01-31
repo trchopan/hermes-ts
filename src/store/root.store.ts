@@ -5,7 +5,8 @@ import {
   THEME_SETTINGS,
   IThemeSetting,
   ILanguageSetting,
-  IError
+  IError,
+  IUser
 } from "./root.models";
 import { IRecaptchaData } from "@/app/auth/auth.models";
 
@@ -19,6 +20,7 @@ export const ROOT_ACTIONS = {
   toggleDrawer: "toggleDrawer",
   registerRecaptcha: "registerRecaptcha",
   changeUser: "changeUser",
+  changeUsersList: "changeUsersList",
   changeLoadingMessage: "changeLoadingMessage",
   finishLoading: "finishLoading",
   changeError: "changeError",
@@ -32,6 +34,7 @@ export interface RootState {
   language: ILanguageSetting;
   recaptcha: IRecaptchaData | undefined;
   user: firebase.User | null;
+  usersList: IUser[];
   loadingMessage: string | null;
   error: IError | null;
 }
@@ -44,6 +47,7 @@ const rootStore: StoreOptions<RootState> = {
     language: LANGUAGE_SETTINGS[0], // Vietnamese
     recaptcha: undefined,
     user: null,
+    usersList: [],
     loadingMessage: null,
     error: null
   },
@@ -79,6 +83,9 @@ const rootStore: StoreOptions<RootState> = {
       commit("captchaTokenRegistered", data),
     [ROOT_ACTIONS.changeUser]: ({ commit }, user: firebase.User) =>
       commit("userChanged", user),
+    [ROOT_ACTIONS.changeUsersList]: ({ commit }, usersList: IUser[]) => {
+      commit("usersListChanged", usersList);
+    },
     [ROOT_ACTIONS.changeLoadingMessage]: ({ commit }, message: string | null) =>
       commit("loadingMessageChanged", message),
     [ROOT_ACTIONS.finishLoading]: ({ commit }) =>
@@ -122,6 +129,10 @@ const rootStore: StoreOptions<RootState> = {
     userChanged(state, user: firebase.User) {
       state.user = user;
       log("User changed", state.user);
+    },
+    usersListChanged(state, usersList: IUser[]) {
+      state.usersList = usersList;
+      log("Users list changed", state.usersList);
     },
     loadingMessageChanged(state, message: string | null) {
       state.loadingMessage = message;
