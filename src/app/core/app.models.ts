@@ -1,5 +1,5 @@
 import { ILanguageMap } from "@/plugins/translate";
-import { CHAT_ROUTE } from "../chat/chat.routes";
+import { CHAT_ROUTE } from "@/app/chat/chat.routes";
 
 export const LANGUAGES_MAP: ILanguageMap = {
   home: {
@@ -57,8 +57,7 @@ export const DRAWER_ITEMS: IDrawerItem[] = [
     name: "playground",
     icon: "dashboard",
     children: [
-      { path: CHAT_ROUTE, name: "chat" },
-      { path: "machine-learning", name: "machineLearning" }
+      { path: CHAT_ROUTE, name: "chat" }
     ]
   }
 ];
