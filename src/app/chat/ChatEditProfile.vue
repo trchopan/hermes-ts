@@ -5,7 +5,7 @@
   >
     <v-avatar slot="activator">
       <img
-        :src="'/images/'+user.photoURL"
+        :src="'/images/' + (user.photoURL || defaultProfileImage)"
         alt="User avatar"
       >
     </v-avatar>
@@ -124,6 +124,7 @@ export default class ChatEditProfile extends Vue {
   public language!: ILanguageSetting;
   @State("user")
   public user!: firebase.User;
+  public defaultProfileImage = DEFAULT_PROFILE_IMAGE;
   public dialogOpen: boolean = false;
   public formValid: boolean = true;
   public isSelecting: boolean = false;

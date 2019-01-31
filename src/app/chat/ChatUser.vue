@@ -78,7 +78,8 @@ import {
   CHATS_COLLECTION,
   IChatContent,
   parseChatDocName,
-  parseChatContent
+  parseChatContent,
+  DEFAULT_PROFILE_IMAGE
 } from "@/app/chat/chat.models";
 import { State } from "vuex-class";
 import { ILanguageSetting, IUser } from "@/store/root.models";
@@ -107,7 +108,7 @@ export default class ChatUser extends Vue {
 
   get receiverPhotoUrl(): string {
     const receiver = this.usersList.find(x => x.uid === this.$route.params.id);
-    return receiver ? receiver.photoURL : "";
+    return receiver ? receiver.photoURL || DEFAULT_PROFILE_IMAGE : "";
   }
 
   public created() {
