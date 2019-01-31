@@ -31,8 +31,8 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import { State, Getter } from "vuex-class";
 import { IMappedLanguage } from "@/plugins/translate";
-import { ILanguageSetting } from "@/store/root.models";
-import { ROOT_ACTIONS, IError } from "@/store/root.store";
+import { ILanguageSetting, IError } from "@/store/root.models";
+import { ROOT_ACTIONS } from "@/store/root.store";
 import { LANGUAGES_MAP } from "@/app/core/app.models";
 
 @Component({

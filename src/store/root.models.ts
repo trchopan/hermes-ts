@@ -1,5 +1,10 @@
 import { COUNTRY_CODE } from "@/plugins/translate";
 
+export interface IError {
+  message: string;
+  code: string;
+}
+
 export interface ILanguageSetting {
   value: COUNTRY_CODE;
   text: string;

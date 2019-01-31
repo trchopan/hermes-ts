@@ -4,7 +4,8 @@ import {
   LANGUAGE_SETTINGS,
   THEME_SETTINGS,
   IThemeSetting,
-  ILanguageSetting
+  ILanguageSetting,
+  IError
 } from "./root.models";
 import { IRecaptchaData } from "@/app/auth/auth.models";
 
@@ -23,11 +24,6 @@ export const ROOT_ACTIONS = {
   changeError: "changeError",
   clearError: "clearError"
 };
-
-export interface IError {
-  message: string;
-  code: string;
-}
 
 export interface RootState {
   localStorageStatus: boolean;
