@@ -19,3 +19,15 @@ export const THEME_SETTINGS: IThemeSetting[] = [
   { value: "light", text: "Light" },
   { value: "dark", text: "Dark" }
 ];
+
+export interface IUser {
+  uid: string;
+  displayName: string;
+  photoURL: string;
+  email: string;
+  phoneNumber: string;
+  metadata: {
+    creationTime: string;
+    lastSignInTime: string;
+  };
+}

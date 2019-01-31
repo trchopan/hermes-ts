@@ -88,12 +88,11 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { State } from "vuex-class";
-import { ILanguageSetting } from "@/store/root.models";
+import { ILanguageSetting, IUser } from "@/store/root.models";
 import {
   LANGUAGES_MAP,
   CHATROOMS_COLLECTION,
   IChatRoom,
-  IUser,
   DEFAULT_PROFILE_IMAGE
 } from "@/app/chat/chat.models";
 import ChatCreateRoom from "@/app/chat/ChatCreateRoom.vue";

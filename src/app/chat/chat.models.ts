@@ -138,18 +138,6 @@ export interface IChatRoom {
   participants: string[];
 }
 
-export interface IUser {
-  uid: string;
-  displayName: string;
-  photoURL: string;
-  email: string;
-  phoneNumber: string;
-  metadata: {
-    creationTime: string;
-    lastSignInTime: string;
-  };
-}
-
 export interface IChatContent {
   _id?: string;
   senderId: string;
