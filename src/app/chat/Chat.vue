@@ -2,14 +2,28 @@
   <v-layout
     column
     fill-height
-    :class="$vuetify.breakpoint.mdAndUp ? 'px-5': ''"
+    class="chat-container ma-auto"
   >
     <v-layout
-      ref="chatView"
+      v-if="!$route.params.id"
       column
+      justify-center
+      align-center
+      class="mx-5"
     >
-      <router-view class="chat-view"></router-view>
+      <p>{{ $t.clickChatRoomIcon }}</p>
+      <v-btn
+        icon
+        dark
+        color="secondary"
+      >
+        <v-icon>chat</v-icon>
+      </v-btn>
     </v-layout>
+    <router-view
+      class="chat-view"
+      :key="$route.path"
+    ></router-view>
     <v-layout
       shrink
       justify-center
@@ -17,7 +31,7 @@
       class="mt-2"
     >
       <ChatEditProfile class="mr-2"/>
-      <ChatInput :disabled="!$route.params.id"/>
+      <ChatInput :receiverId="$route.params.id"/>
       <ChatRoomDrawer class="d-inline-block"/>
     </v-layout>
   </v-layout>
@@ -61,6 +75,9 @@ export default class Chat extends Vue {
 </script>
 
 <style lang="scss" scoped>
+.chat-container {
+  max-width: 900px;
+}
 .chat-view {
   height: 0;
   overflow-y: scroll;

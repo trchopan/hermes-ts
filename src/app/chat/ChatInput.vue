@@ -17,7 +17,7 @@
         solo
         append-icon="send"
         class="chat-input-field"
-        :disabled="disabled"
+        :disabled="!receiverId"
         @click:append="sendMessage()"
       ></v-text-field>
     </v-form>
@@ -37,6 +37,7 @@ import { State } from "vuex-class";
 import { fireStore } from "@/firebase";
 import { Prop } from "vue-property-decorator";
 import { ILanguageSetting } from "@/store/root.models";
+import { ROOT_ACTIONS } from "@/store/root.store";
 
 @Component({
   name: "ChatInput"
@@ -46,39 +47,40 @@ export default class ChatInput extends Vue {
   public language!: ILanguageSetting;
   @State("user")
   public user!: firebase.User;
-  @Prop(Boolean)
-  public disabled!: boolean;
+  @Prop(String)
+  public receiverId!: string;
   public message: string = "";
-
-  private chatDocumentName: string = "";
 
   get $t() {
     return this.$translate(LANGUAGES_MAP, this.language.value);
   }
 
-  public created() {
-    this.chatDocumentName =
-      this.user.uid > this.$route.params.id
-        ? this.user.uid + this.$route.params.id
-        : this.$route.params.id + this.user.uid;
-  }
-
   public async sendMessage() {
-    if (this.message && this.chatDocumentName) {
+    if (this.message && this.receiverId) {
+      const chatDocName =
+        this.user.uid > this.receiverId
+          ? this.user.uid + this.receiverId
+          : this.receiverId + this.user.uid;
       const chatContent: IChatContent = {
         senderId: this.user.uid,
         message: this.message,
         timestamp: Date.now(),
         delivered: false
       };
+      try {
+        const result = await fireStore
+          .collection(CHATROOMS_COLLECTION)
+          .doc(chatDocName)
+          .collection(CHATS_COLLECTION)
+          .add(chatContent);
 
-      const result = await fireStore
-        .collection(CHATROOMS_COLLECTION)
-        .doc(this.chatDocumentName)
-        .collection(CHATS_COLLECTION)
-        .add(chatContent);
-
-      this.message = "";
+        this.message = "";
+      } catch (error) {
+        this.$store.dispatch(
+          ROOT_ACTIONS.changeError,
+          this.$t.unableSendMessage
+        );
+      }
     }
   }
 }

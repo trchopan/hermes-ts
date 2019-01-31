@@ -2,6 +2,13 @@
 import { ILanguageMap } from "@/plugins/translate";
 
 export const LANGUAGES_MAP: ILanguageMap = {
+  // Chat
+  clickChatRoomIcon: {
+    vi:
+      "Tham gia phòng chat hoặc gởi tin nhắn trực tiếp bằng cách nhấn nút tham gia bên dưới",
+    en: "Join chat room or send direct message by click the join button below"
+  },
+  // End of Chat
   // ChatEditProfile
   editProfile: {
     vi: "Thay đổi thông tin tài khoản",
@@ -97,11 +104,27 @@ export const LANGUAGES_MAP: ILanguageMap = {
     vi: "Đang tải tin...",
     en: "Loading chat..."
   },
+  errorReadingChatContent: {
+    vi: "Lỗi khi đọc nội dung chat",
+    en: "Error reading chat content"
+  },
+  unableUpdateDeliveredStatus: {
+    vi: "Không cập nhật được trạng thái đọc tin nhắn",
+    en: "Unable to update message delivered status"
+  },
+  noMessage: {
+    vi: "Chưa có chat",
+    en: "No message"
+  },
   // End of ChatUser
   // ChatInput
   inputMessage: {
     vi: "Nhập tin nhắn để gởi",
     en: "Enter message"
+  },
+  unableSendMessage: {
+    vi: "Không gởi được tin nhắn",
+    en: "Unable to send message"
   }
   // End of ChatInput
 };

@@ -1,10 +1,14 @@
 <template>
-  <v-flex>
+  <v-layout
+    ref="chatView"
+    column
+  >
     <v-layout
-      v-if="!chatContents.length"
+      v-if="loadingChat"
       justify-center
       align-center
       column
+      fill-height
     >
       <v-progress-circular
         indeterminate
@@ -16,39 +20,53 @@
       <p>{{ $t.loadingChat }}</p>
     </v-layout>
     <v-layout
-      v-for="chat in chatContents"
-      :key="'chat-' + chat.timestamp"
+      v-if="!loadingChat && chatContents.length === 0"
+      justify-center
       align-center
+      column
+      fill-height
     >
-      <v-spacer v-if="chat.senderId === user.uid"></v-spacer>
-      <!-- TODO: Avatar here should be of the sender avatar not the current user -->
-      <v-avatar
-        v-else
-        size="3rem"
-      >
-        <img
-          :src="'/images/'+user.photoURL"
-          alt="User avatar"
-        >
-      </v-avatar>
-      <v-card
-        dark
-        class="ma-2"
-        :color="chat.senderId === user.uid ? 'primary' : 'secondary'"
-      >
-        <v-card-text>
-          <div>{{ chat.message }}</div>
-          <div
-            class="font-weight-light caption"
-            :class="chat.senderId === user.uid ? 'text-xs-right' : ''"
-          >
-            <span>{{ chat.timestamp | dateFormat(language.value) }}</span>
-            <span v-if="chat.senderId === user.uid">{{ chat.delivered ? "✓": "..."}}</span>
-          </div>
-        </v-card-text>
-      </v-card>
+      <v-icon size="50">mood</v-icon>
+      <p>{{ $t.noMessage }}</p>
     </v-layout>
-  </v-flex>
+    <v-flex v-else>
+      <v-layout
+        v-for="chat in chatContents"
+        :key="'chat-' + chat.timestamp"
+        align-center
+      >
+        <v-spacer v-if="chat.senderId === user.uid"></v-spacer>
+        <!-- TODO: Avatar here should be of the sender avatar not the current user -->
+        <v-avatar
+          v-else
+          size="3rem"
+        >
+          <img
+            :src="'/images/'+user.photoURL"
+            alt="User avatar"
+          >
+        </v-avatar>
+        <v-card
+          dark
+          class="ma-2"
+          :color="chat.senderId === user.uid ? 'primary' : 'secondary'"
+        >
+          <v-card-text>
+            <div>{{ chat.message }}</div>
+            <div
+              class="font-weight-light caption"
+              :class="chat.senderId === user.uid ? 'text-xs-right' : ''"
+            >
+              <span>{{ chat.timestamp | dateFormat(language.value) }}</span>
+              <span
+                v-if="chat.senderId === user.uid"
+              >{{ chat.delivered ? "✓": "..."}}</span>
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-layout>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script lang="ts">
@@ -64,6 +82,7 @@ import {
 import { State } from "vuex-class";
 import { ILanguageSetting } from "@/store/root.models";
 import { Watch } from "vue-property-decorator";
+import { ROOT_ACTIONS } from "@/store/root.store";
 
 @Component({
   name: "ChatUser"
@@ -73,9 +92,9 @@ export default class ChatUser extends Vue {
   public language!: ILanguageSetting;
   @State("user")
   public user!: firebase.User;
+  public loadingChat: boolean = false;
   public chatContents: IChatContent[] = [];
 
-  private chatDocumentName: string = "";
   // To be called to finish the query before the component is destroyed
   private chatContentsQuery: any = null;
 
@@ -106,44 +125,74 @@ export default class ChatUser extends Vue {
     }, 200);
   }
 
-  @Watch("$route.params.id")
-  private onParamsIdChange(value: string, oldVal: string) {
-    if (this.chatContentsQuery) {
-      this.chatContentsQuery();
-    }
-    this.chatContentsQuery = this.queryChatContents(value);
-  }
+  private parseChatContent = (id: string, data: any): IChatContent | null =>
+    data.senderId !== undefined &&
+    data.timestamp !== undefined &&
+    data.message !== undefined &&
+    data.delivered !== undefined
+      ? {
+          _id: id,
+          senderId: data.senderId,
+          timestamp: data.timestamp,
+          message: data.message,
+          delivered: data.delivered
+        }
+      : null;
 
   private queryChatContents(senderId: string) {
-    this.chatDocumentName =
+    this.loadingChat = true;
+    const chatDocName =
       this.user.uid > senderId
         ? this.user.uid + senderId
         : senderId + this.user.uid;
     return fireStore
       .collection(CHATROOMS_COLLECTION)
-      .doc(this.chatDocumentName)
+      .doc(chatDocName)
       .collection(CHATS_COLLECTION)
       .orderBy("timestamp")
       .limit(50)
       .onSnapshot(result => {
-        this.chatContents = result.empty
-          ? []
-          : result.docs.map(
-              doc => ({ _id: doc.id, ...doc.data() } as IChatContent)
+        if (!result.empty) {
+          const markDelivered: Promise<void>[] = [];
+          result.docChanges().forEach(change => {
+            const content = this.parseChatContent(
+              change.doc.id,
+              change.doc.data()
             );
-        const markForDelivered = this.chatContents
-          .filter(x => x.senderId !== this.user.uid && !x.delivered)
-          .map(chat =>
-            fireStore
-              .collection(CHATROOMS_COLLECTION)
-              .doc(this.chatDocumentName)
-              .collection(CHATS_COLLECTION)
-              .doc(chat._id)
-              .update({ delivered: true })
-          );
-        if (markForDelivered.length > 0) {
-          Promise.all(markForDelivered);
+            if (!content) {
+              this.$store.dispatch(
+                ROOT_ACTIONS.changeError,
+                this.$t.errorReadingChatContent
+              );
+              return;
+            }
+            console.log("change type", change.type);
+            if (change.type === "added") {
+              this.chatContents.push(content);
+              if (content.senderId !== this.user.uid && !content.delivered) {
+                markDelivered.push(
+                  fireStore
+                    .collection(CHATROOMS_COLLECTION)
+                    .doc(chatDocName)
+                    .collection(CHATS_COLLECTION)
+                    .doc(content._id)
+                    .update({ delivered: true })
+                );
+              }
+            }
+            if (change.type === "modified") {
+              this.chatContents.splice(change.newIndex, 1, content);
+            }
+          });
+
+          if (markDelivered.length > 0) {
+            Promise.all(markDelivered).catch(error => {
+              error.message = this.$t.unableUpdateDeliveredStatus;
+              this.$store.dispatch(ROOT_ACTIONS.changeError, error);
+            });
+          }
         }
+        this.loadingChat = false;
       });
   }
 }
