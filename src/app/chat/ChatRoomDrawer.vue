@@ -113,6 +113,8 @@ import { ROOT_ACTIONS } from "@/store/root.store";
 export default class ChatRoomDrawer extends Vue {
   @State("user")
   public user!: firebase.User;
+  @State("usersList")
+  public usersList!: IUser[];
   public chatRoomRoute = `${CHAT_ROUTE}/${CHAT_ROOM_ROUTE.replace(":id", "")}`;
   public chatUserRoute = `${CHAT_ROUTE}/${CHAT_USER_ROUTE.replace(":id", "")}`;
   public defaultProfileImage = DEFAULT_PROFILE_IMAGE;
@@ -120,7 +122,6 @@ export default class ChatRoomDrawer extends Vue {
   public rightDrawer: boolean = false;
   public ownerChatRooms: IChatRoom[] = [];
   public joinedChatRooms: IChatRoom[] = [];
-  public usersList: IUser[] = [];
   public loadingUserList: boolean = false;
 
   @State("language")
@@ -165,13 +166,14 @@ export default class ChatRoomDrawer extends Vue {
     try {
       this.loadingUserList = true;
       const result = await this.listUsersCallable();
-      this.usersList = (result.data.users as IUser[])
+      const usersList = (result.data.users as IUser[])
         .filter(x => x.uid !== this.user.uid)
         .sort(
           (a, b) =>
             new Date(b.metadata.lastSignInTime).getTime() -
             new Date(a.metadata.lastSignInTime).getTime()
         );
+      this.$store.dispatch(ROOT_ACTIONS.changeUsersList, usersList);
     } catch (error) {
       error.message = this.$t.errorGettingUsersList;
       this.$store.dispatch(ROOT_ACTIONS.changeError, error);

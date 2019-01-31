@@ -36,13 +36,12 @@
         align-center
       >
         <v-spacer v-if="chat.senderId === user.uid"></v-spacer>
-        <!-- TODO: Avatar here should be of the sender avatar not the current user -->
         <v-avatar
           v-else
           size="3rem"
         >
           <img
-            :src="'/images/'+user.photoURL"
+            :src="'/images/'+receiverPhotoUrl"
             alt="User avatar"
           >
         </v-avatar>
@@ -82,7 +81,7 @@ import {
   parseChatContent
 } from "@/app/chat/chat.models";
 import { State } from "vuex-class";
-import { ILanguageSetting } from "@/store/root.models";
+import { ILanguageSetting, IUser } from "@/store/root.models";
 import { Watch } from "vue-property-decorator";
 import { ROOT_ACTIONS } from "@/store/root.store";
 
@@ -94,6 +93,8 @@ export default class ChatUser extends Vue {
   public language!: ILanguageSetting;
   @State("user")
   public user!: firebase.User;
+  @State("usersList")
+  public usersList!: IUser[];
   public loadingChat: boolean = false;
   public chatContents: IChatContent[] = [];
 
@@ -102,6 +103,11 @@ export default class ChatUser extends Vue {
 
   get $t() {
     return this.$translate(LANGUAGES_MAP, this.language.value);
+  }
+
+  get receiverPhotoUrl(): string {
+    const receiver = this.usersList.find(x => x.uid === this.$route.params.id);
+    return receiver ? receiver.photoURL : "";
   }
 
   public created() {
