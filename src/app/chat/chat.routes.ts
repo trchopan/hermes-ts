@@ -12,6 +12,9 @@ export default [
     path: CHAT_ROUTE,
     name: "chat",
     component: Chat,
+    meta: {
+      requireAuth: true
+    },
     children: [
       { path: CHAT_ROOM_ROUTE, name: "chat-room", component: ChatRoom },
       { path: CHAT_USER_ROUTE, name: "chat-user", component: ChatUser }

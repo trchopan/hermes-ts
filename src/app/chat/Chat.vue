@@ -4,7 +4,12 @@
     fill-height
     :class="$vuetify.breakpoint.mdAndUp ? 'px-5': ''"
   >
-    <router-view class="chat-view"></router-view>
+    <v-layout
+      ref="chatView"
+      column
+    >
+      <router-view class="chat-view"></router-view>
+    </v-layout>
     <v-layout
       shrink
       justify-center
@@ -12,7 +17,7 @@
       class="mt-2"
     >
       <ChatEditProfile class="mr-2"/>
-      <ChatInput/>
+      <ChatInput :disabled="!$route.params.id"/>
       <ChatRoomDrawer class="d-inline-block"/>
     </v-layout>
   </v-layout>

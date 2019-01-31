@@ -9,6 +9,7 @@
     >
       <v-text-field
         v-model="message"
+        :label="$t.inputMessage"
         type="text"
         full-width
         flat
@@ -16,6 +17,7 @@
         solo
         append-icon="send"
         class="chat-input-field"
+        :disabled="disabled"
         @click:append="sendMessage()"
       ></v-text-field>
     </v-form>
@@ -26,22 +28,33 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import {
+  LANGUAGES_MAP,
   IChatContent,
   CHATROOMS_COLLECTION,
   CHATS_COLLECTION
 } from "@/app/chat/chat.models";
 import { State } from "vuex-class";
 import { fireStore } from "@/firebase";
+import { Prop } from "vue-property-decorator";
+import { ILanguageSetting } from "@/store/root.models";
 
 @Component({
   name: "ChatInput"
 })
 export default class ChatInput extends Vue {
+  @State("language")
+  public language!: ILanguageSetting;
   @State("user")
   public user!: firebase.User;
+  @Prop(Boolean)
+  public disabled!: boolean;
   public message: string = "";
 
   private chatDocumentName: string = "";
+
+  get $t() {
+    return this.$translate(LANGUAGES_MAP, this.language.value);
+  }
 
   public created() {
     this.chatDocumentName =

@@ -32,7 +32,6 @@ export const LANGUAGES_MAP: ILanguageMap = {
     en: "Unable to update profile information"
   },
   // End of ChatEditProfile
-
   // ChatCreateRoom
   createChatRoom: {
     vi: "Tạo phòng chat",
@@ -63,7 +62,6 @@ export const LANGUAGES_MAP: ILanguageMap = {
     en: "Room name must be longer than 3 characters"
   },
   // End of ChatCreateRoom
-
   // ChatRoomDrawer
   chatRooms: {
     vi: "Phòng chat",
@@ -92,7 +90,20 @@ export const LANGUAGES_MAP: ILanguageMap = {
   joined: {
     vi: "Tham gia",
     en: "Joined"
+  },
+  // End of ChatRoomDrawer
+  // ChatUser
+  loadingChat: {
+    vi: "Đang tải tin...",
+    en: "Loading chat..."
+  },
+  // End of ChatUser
+  // ChatInput
+  inputMessage: {
+    vi: "Nhập tin nhắn để gởi",
+    en: "Enter message"
   }
+  // End of ChatInput
 };
 
 export const DEFAULT_PROFILE_IMAGE: string = "stanlee.jpg";
