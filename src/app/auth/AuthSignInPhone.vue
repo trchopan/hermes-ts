@@ -39,7 +39,7 @@
                 prepend-icon="phone"
                 prefix="+84"
                 name="phone"
-                mask="### ### ####"
+                mask="#### ### ####"
                 :rules="phoneRules"
                 :label="$t.phoneNumber"
                 type="text"
@@ -81,7 +81,8 @@
               <v-toolbar-title>{{ $t.confirmCode }}</v-toolbar-title>
             </v-toolbar>
             <v-card-text key="form-confirm">
-              <p>{{ $format($t.confirmCodeDescription, [phone]) }}</p>
+              <p>{{ $t.confirmCodeDescription }}</p>
+              <p class="title secondary--text text-xs-center">{{ phone }}</p>
               <v-text-field
                 v-model="confirmCode"
                 prepend-icon="lock"
@@ -169,7 +170,7 @@ export default class AuthSignInPhone extends Vue {
 
   public async submit() {
     if ((this.$refs.signInForm as any).validate()) {
-      this.phone = COUNTRY_CODE + this.phone;
+      const phoneNumber = COUNTRY_CODE + this.phone.replace(/^0/, "");
       try {
         // Send SMS
         this.$store.dispatch(
@@ -177,7 +178,7 @@ export default class AuthSignInPhone extends Vue {
           this.$t.sendingVerificationCode
         );
         this.confirmationResult = await fireAuth.signInWithPhoneNumber(
-          this.phone,
+          phoneNumber,
           this.recaptcha.verifier
         );
         this.phoneNumberSubmited = true;

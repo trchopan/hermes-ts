@@ -47,9 +47,9 @@ export const LANGUAGES_MAP: ILanguageMap = {
   },
   confirmCodeDescription: {
     vi:
-      "Mã xác nhận đã được gởi đến số điện thoại ({0}). Bạn vui lòng kiểm tra tin nhắn điện thoại và nhập mã vào ô bên dưới.",
+      "Mã xác nhận đã được gởi đến số điện thoại bên dưới. Bạn vui lòng kiểm tra tin nhắn điện thoại và nhập mã vào ô bên dưới.",
     en:
-      "Confirmation code has been sent to the phone number ({0}). Please check your phone message and enter the code below."
+      "Confirmation code has been sent to the phone number below. Please check your phone message and enter the code below."
   },
   confirmingVerfificationCode: {
     vi: "Đang xác nhận mã",
