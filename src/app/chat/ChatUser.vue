@@ -77,7 +77,9 @@ import {
   LANGUAGES_MAP,
   CHATROOMS_COLLECTION,
   CHATS_COLLECTION,
-  IChatContent
+  IChatContent,
+  parseChatDocName,
+  parseChatContent
 } from "@/app/chat/chat.models";
 import { State } from "vuex-class";
 import { ILanguageSetting } from "@/store/root.models";
@@ -103,7 +105,8 @@ export default class ChatUser extends Vue {
   }
 
   public created() {
-    this.chatContentsQuery = this.queryChatContents(this.$route.params.id);
+    const chatDocName = parseChatDocName(this.user.uid, this.$route.params.id);
+    this.chatContentsQuery = this.queryChatContents(chatDocName);
   }
 
   public destroyed() {
@@ -125,40 +128,21 @@ export default class ChatUser extends Vue {
     }, 200);
   }
 
-  private parseChatContent = (id: string, data: any): IChatContent | null =>
-    data.senderId !== undefined &&
-    data.timestamp !== undefined &&
-    data.message !== undefined &&
-    data.delivered !== undefined
-      ? {
-          _id: id,
-          senderId: data.senderId,
-          timestamp: data.timestamp,
-          message: data.message,
-          delivered: data.delivered
-        }
-      : null;
-
-  private queryChatContents(senderId: string) {
+  private queryChatContents(chatDocId: string) {
     this.loadingChat = true;
-    const chatDocName =
-      this.user.uid > senderId
-        ? this.user.uid + senderId
-        : senderId + this.user.uid;
-    return fireStore
+    const chatColRef = fireStore
       .collection(CHATROOMS_COLLECTION)
-      .doc(chatDocName)
-      .collection(CHATS_COLLECTION)
+      .doc(chatDocId)
+      .collection(CHATS_COLLECTION);
+
+    return chatColRef
       .orderBy("timestamp")
       .limit(50)
       .onSnapshot(result => {
         if (!result.empty) {
-          const markDelivered: Promise<void>[] = [];
+          const markDelivered: Array<Promise<void>> = [];
           result.docChanges().forEach(change => {
-            const content = this.parseChatContent(
-              change.doc.id,
-              change.doc.data()
-            );
+            const content = parseChatContent(change.doc.id, change.doc.data());
             if (!content) {
               this.$store.dispatch(
                 ROOT_ACTIONS.changeError,
@@ -166,17 +150,11 @@ export default class ChatUser extends Vue {
               );
               return;
             }
-            console.log("change type", change.type);
             if (change.type === "added") {
               this.chatContents.push(content);
               if (content.senderId !== this.user.uid && !content.delivered) {
                 markDelivered.push(
-                  fireStore
-                    .collection(CHATROOMS_COLLECTION)
-                    .doc(chatDocName)
-                    .collection(CHATS_COLLECTION)
-                    .doc(content._id)
-                    .update({ delivered: true })
+                  chatColRef.doc(content._id).update({ delivered: true })
                 );
               }
             }

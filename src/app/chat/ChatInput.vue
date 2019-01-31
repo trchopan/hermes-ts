@@ -31,7 +31,8 @@ import {
   LANGUAGES_MAP,
   IChatContent,
   CHATROOMS_COLLECTION,
-  CHATS_COLLECTION
+  CHATS_COLLECTION,
+  parseChatDocName
 } from "@/app/chat/chat.models";
 import { State } from "vuex-class";
 import { fireStore } from "@/firebase";
@@ -57,10 +58,7 @@ export default class ChatInput extends Vue {
 
   public async sendMessage() {
     if (this.message && this.receiverId) {
-      const chatDocName =
-        this.user.uid > this.receiverId
-          ? this.user.uid + this.receiverId
-          : this.receiverId + this.user.uid;
+      const chatDocName = parseChatDocName(this.user.uid, this.receiverId);
       const chatContent: IChatContent = {
         senderId: this.user.uid,
         message: this.message,
