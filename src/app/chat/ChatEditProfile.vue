@@ -1,6 +1,7 @@
 <template>
   <v-dialog
     v-model="dialogOpen"
+    @keydown.esc="dialogOpen = false"
     max-width="500"
   >
     <v-avatar slot="activator">
