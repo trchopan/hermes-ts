@@ -85,6 +85,7 @@ import { State } from "vuex-class";
 import { ILanguageSetting, IUser } from "@/store/root.models";
 import { Watch } from "vue-property-decorator";
 import { ROOT_ACTIONS } from "@/store/root.store";
+import { CHAT_ROUTE } from "@/app/chat/chat.routes";
 
 @Component({
   name: "ChatUser"
@@ -96,6 +97,7 @@ export default class ChatUser extends Vue {
   public user!: firebase.User;
   @State("usersList")
   public usersList!: IUser[];
+  public receiver: IUser | undefined;
   public loadingChat: boolean = false;
   public chatContents: IChatContent[] = [];
 
@@ -107,11 +109,16 @@ export default class ChatUser extends Vue {
   }
 
   get receiverPhotoUrl(): string {
-    const receiver = this.usersList.find(x => x.uid === this.$route.params.id);
-    return receiver ? receiver.photoURL || DEFAULT_PROFILE_IMAGE : "";
+    return this.receiver && this.receiver.photoURL
+      ? this.receiver.photoURL
+      : DEFAULT_PROFILE_IMAGE;
   }
 
   public created() {
+    this.receiver = this.usersList.find(x => x.uid === this.$route.params.id);
+    if (!this.receiver) {
+      this.$router.replace(CHAT_ROUTE);
+    }
     this.chatContentsQuery = this.queryChatContents(
       this.user.uid,
       this.$route.params.id
