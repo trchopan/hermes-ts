@@ -168,3 +168,25 @@ export interface IChatContent {
   timestamp: number;
   delivered: boolean;
 }
+
+export const parseChatDocName = (id1: string, id2: string) =>
+  id1 > id2 ? `${id1}_${id2}` : `${id2}_${id1}`;
+
+export function parseChatContent(id: string, data: any): IChatContent | null {
+  if (
+    data.senderId !== undefined &&
+    data.timestamp !== undefined &&
+    data.message !== undefined &&
+    data.delivered !== undefined
+  ) {
+    return {
+      _id: id,
+      senderId: data.senderId,
+      timestamp: data.timestamp,
+      message: data.message,
+      delivered: data.delivered
+    };
+  } else {
+    return null;
+  }
+}
