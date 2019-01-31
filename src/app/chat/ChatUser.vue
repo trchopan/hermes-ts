@@ -105,8 +105,10 @@ export default class ChatUser extends Vue {
   }
 
   public created() {
-    const chatDocName = parseChatDocName(this.user.uid, this.$route.params.id);
-    this.chatContentsQuery = this.queryChatContents(chatDocName);
+    this.chatContentsQuery = this.queryChatContents(
+      this.user.uid,
+      this.$route.params.id
+    );
   }
 
   public destroyed() {
@@ -128,47 +130,58 @@ export default class ChatUser extends Vue {
     }, 200);
   }
 
-  private queryChatContents(chatDocId: string) {
+  private queryChatContents(userId: string, receiverId: string) {
     this.loadingChat = true;
-    const chatColRef = fireStore
-      .collection(CHATROOMS_COLLECTION)
-      .doc(chatDocId)
-      .collection(CHATS_COLLECTION);
+    const chatDocName = parseChatDocName(userId, receiverId);
+    const chatDoc = fireStore.collection(CHATROOMS_COLLECTION).doc(chatDocName);
 
-    return chatColRef
+    const resultHandler = (result: firebase.firestore.QuerySnapshot) => {
+      const markDelivered: Array<Promise<void>> = [];
+      result.docChanges().forEach(change => {
+        const content = parseChatContent(change.doc.id, change.doc.data());
+        if (!content) {
+          this.$store.dispatch(
+            ROOT_ACTIONS.changeError,
+            this.$t.errorReadingChatContent
+          );
+          return;
+        }
+        if (change.type === "added") {
+          this.chatContents.push(content);
+          if (content.senderId !== this.user.uid && !content.delivered) {
+            markDelivered.push(
+              chatDoc
+                .collection(CHATS_COLLECTION)
+                .doc(content._id)
+                .update({ delivered: true })
+            );
+          }
+        }
+        if (change.type === "modified") {
+          this.chatContents.splice(change.newIndex, 1, content);
+        }
+      });
+
+      if (markDelivered.length > 0) {
+        Promise.all(markDelivered).catch(error => {
+          error.message = this.$t.unableUpdateDeliveredStatus;
+          this.$store.dispatch(ROOT_ACTIONS.changeError, error);
+        });
+      }
+    };
+
+    const initChatDoc = async () =>
+      await chatDoc.set({ [userId]: true, [receiverId]: true });
+
+    return chatDoc
+      .collection(CHATS_COLLECTION)
       .orderBy("timestamp")
       .limit(50)
-      .onSnapshot(result => {
+      .onSnapshot(async result => {
         if (!result.empty) {
-          const markDelivered: Array<Promise<void>> = [];
-          result.docChanges().forEach(change => {
-            const content = parseChatContent(change.doc.id, change.doc.data());
-            if (!content) {
-              this.$store.dispatch(
-                ROOT_ACTIONS.changeError,
-                this.$t.errorReadingChatContent
-              );
-              return;
-            }
-            if (change.type === "added") {
-              this.chatContents.push(content);
-              if (content.senderId !== this.user.uid && !content.delivered) {
-                markDelivered.push(
-                  chatColRef.doc(content._id).update({ delivered: true })
-                );
-              }
-            }
-            if (change.type === "modified") {
-              this.chatContents.splice(change.newIndex, 1, content);
-            }
-          });
-
-          if (markDelivered.length > 0) {
-            Promise.all(markDelivered).catch(error => {
-              error.message = this.$t.unableUpdateDeliveredStatus;
-              this.$store.dispatch(ROOT_ACTIONS.changeError, error);
-            });
-          }
+          resultHandler(result);
+        } else {
+          await initChatDoc();
         }
         this.loadingChat = false;
       });
