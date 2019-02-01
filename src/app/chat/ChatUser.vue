@@ -149,7 +149,7 @@ export default class ChatUser extends Vue {
     const chatDocName = parseChatDocName(userId, receiverId);
     const chatDoc = fireStore.collection(CHATROOMS_COLLECTION).doc(chatDocName);
 
-    const resultHandler = (result: firebase.firestore.QuerySnapshot) => {
+    const resultHandler = async (result: firebase.firestore.QuerySnapshot) => {
       const markDelivered: Array<Promise<void>> = [];
       result.docChanges().forEach(change => {
         const content = parseChatContent(change.doc.id, change.doc.data());
@@ -177,10 +177,12 @@ export default class ChatUser extends Vue {
       });
 
       if (markDelivered.length > 0) {
-        Promise.all(markDelivered).catch(error => {
+        try {
+          await Promise.all(markDelivered);
+        } catch (error) {
           error.message = this.$t.unableUpdateDeliveredStatus;
           this.$store.dispatch(ROOT_ACTIONS.changeError, error);
-        });
+        }
       }
     };
 
@@ -190,7 +192,7 @@ export default class ChatUser extends Vue {
     return chatDoc
       .collection(CHATS_COLLECTION)
       .orderBy("timestamp")
-      .limit(50)
+      .limit(15)
       .onSnapshot(async result => {
         if (!result.empty) {
           resultHandler(result);
