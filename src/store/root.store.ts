@@ -20,6 +20,7 @@ export const ROOT_ACTIONS = {
   toggleDrawer: "toggleDrawer",
   registerRecaptcha: "registerRecaptcha",
   changeUser: "changeUser",
+  changeUserProfile: "changeUserProfile",
   changeUsersList: "changeUsersList",
   changeLoadingMessage: "changeLoadingMessage",
   finishLoading: "finishLoading",
@@ -34,6 +35,7 @@ export interface RootState {
   language: ILanguageSetting;
   recaptcha: IRecaptchaData | undefined;
   user: firebase.User | null;
+  userProfile: IUser | null;
   usersList: IUser[];
   loadingMessage: string | null;
   error: IError | null;
@@ -47,6 +49,7 @@ const rootStore: StoreOptions<RootState> = {
     language: LANGUAGE_SETTINGS[0], // Vietnamese
     recaptcha: undefined,
     user: null,
+    userProfile: null,
     usersList: [],
     loadingMessage: null,
     error: null
@@ -83,6 +86,8 @@ const rootStore: StoreOptions<RootState> = {
       commit("captchaTokenRegistered", data),
     [ROOT_ACTIONS.changeUser]: ({ commit }, user: firebase.User) =>
       commit("userChanged", user),
+    [ROOT_ACTIONS.changeUserProfile]: ({ commit }, userProfile: IUser) =>
+      commit("userProfileChanged", userProfile),
     [ROOT_ACTIONS.changeUsersList]: ({ commit }, usersList: IUser[]) => {
       commit("usersListChanged", usersList);
     },
@@ -129,6 +134,10 @@ const rootStore: StoreOptions<RootState> = {
     userChanged(state, user: firebase.User) {
       state.user = user;
       log("User changed", state.user);
+    },
+    userProfileChanged(state, userProfile: IUser) {
+      state.userProfile = userProfile;
+      log("User profile changed", state.userProfile);
     },
     usersListChanged(state, usersList: IUser[]) {
       state.usersList = usersList;

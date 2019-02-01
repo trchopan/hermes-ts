@@ -8,6 +8,10 @@ export const LANGUAGES_MAP: ILanguageMap = {
       "Tham gia phòng chat hoặc gởi tin nhắn trực tiếp bằng cách nhấn nút tham gia bên dưới",
     en: "Join chat room or send direct message by click the join button below"
   },
+  noProfileFound: {
+    vi: "Không tìm thấy thông tin tài khoản",
+    en: "No profile information found"
+  },
   // End of Chat
   // ChatEditProfile
   editProfile: {

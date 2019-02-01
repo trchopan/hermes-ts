@@ -41,12 +41,14 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { State } from "vuex-class";
-import { ILanguageSetting } from "@/store/root.models";
+import { ILanguageSetting, USERS_COLLECTION } from "@/store/root.models";
 import { Watch } from "vue-property-decorator";
 import { LANGUAGES_MAP } from "@/app/chat/chat.models";
 import ChatRoomDrawer from "./ChatRoomDrawer.vue";
 import ChatEditProfile from "./ChatEditProfile.vue";
 import ChatInput from "./ChatInput.vue";
+import { fireStore } from "@/firebase";
+import { ROOT_ACTIONS } from "@/store/root.store";
 
 @Component({
   name: "Chat",
@@ -62,14 +64,38 @@ export default class Chat extends Vue {
   @State("user")
   public user!: firebase.User;
 
+  // Firestore query
+  private userDataQuery!: () => void;
+
   get $t() {
     return this.$translate(LANGUAGES_MAP, this.language.value);
   }
 
-  public mounted() {
+  public created() {
     if (!this.user) {
       this.$router.replace("/auth");
+    } else {
+      this.userDataQuery = fireStore
+        .collection(USERS_COLLECTION)
+        .doc(this.user.uid)
+        .onSnapshot(snapshot => {
+          if (!snapshot) {
+            this.$store.dispatch(
+              ROOT_ACTIONS.changeError,
+              this.$t.noProfileFound
+            );
+          } else {
+            this.$store.dispatch(
+              ROOT_ACTIONS.changeUserProfile,
+              snapshot.data()
+            );
+          }
+        });
     }
+  }
+
+  public destroyed() {
+    this.userDataQuery();
   }
 }
 </script>
