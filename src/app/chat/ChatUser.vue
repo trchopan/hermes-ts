@@ -192,7 +192,7 @@ export default class ChatUser extends Vue {
     return chatDoc
       .collection(CHATS_COLLECTION)
       .orderBy("timestamp")
-      .limit(15)
+      .limit(50)
       .onSnapshot(async result => {
         if (!result.empty) {
           resultHandler(result);
