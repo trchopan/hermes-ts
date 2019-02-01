@@ -1,9 +1,14 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
-import { listUsersHandler } from "./list-users";
+import { findUserHandler } from "./find-user";
+import { onAuthCreateHandler, onAuthDeleteHandler } from "./on-auth";
 
 admin.initializeApp(functions.config().firebase);
 const firestore = admin.firestore();
 firestore.settings({ timestampsInSnapshots: true });
 
-export const listUsers = functions.https.onCall(listUsersHandler);
+// Auth
+export const onAuthCreate = functions.auth.user().onCreate(onAuthCreateHandler);
+export const onAuthDelete = functions.auth.user().onDelete(onAuthDeleteHandler);
+
+export const findUser = functions.https.onCall(findUserHandler);
