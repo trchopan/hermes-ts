@@ -24,5 +24,11 @@ export function onAuthCreateHandler(user: UserRecord, context: EventContext) {
     .firestore()
     .collection(USERS_COLLECTIONS)
     .doc(user.uid)
-    .set({ displayName: "", photoURL: "", init: false });
+    .set({
+      email: user.email || null,
+      phoneNumber: user.phoneNumber || null,
+      displayName: user.displayName || "",
+      photoURL: user.phoneNumber || "",
+      init: false
+    });
 }
