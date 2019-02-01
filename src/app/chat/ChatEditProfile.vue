@@ -172,8 +172,8 @@ export default class ChatEditProfile extends Vue {
           this.$t.updatingProfile
         );
         const data = {
-          displayName: this._displayName || "",
-          photoURL: this.selectedImage || ""
+          displayName: this._displayName || this.user.displayName,
+          photoURL: this.selectedImage
         };
         await fireStore
           .collection(USERS_COLLECTION)
