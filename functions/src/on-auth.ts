@@ -2,8 +2,7 @@ import * as admin from "firebase-admin";
 import { logger } from "./helpers";
 import { UserRecord } from "firebase-functions/lib/providers/auth";
 import { EventContext } from "firebase-functions";
-
-export const USERS_COLLECTIONS = "users";
+import { USERS_COLLECTIONS } from "./collections";
 
 const log = logger("[onAuth]");
 
