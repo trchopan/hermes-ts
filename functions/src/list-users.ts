@@ -30,8 +30,7 @@ export async function listUsersHandler(
     const results = await admin.firestore().getAll(...docRefs);
     return {
       users: results.map(snapshot => ({
-        id: snapshot.id,
-        exist: snapshot.exists,
+        uid: snapshot.id,
         data: snapshot.exists ? snapshot.data() : null
       }))
     };
