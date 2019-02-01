@@ -10,7 +10,7 @@ export async function listUsersHandler(
   data: { users: string[] },
   context: CallableContext
 ) {
-  console.log("request", data);
+  log("request", data);
 
   if (!context.auth) {
     throw new functions.https.HttpsError("unauthenticated");
