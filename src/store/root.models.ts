@@ -25,6 +25,8 @@ export const THEME_SETTINGS: IThemeSetting[] = [
   { value: "dark", text: "Dark" }
 ];
 
+export const USERS_COLLECTION = "users";
+
 export interface IUser {
   uid: string;
   displayName: string;
