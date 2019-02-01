@@ -27,8 +27,8 @@ export function onAuthCreateHandler(user: UserRecord, context: EventContext) {
     .set({
       email: user.email || null,
       phoneNumber: user.phoneNumber || null,
-      displayName: user.displayName || "",
-      photoURL: user.phoneNumber || "",
+      displayName: user.displayName || null,
+      photoURL: user.phoneNumber || null,
       init: false
     });
 }
