@@ -106,7 +106,7 @@
 import Vue from "vue";
 import { State } from "vuex-class";
 import Component from "vue-class-component";
-import { ILanguageSetting } from "@/store/root.models";
+import { ILanguageSetting, USERS_COLLECTION } from "@/store/root.models";
 import {
   LANGUAGES_MAP,
   DEFAULT_PROFILE_IMAGE,
@@ -116,6 +116,7 @@ import { Watch } from "vue-property-decorator";
 import { ITextFieldRule } from "@/app/shared/types";
 import { AUTH_SIGN_OUT_ROUTE } from "@/app/auth/auth.routes";
 import { ROOT_ACTIONS } from "@/store/root.store";
+import { fireStore } from "@/firebase";
 
 @Component({
   name: "ChatEditProfile"
@@ -170,10 +171,15 @@ export default class ChatEditProfile extends Vue {
           ROOT_ACTIONS.changeLoadingMessage,
           this.$t.updatingProfile
         );
-        await this.user.updateProfile({
-          displayName: this._displayName,
+        const data = {
+          displayName: this._displayName || this.user.displayName,
           photoURL: this.selectedImage
-        });
+        };
+        await fireStore
+          .collection(USERS_COLLECTION)
+          .doc(this.user.uid)
+          .update(data);
+        await this.user.updateProfile(data);
         this.$store.dispatch(ROOT_ACTIONS.finishLoading);
         this.dialogOpen = false;
       } catch (error) {

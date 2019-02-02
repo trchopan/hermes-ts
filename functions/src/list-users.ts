@@ -1,29 +1,41 @@
+import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import { CallableContext } from "firebase-functions/lib/providers/https";
-import { ErrorCodes } from "./error-codes";
+import { USERS_COLLECTIONS } from "./collections";
+import { logger } from "./helpers";
 
-export async function listUsersHandler(data: any, context: CallableContext) {
-  console.log("request listUsers", data);
+const log = logger("[listUsers]");
+
+export async function listUsersHandler(
+  data: { users: string[] },
+  context: CallableContext
+) {
+  log("request", data);
 
   if (!context.auth) {
-    return { code: ErrorCodes.notAuthorized };
-  } else {
-    try {
-      const result = await admin.auth().listUsers();
-      return {
-        pageToken: result.pageToken,
-        users: result.users.map(user => ({
-          uid: user.uid,
-          displayName: user.displayName,
-          photoURL: user.photoURL,
-          email: user.email,
-          phoneNumber: user.phoneNumber,
-          metadata: user.metadata
-        }))
-      };
-    } catch (error) {
-      console.error("ERROR listUsers", error.code, error.message);
-      return { code: ErrorCodes.unknown };
-    }
+    throw new functions.https.HttpsError("unauthenticated");
+  }
+
+  if (!data || !data.users || !Array.isArray(data.users)) {
+    throw new functions.https.HttpsError("invalid-argument");
+  }
+
+  try {
+    const docRefs = data.users.map(userId =>
+      admin
+        .firestore()
+        .collection(USERS_COLLECTIONS)
+        .doc(userId)
+    );
+    const results = await admin.firestore().getAll(...docRefs);
+    return {
+      users: results.map(snapshot => ({
+        uid: snapshot.id,
+        data: snapshot.exists ? snapshot.data() : null
+      }))
+    };
+  } catch (error) {
+    log("ERROR listUser", error.code, error.message);
+    throw new functions.https.HttpsError("not-found");
   }
 }

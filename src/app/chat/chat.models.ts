@@ -8,6 +8,10 @@ export const LANGUAGES_MAP: ILanguageMap = {
       "Tham gia phòng chat hoặc gởi tin nhắn trực tiếp bằng cách nhấn nút tham gia bên dưới",
     en: "Join chat room or send direct message by click the join button below"
   },
+  noProfileFound: {
+    vi: "Không tìm thấy thông tin tài khoản",
+    en: "No profile information found"
+  },
   // End of Chat
   // ChatEditProfile
   editProfile: {
@@ -99,6 +103,16 @@ export const LANGUAGES_MAP: ILanguageMap = {
     en: "Joined"
   },
   // End of ChatRoomDrawer
+  // ChatAddContact
+  addContact: {
+    vi: "Thêm tài khoản",
+    en: "Add contact"
+  },
+  invalidEmail: {
+    vi: "Email không hợp lệ",
+    en: "Invalid email"
+  },
+  // End of ChatAddContact
   // ChatUser
   loadingChat: {
     vi: "Đang tải tin...",
@@ -115,6 +129,10 @@ export const LANGUAGES_MAP: ILanguageMap = {
   noMessage: {
     vi: "Chưa có chat",
     en: "No message"
+  },
+  noReceiverFound: {
+    vi: "Không có user với id: ",
+    en: "No user found with id: "
   },
   // End of ChatUser
   // ChatInput

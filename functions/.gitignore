@@ -6,4 +6,3 @@
 typings/
 
 node_modules/
-**/firebase-debug.log
