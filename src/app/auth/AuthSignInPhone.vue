@@ -121,15 +121,17 @@ import Component from "vue-class-component";
 import { State } from "vuex-class";
 import { Watch } from "vue-property-decorator";
 import { ILanguageSetting } from "@/store/root.models";
-import { LANGUAGES_MAP, IRecaptchaData } from "@/app/auth/auth.models";
+import {
+  LANGUAGES_MAP,
+  IRecaptchaData,
+  PHONE_COUNTRY_CODE
+} from "@/app/auth/auth.models";
 import Recaptcha from "@/app/auth/Recaptcha.vue";
 import { ITextFieldRule } from "@/app/shared/types";
 import { fireAuth } from "@/firebase";
 import { ROOT_ACTIONS } from "@/store/root.store";
 import { AUTH_ROUTE } from "@/app/auth/auth.routes";
 import { CHAT_ROUTE } from "@/app/chat/chat.routes";
-
-export const COUNTRY_CODE = "+84";
 
 @Component({
   name: "AuthSignInPhone",
@@ -170,7 +172,7 @@ export default class AuthSignInPhone extends Vue {
 
   public async submit() {
     if ((this.$refs.signInForm as any).validate()) {
-      const phoneNumber = COUNTRY_CODE + this.phone.replace(/^0/, "");
+      const phoneNumber = PHONE_COUNTRY_CODE + this.phone.replace(/^0/, "");
       try {
         // Send SMS
         this.$store.dispatch(

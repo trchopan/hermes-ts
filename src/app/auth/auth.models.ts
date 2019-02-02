@@ -157,6 +157,8 @@ export const LANGUAGES_MAP: ILanguageMap = {
   }
 };
 
+export const PHONE_COUNTRY_CODE = "+84";
+
 export interface IRecaptchaData {
   verifier: firebase.auth.RecaptchaVerifier;
   widgetId: number;
