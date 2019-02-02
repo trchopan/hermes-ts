@@ -82,7 +82,7 @@ import {
   DEFAULT_PROFILE_IMAGE
 } from "@/app/chat/chat.models";
 import { State } from "vuex-class";
-import { ILanguageSetting, IUser } from "@/store/root.models";
+import { ILanguageSetting, IUser, USERS_COLLECTION } from "@/store/root.models";
 import { Watch } from "vue-property-decorator";
 import { ROOT_ACTIONS } from "@/store/root.store";
 import { CHAT_ROUTE } from "@/app/chat/chat.routes";
@@ -96,37 +96,65 @@ export default class ChatUser extends Vue {
   @State("user")
   public user!: firebase.User;
   @State("usersList")
-  public usersList!: IUser[];
+  public usersList!: IUser[] | null;
   public receiver: IUser | undefined;
-  public loadingChat: boolean = false;
+  public loadingChat: boolean = true;
   public chatContents: IChatContent[] = [];
 
   // To be called to finish the query before the component is destroyed
   private chatContentsQuery: any = null;
+  private receiverQuery: any = null;
 
   get $t() {
     return this.$translate(LANGUAGES_MAP, this.language.value);
   }
 
   get receiverPhotoUrl(): string {
-    return this.receiver && this.receiver.photoURL
-      ? this.receiver.photoURL
+    return this.receiver && this.receiver.data && this.receiver.data.photoURL
+      ? this.receiver.data.photoURL
       : DEFAULT_PROFILE_IMAGE;
   }
 
   public created() {
-    this.receiver = this.usersList.find(x => x.uid === this.$route.params.id);
-    if (!this.receiver) {
-      this.$router.replace(CHAT_ROUTE);
-    }
-    this.chatContentsQuery = this.queryChatContents(
-      this.user.uid,
-      this.$route.params.id
-    );
+    this.receiverQuery = fireStore
+      .collection(USERS_COLLECTION)
+      .doc(this.$route.params.id)
+      .onSnapshot(snapshot => {
+        if (snapshot.exists) {
+          this.receiver = { uid: snapshot.id, data: snapshot.data() as any };
+          if (this.usersList && this.receiver) {
+            const receiverId = this.receiver.uid;
+            const newUserlist = this.usersList;
+            newUserlist.splice(
+              this.usersList.findIndex(x => x.uid === receiverId),
+              1,
+              this.receiver
+            );
+            this.$store.dispatch(ROOT_ACTIONS.changeUsersList, newUserlist);
+          }
+          if (!this.chatContentsQuery) {
+            this.chatContentsQuery = this.queryChatContents(
+              this.user.uid,
+              this.$route.params.id
+            );
+          }
+        } else {
+          const error = {
+            message: this.$t.noReceiverFound + this.$route.params.id
+          };
+          this.$store.dispatch(ROOT_ACTIONS.changeError, error);
+          this.$router.replace(CHAT_ROUTE);
+        }
+      });
   }
 
   public destroyed() {
-    this.chatContentsQuery();
+    if (this.chatContentsQuery) {
+      this.chatContentsQuery();
+    }
+    if (this.receiverQuery) {
+      this.receiverQuery();
+    }
   }
 
   public scrollDown() {
@@ -145,7 +173,6 @@ export default class ChatUser extends Vue {
   }
 
   private queryChatContents(userId: string, receiverId: string) {
-    this.loadingChat = true;
     const chatDocName = parseChatDocName(userId, receiverId);
     const chatDoc = fireStore.collection(CHATROOMS_COLLECTION).doc(chatDocName);
 
@@ -173,6 +200,9 @@ export default class ChatUser extends Vue {
         }
         if (change.type === "modified") {
           this.chatContents.splice(change.newIndex, 1, content);
+        }
+        if (change.type === "removed") {
+          this.chatContents.splice(change.oldIndex, 1);
         }
       });
 

@@ -41,13 +41,18 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { State } from "vuex-class";
-import { ILanguageSetting, USERS_COLLECTION } from "@/store/root.models";
+import {
+  ILanguageSetting,
+  USERS_COLLECTION,
+  parseProfile,
+  IUser
+} from "@/store/root.models";
 import { Watch } from "vue-property-decorator";
 import { LANGUAGES_MAP } from "@/app/chat/chat.models";
 import ChatRoomDrawer from "./ChatRoomDrawer.vue";
 import ChatEditProfile from "./ChatEditProfile.vue";
 import ChatInput from "./ChatInput.vue";
-import { fireStore } from "@/firebase";
+import { fireStore, fireFunctions } from "@/firebase";
 import { ROOT_ACTIONS } from "@/store/root.store";
 
 @Component({
@@ -63,39 +68,49 @@ export default class Chat extends Vue {
   public language!: ILanguageSetting;
   @State("user")
   public user!: firebase.User;
-
-  // Firestore query
-  private userDataQuery!: () => void;
+  public listUsersCallable = fireFunctions.httpsCallable("listUsers");
 
   get $t() {
     return this.$translate(LANGUAGES_MAP, this.language.value);
   }
 
-  public created() {
+  public async created() {
     if (!this.user) {
       this.$router.replace("/auth");
     } else {
-      this.userDataQuery = fireStore
-        .collection(USERS_COLLECTION)
-        .doc(this.user.uid)
-        .onSnapshot(snapshot => {
-          if (!snapshot) {
-            this.$store.dispatch(
-              ROOT_ACTIONS.changeError,
-              this.$t.noProfileFound
-            );
-          } else {
-            this.$store.dispatch(
-              ROOT_ACTIONS.changeUserProfile,
-              snapshot.data()
-            );
-          }
-        });
-    }
-  }
+      try {
+        const profile = await fireStore
+          .collection(USERS_COLLECTION)
+          .doc(this.user.uid)
+          .get()
+          .then(snapshot => {
+            if (!snapshot.exists) {
+              this.$store.dispatch(
+                ROOT_ACTIONS.changeError,
+                this.$t.noProfileFound
+              );
+              return null;
+            } else {
+              const profileData = parseProfile(snapshot.data());
+              this.$store.dispatch(ROOT_ACTIONS.changeUserProfile, profileData);
+              return profileData;
+            }
+          });
 
-  public destroyed() {
-    this.userDataQuery();
+        if (profile && profile.contacts) {
+          const result = await this.listUsersCallable({
+            users: profile.contacts
+          });
+          const usersList = (result.data.users as IUser[]).filter(
+            x => x.uid !== this.user.uid
+          );
+          this.$store.dispatch(ROOT_ACTIONS.changeUsersList, usersList);
+        }
+      } catch (error) {
+        error.message = this.$t.errorGettingUsersList;
+        this.$store.dispatch(ROOT_ACTIONS.changeError, error);
+      }
+    }
   }
 }
 </script>

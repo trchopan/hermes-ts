@@ -6,7 +6,8 @@ import {
   IThemeSetting,
   ILanguageSetting,
   IError,
-  IUser
+  IUser,
+  IProfile
 } from "./root.models";
 import { IRecaptchaData } from "@/app/auth/auth.models";
 
@@ -35,8 +36,8 @@ export interface RootState {
   language: ILanguageSetting;
   recaptcha: IRecaptchaData | undefined;
   user: firebase.User | null;
-  userProfile: IUser | null;
-  usersList: IUser[];
+  userProfile: IProfile | null;
+  usersList: IUser[] | null;
   loadingMessage: string | null;
   error: IError | null;
 }
@@ -50,7 +51,7 @@ const rootStore: StoreOptions<RootState> = {
     recaptcha: undefined,
     user: null,
     userProfile: null,
-    usersList: [],
+    usersList: null,
     loadingMessage: null,
     error: null
   },
@@ -86,7 +87,7 @@ const rootStore: StoreOptions<RootState> = {
       commit("captchaTokenRegistered", data),
     [ROOT_ACTIONS.changeUser]: ({ commit }, user: firebase.User) =>
       commit("userChanged", user),
-    [ROOT_ACTIONS.changeUserProfile]: ({ commit }, userProfile: IUser) =>
+    [ROOT_ACTIONS.changeUserProfile]: ({ commit }, userProfile: IProfile) =>
       commit("userProfileChanged", userProfile),
     [ROOT_ACTIONS.changeUsersList]: ({ commit }, usersList: IUser[]) => {
       commit("usersListChanged", usersList);
@@ -135,7 +136,7 @@ const rootStore: StoreOptions<RootState> = {
       state.user = user;
       log("User changed", state.user);
     },
-    userProfileChanged(state, userProfile: IUser) {
+    userProfileChanged(state, userProfile: IProfile) {
       state.userProfile = userProfile;
       log("User profile changed", state.userProfile);
     },

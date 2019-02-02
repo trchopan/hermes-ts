@@ -27,14 +27,22 @@ export const THEME_SETTINGS: IThemeSetting[] = [
 
 export const USERS_COLLECTION = "users";
 
+export const parseProfile = (data: any): IProfile => ({
+  init: data.init !== undefined ? data.init : false,
+  contacts: data.contacts !== undefined ? data.contacts : []
+});
+
+export interface IProfile {
+  init: boolean;
+  contacts: string[];
+}
+
 export interface IUser {
   uid: string;
-  displayName: string;
-  photoURL: string;
-  email: string;
-  phoneNumber: string;
-  metadata: {
-    creationTime: string;
-    lastSignInTime: string;
-  };
+  data: {
+    displayName: string;
+    photoURL: string;
+    email: string;
+    phoneNumber: string;
+  } | null;
 }

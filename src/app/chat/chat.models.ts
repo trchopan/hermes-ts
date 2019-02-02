@@ -103,6 +103,16 @@ export const LANGUAGES_MAP: ILanguageMap = {
     en: "Joined"
   },
   // End of ChatRoomDrawer
+  // ChatAddContact
+  addContact: {
+    vi: "Thêm tài khoản",
+    en: "Add contact"
+  },
+  invalidEmail: {
+    vi: "Email không hợp lệ",
+    en: "Invalid email"
+  },
+  // End of ChatAddContact
   // ChatUser
   loadingChat: {
     vi: "Đang tải tin...",
@@ -119,6 +129,10 @@ export const LANGUAGES_MAP: ILanguageMap = {
   noMessage: {
     vi: "Chưa có chat",
     en: "No message"
+  },
+  noReceiverFound: {
+    vi: "Không có user với id: ",
+    en: "No user found with id: "
   },
   // End of ChatUser
   // ChatInput
