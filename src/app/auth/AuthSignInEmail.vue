@@ -74,13 +74,13 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import { State } from "vuex-class";
+import { State, Getter } from "vuex-class";
 import { Watch } from "vue-property-decorator";
 import Recaptcha from "@/app/auth/Recaptcha.vue";
-import { ILanguageSetting } from "@/store/root.models";
+import { ILanguageSetting, IMappedLanguage } from "@/store/root.models";
 import { ITextFieldRule } from "@/app/shared/types";
 import { validateEmail } from "@/app/shared/validate-email.helper";
-import { LANGUAGES_MAP, IRecaptchaData } from "@/app/auth/auth.models";
+import { AUTH_LANGUAGES, IRecaptchaData } from "@/app/auth/auth.models";
 import { fireAuth } from "@/firebase";
 import { AUTH_SIGN_UP_EMAIL_ROUTE, AUTH_ROUTE } from "@/app/auth/auth.routes";
 import { ROOT_ACTIONS } from "@/store/root.store";
@@ -91,8 +91,8 @@ import { CHAT_ROUTE } from "@/app/chat/chat.routes";
   components: { Recaptcha }
 })
 export default class AuthSignInEmail extends Vue {
-  @State("language")
-  public language!: ILanguageSetting;
+  @Getter("$t")
+  public $t!: IMappedLanguage;
   @State("recaptcha")
   public recaptcha!: IRecaptchaData;
   @State("user")
@@ -107,10 +107,6 @@ export default class AuthSignInEmail extends Vue {
   public passwordRules: ITextFieldRule[] = [];
 
   private _loading: boolean = false;
-
-  get $t() {
-    return this.$translate(LANGUAGES_MAP, this.language.value);
-  }
 
   get loading(): boolean {
     return !(this.recaptcha && !!this.recaptcha.verifier) || this._loading;

@@ -1,7 +1,7 @@
 // tslint:disable:max-line-length
 import { ILanguageMap } from "@/plugins/translate";
 
-export const LANGUAGES_MAP: ILanguageMap = {
+export const AUTH_LANGUAGES: ILanguageMap = {
   auth: {
     vi: "Hệ thống xác thực tài khoản",
     en: "Authentication system"
@@ -154,6 +154,14 @@ export const LANGUAGES_MAP: ILanguageMap = {
   passwordMustNotEmpty: {
     vi: "Mật khẩu không được trống",
     en: "Password must not be empty"
+  },
+  verifyRecaptcha: {
+    vi: "Đang xác lập Recaptcha...",
+    en: "Verifying Recaptcha..."
+  },
+  errorRegisterCaptcha: {
+    vi: "Không thể xác lập Recaptcha",
+    en: "Unable to verify Recaptcha"
   }
 };
 

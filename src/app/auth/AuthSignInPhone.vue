@@ -118,11 +118,11 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import { State } from "vuex-class";
+import { State, Getter } from "vuex-class";
 import { Watch } from "vue-property-decorator";
-import { ILanguageSetting } from "@/store/root.models";
+import { ILanguageSetting, IMappedLanguage } from "@/store/root.models";
 import {
-  LANGUAGES_MAP,
+  AUTH_LANGUAGES,
   IRecaptchaData,
   PHONE_COUNTRY_CODE
 } from "@/app/auth/auth.models";
@@ -138,8 +138,8 @@ import { CHAT_ROUTE } from "@/app/chat/chat.routes";
   components: { Recaptcha }
 })
 export default class AuthSignInPhone extends Vue {
-  @State("language")
-  public language!: ILanguageSetting;
+  @Getter("$t")
+  public $t!: IMappedLanguage;
   @State("recaptcha")
   public recaptcha!: IRecaptchaData;
   @State("user")
@@ -164,10 +164,6 @@ export default class AuthSignInPhone extends Vue {
     if (this.user) {
       this.$router.replace(CHAT_ROUTE);
     }
-  }
-
-  get $t() {
-    return this.$translate(LANGUAGES_MAP, this.language.value);
   }
 
   public async submit() {

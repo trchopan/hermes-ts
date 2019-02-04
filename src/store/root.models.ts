@@ -1,4 +1,9 @@
-import { COUNTRY_CODE } from "@/plugins/translate";
+import { AUTH_LANGUAGES } from "@/app/auth/auth.models";
+
+export enum COUNTRY_CODE {
+  vi = "vi",
+  en = "en"
+}
 
 export interface IError {
   message: string;
@@ -14,6 +19,25 @@ export const LANGUAGE_SETTINGS: ILanguageSetting[] = [
   { value: COUNTRY_CODE.vi, text: "🇻🇳 Tiếng Việt" },
   { value: COUNTRY_CODE.en, text: "🇬🇧 English" }
 ];
+
+export interface ILanguage {
+  vi: string;
+  en: string;
+}
+
+export interface ILanguageMap {
+  [key: string]: ILanguage;
+}
+
+export interface IMappedLanguage {
+  [key: string]: string;
+}
+
+export const NO_TRANSLATION = "(no translation)";
+
+export const COMBINED_LANGUAGES_MAP: ILanguageMap = {
+  ...AUTH_LANGUAGES
+};
 
 export interface IThemeSetting {
   value: string;

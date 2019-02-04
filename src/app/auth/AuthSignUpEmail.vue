@@ -83,10 +83,10 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import { State } from "vuex-class";
-import { LANGUAGES_MAP, IRecaptchaData } from "@/app/auth/auth.models";
+import { State, Getter } from "vuex-class";
+import { AUTH_LANGUAGES, IRecaptchaData } from "@/app/auth/auth.models";
 import { Watch } from "vue-property-decorator";
-import { ILanguageSetting } from "@/store/root.models";
+import { ILanguageSetting, IMappedLanguage } from "@/store/root.models";
 import { validateEmail } from "@/app/shared/validate-email.helper";
 import { ITextFieldRule } from "@/app/shared/types";
 import { fireAuth, ReCaptchaVerifier } from "@/firebase";
@@ -100,8 +100,8 @@ import { CHAT_ROUTE } from "@/app/chat/chat.routes";
   components: { Recaptcha }
 })
 export default class AuthSignUpEmail extends Vue {
-  @State("language")
-  public language!: ILanguageSetting;
+  @Getter("$t")
+  public $t!: IMappedLanguage;
   @State("recaptcha")
   public recaptcha!: IRecaptchaData;
   @State("user")
@@ -125,10 +125,6 @@ export default class AuthSignUpEmail extends Vue {
     if (this.user) {
       this.$router.replace(CHAT_ROUTE);
     }
-  }
-
-  get $t() {
-    return this.$translate(LANGUAGES_MAP, this.language.value);
   }
 
   public async submit() {

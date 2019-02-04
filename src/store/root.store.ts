@@ -1,13 +1,15 @@
 import { StoreOptions } from "vuex";
 import { logger } from "@/app/shared/logger.helper";
 import {
+  NO_TRANSLATION,
   LANGUAGE_SETTINGS,
   THEME_SETTINGS,
   IThemeSetting,
   ILanguageSetting,
   IError,
   IUser,
-  IProfile
+  IProfile,
+  COMBINED_LANGUAGES_MAP
 } from "./root.models";
 import { IRecaptchaData } from "@/app/auth/auth.models";
 
@@ -56,10 +58,21 @@ const rootStore: StoreOptions<RootState> = {
     error: null
   },
   getters: {
-    darkTheme: state =>
+    darkTheme: (state) =>
       state.theme.value === THEME_SETTINGS[0].value ? false : true,
-    appLoading: state => !!state.loadingMessage,
-    appErroring: state => !!state.error
+    appLoading: (state) => !!state.loadingMessage,
+    appErroring: (state) => !!state.error,
+    $t: (state) =>
+      Object.keys(COMBINED_LANGUAGES_MAP).reduce(
+        (acc, key) => {
+          acc[key] =
+            COMBINED_LANGUAGES_MAP[key][state.language.value] ||
+            COMBINED_LANGUAGES_MAP[key].en ||
+            NO_TRANSLATION;
+          return acc;
+        },
+        {} as any
+      )
   },
   actions: {
     [ROOT_ACTIONS.initializeApp]: ({ commit, dispatch }) => {
