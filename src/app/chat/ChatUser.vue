@@ -99,8 +99,10 @@ export default class ChatUser extends Vue {
   public $t!: IMappedLanguage;
   @State
   public user!: firebase.User;
-  @State("usersList")
+  @State
   public usersList!: IUser[] | null;
+  @State
+  public language!: ILanguageSetting;
   public receiver: IUser | undefined;
   public loadingChat: boolean = true;
   public chatContents: IChatContent[] = [];
