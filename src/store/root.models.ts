@@ -1,11 +1,13 @@
 import { AUTH_LANGUAGES } from "@/app/auth/auth.models";
 import { HOME_LANGUAGES } from "@/app/home/home.models";
 import { APP_LANGUAGES } from "@/app/core/app.models";
+import { CHAT_LANGUAGES } from "@/app/chat/chat.models";
 
 export const COMBINED_LANGUAGES_MAP: ILanguageMap = {
   ...APP_LANGUAGES,
   ...AUTH_LANGUAGES,
-  ...HOME_LANGUAGES
+  ...HOME_LANGUAGES,
+  ...CHAT_LANGUAGES
 };
 
 export enum COUNTRY_CODE {
