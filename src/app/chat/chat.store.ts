@@ -1,89 +1,110 @@
-import { IUser } from "@/store/root.models";
+import { IUser, USERS_COLLECTION, parseUser } from "@/store/root.models";
 import { IChatContent, CHATROOMS_COLLECTION } from "./chat.models";
 import { GetterTree, ActionTree, MutationTree } from "vuex";
 import { RootState } from "@/store/root.store";
 import { fireStore, fireFunctions } from "@/firebase";
 import { logger } from "../shared/logger.helper";
 
-const namespace = "chatStore";
-const log = logger(`[${namespace}]`, "#020099");
+export const chatStoreNamespace = "chatStore";
+const log = logger(`[${chatStoreNamespace}]`, "#020099");
 const listUsersCallable = fireFunctions.httpsCallable("listUsers");
 
 export const CHAT_ACTIONS = {
-  fetchContactList: `${namespace}/fetchContactList`,
-  changeContactList: `${namespace}/changeContactList`
+  subscribeChatsList: `${chatStoreNamespace}/subscribeChatsList`,
+  subscribeContactList: `${chatStoreNamespace}/subscribeContactList`,
+  changeContactList: `${chatStoreNamespace}/changeContactList`
 };
 
 const CHAT_MUTATIONS = {
-  contactListChanged: "contactListChanged"
+  contactChangedAtIndex: "contactChangedAtIndex"
 };
 
 interface ChatState {
-  contactList: IUser[];
-  currentReceiver: IUser | null;
+  contactsList: IUser[];
+  currentReceiverId: string | null;
+  chatsList: any[];
   currentChat: IChatContent[];
   scrollChatBottomState: boolean;
 }
 
 const initState: ChatState = {
-  contactList: [],
-  currentReceiver: null,
+  contactsList: [],
+  currentReceiverId: null,
+  chatsList: [],
   currentChat: [],
   scrollChatBottomState: false
 };
 
-const getters: GetterTree<ChatState, RootState> = {};
+const getters: GetterTree<ChatState, RootState> = {
+  currentReceiver: (state) =>
+    state.contactsList.find((x) => x.uid === state.currentReceiverId)
+};
 
-const actions: ActionTree<ChatState, RootState> = {
-  [CHAT_ACTIONS.fetchContactList]: async ({ commit, rootState }) => {
-    if (!rootState.user) {
-      log("no user found");
-      return;
+const actions = (): ActionTree<ChatState, RootState> => {
+  const contactsListSnapshots: Array<() => void> = [];
+  let activeChatsSnapshot: () => void;
+
+  return {
+    [CHAT_ACTIONS.subscribeContactList]: ({ commit, rootState }) => {
+      if (!rootState.user) {
+        log("no user found");
+        return;
+      }
+      const userId = rootState.user.uid;
+      if (activeChatsSnapshot !== undefined) {
+        activeChatsSnapshot();
+      }
+      if (contactsListSnapshots && Array.isArray(contactsListSnapshots)) {
+        contactsListSnapshots.forEach((snap) => snap());
+      }
+
+      activeChatsSnapshot = fireStore
+        .collection(CHATROOMS_COLLECTION)
+        .where(userId, "==", true)
+        .onSnapshot((chatRoom) => {
+          if (!chatRoom.empty) {
+            let keys: string[] = [];
+            chatRoom.docs
+              .sort((a, b) => {
+                if (a.data().timestamp && b.data().timestamp) {
+                  return a.data().timestamp - b.data().timestamp;
+                } else {
+                  return -9999999;
+                }
+              })
+              .forEach((doc) => (keys = keys.concat(Object.keys(doc.data()))));
+
+            const contactIds = keys.filter((x) => x !== userId);
+            contactIds.forEach((id, index) => {
+              contactsListSnapshots[index] = fireStore
+                .collection(USERS_COLLECTION)
+                .doc(id)
+                .onSnapshot((user) => {
+                  if (user.exists) {
+                    commit(CHAT_MUTATIONS.contactChangedAtIndex, {
+                      index,
+                      user: parseUser(user.id, user.data())
+                    });
+                  }
+                });
+            });
+          }
+        });
     }
-    const userId = rootState.user.uid;
-    const activeChats = await fireStore
-      .collection(CHATROOMS_COLLECTION)
-      .where(userId, "==", true)
-      .get()
-      .then((chatRoom) => {
-        if (!chatRoom.empty) {
-          let keys: string[] = [];
-          chatRoom.docs.forEach(
-            (doc) => (keys = keys.concat(Object.keys(doc.data())))
-          );
-          return keys.filter((x) => x !== userId);
-        }
-        return null;
-      });
-
-    const result = await listUsersCallable({
-      users: activeChats
-    });
-
-    if (result.data.users) {
-      const contactList = (result.data.users as IUser[]).filter(
-        (x) => x.uid !== userId
-      );
-      commit(CHAT_MUTATIONS.contactListChanged, contactList);
-    } else {
-      log("no users list found");
-    }
-  },
-  [CHAT_ACTIONS.changeContactList]: ({ commit }, contactList: IUser[]) =>
-    commit(CHAT_MUTATIONS.contactListChanged, contactList)
+  };
 };
 
 const mutations: MutationTree<ChatState> = {
-  [CHAT_MUTATIONS.contactListChanged](state, contactList: IUser[]) {
-    state.contactList = contactList;
-    log(CHAT_MUTATIONS.contactListChanged, contactList);
+  [CHAT_MUTATIONS.contactChangedAtIndex](state, { index, user }) {
+    state.contactsList[index] = user;
+    log(CHAT_MUTATIONS.contactChangedAtIndex, index, user);
   }
 };
 
 export default {
-  namespace,
+  namespace: chatStoreNamespace,
   state: initState,
   getters,
-  actions,
+  actions: actions(),
   mutations
 };

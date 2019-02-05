@@ -67,13 +67,13 @@ import { AUTH_SIGN_OUT_ROUTE } from "@/app/auth/auth.models";
   name: "AppToolbarMenu"
 })
 export default class AppToolbarMenu extends Vue {
-  @Getter("$t")
+  @Getter
   public $t!: IMappedLanguage;
   @State("language")
   public language!: ILanguage;
   @State("theme")
   public theme!: IThemeSetting;
-  @State("user")
+  @State
   public user!: firebase.User;
 
   public authSignOutRoute = AUTH_SIGN_OUT_ROUTE;

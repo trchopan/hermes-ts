@@ -88,9 +88,9 @@ import { CHAT_ROUTE } from "@/app/chat/chat.models";
   components: { Recaptcha }
 })
 export default class AuthSignInEmail extends Vue {
-  @Getter("$t")
+  @Getter
   public $t!: IMappedLanguage;
-  @State("user")
+  @State
   public user!: firebase.User;
   public authRoute = AUTH_ROUTE;
   public signUpEmailRoute = AUTH_SIGN_UP_EMAIL_ROUTE;

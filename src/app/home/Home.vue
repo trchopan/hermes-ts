@@ -65,7 +65,7 @@ import { Getter } from "vuex-class";
   name: "Home"
 })
 export default class Home extends Vue {
-  @Getter("$t")
+  @Getter
   public $t!: IMappedLanguage;
   public skills = SKILLS;
 

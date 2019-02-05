@@ -52,6 +52,7 @@ import ChatEditProfile from "./ChatEditProfile.vue";
 import ChatInput from "./ChatInput.vue";
 import { fireStore, fireFunctions } from "@/firebase";
 import { ROOT_ACTIONS } from "@/store/root.store";
+import { CHAT_ACTIONS } from "@/app/chat/chat.store";
 
 @Component({
   name: "Chat",
@@ -62,9 +63,9 @@ import { ROOT_ACTIONS } from "@/store/root.store";
   }
 })
 export default class Chat extends Vue {
-  @Getter("$t")
+  @Getter
   public $t!: IMappedLanguage;
-  @State("user")
+  @State
   public user!: firebase.User;
   public listUsersCallable = fireFunctions.httpsCallable("listUsers");
 
@@ -72,38 +73,7 @@ export default class Chat extends Vue {
     if (!this.user) {
       this.$router.replace("/auth");
     } else {
-      try {
-        const profile = await fireStore
-          .collection(USERS_COLLECTION)
-          .doc(this.user.uid)
-          .get()
-          .then(snapshot => {
-            if (!snapshot.exists) {
-              this.$store.dispatch(
-                ROOT_ACTIONS.changeError,
-                this.$t.noProfileFound
-              );
-              return null;
-            } else {
-              const profileData = parseProfile(snapshot.data());
-              this.$store.dispatch(ROOT_ACTIONS.changeUserProfile, profileData);
-              return profileData;
-            }
-          });
-
-        if (profile && profile.contacts) {
-          const result = await this.listUsersCallable({
-            users: profile.contacts
-          });
-          const usersList = (result.data.users as IUser[]).filter(
-            x => x.uid !== this.user.uid
-          );
-          this.$store.dispatch(ROOT_ACTIONS.changeUsersList, usersList);
-        }
-      } catch (error) {
-        error.message = this.$t.errorGettingUsersList;
-        this.$store.dispatch(ROOT_ACTIONS.changeError, error);
-      }
+      this.$store.dispatch(CHAT_ACTIONS.subscribeContactList);
     }
   }
 }

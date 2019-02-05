@@ -79,9 +79,9 @@ import { fireAuth } from "@/firebase";
   name: "Auth"
 })
 export default class Auth extends Vue {
-  @Getter("$t")
+  @Getter
   public $t!: IMappedLanguage;
-  @State("user")
+  @State
   public user!: firebase.User;
   public signUpEmailRoute: string = AUTH_SIGN_UP_EMAIL_ROUTE;
   public signInEmailRoute: string = AUTH_SIGN_IN_EMAIL_ROUTE;

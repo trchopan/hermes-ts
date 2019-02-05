@@ -16,23 +16,21 @@
     >
       <v-list subheader>
         <v-subheader>
-          <span>{{ $t.usersList }}</span>
+          <span>{{ $t.contactsList }}</span>
           <v-spacer></v-spacer>
           <ChatAddContact/>
         </v-subheader>
         <v-list-tile
-          v-for="user in usersList"
+          v-for="user in contactsList"
           :key="'user-' + user.uid"
           :to="chatUserRoute + user.uid"
           avatar
         >
           <v-list-tile-avatar>
-            <img
-              :src="'/images/' + (user.data.photoURL || defaultProfileImage)"
-            >
+            <img :src="'/images/' + (user.photoURL || defaultProfileImage)">
           </v-list-tile-avatar>
           <v-list-tile-content>
-            <v-list-tile-title>{{ user.data.displayName || $t.noName }}</v-list-tile-title>
+            <v-list-tile-title>{{ user.displayName || $t.noName }}</v-list-tile-title>
           </v-list-tile-content>
           <v-list-tile-action v-if="$route.params.id === user.uid">
             <v-list-tile-action-text>
@@ -53,12 +51,13 @@ import { IUser, IProfile, IMappedLanguage } from "@/store/root.models";
 import {
   CHATROOMS_COLLECTION,
   DEFAULT_PROFILE_IMAGE,
-CHAT_ROUTE,
-CHAT_USER_ROUTE
+  CHAT_ROUTE,
+  CHAT_USER_ROUTE
 } from "@/app/chat/chat.models";
 import ChatAddContact from "@/app/chat/ChatAddContact.vue";
 import { fireStore } from "@/firebase";
 import { ROOT_ACTIONS } from "@/store/root.store";
+import { chatStoreNamespace } from "@/app/chat/chat.store";
 
 @Component({
   name: "ChatRoomDrawer",
@@ -67,12 +66,12 @@ import { ROOT_ACTIONS } from "@/store/root.store";
   }
 })
 export default class ChatRoomDrawer extends Vue {
-  @Getter("$t")
+  @Getter
   public $t!: IMappedLanguage;
-  @State("user")
+  @State
   public user!: firebase.User;
-  @State("usersList")
-  public usersList!: IUser[];
+  @State(state => state.chatStore.contactsList)
+  public contactsList!: IUser[];
   public chatUserRoute = `${CHAT_ROUTE}/${CHAT_USER_ROUTE.replace(":id", "")}`;
   public defaultProfileImage = DEFAULT_PROFILE_IMAGE;
   public rightDrawer: boolean = false;

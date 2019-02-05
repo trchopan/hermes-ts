@@ -78,9 +78,9 @@ import { PHONE_COUNTRY_CODE } from "@/app/auth/auth.models";
   name: "ChatAddContact"
 })
 export default class ChatAddContact extends Vue {
-  @Getter("$t")
+  @Getter
   public $t!: IMappedLanguage;
-  @State("user")
+  @State
   public user!: firebase.User;
   @State("userProfile")
   public userProfile!: IProfile;

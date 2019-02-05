@@ -60,10 +60,10 @@ export const parseProfile = (data: any): IProfile => ({
   contacts: data.contacts !== undefined ? data.contacts : []
 });
 
-export const parseUser = (user: any): IUser | null =>
+export const parseUser = (uid: string, user: any): IUser | null =>
   user
     ? {
-        uid: user.uid,
+        uid,
         displayName: user.displayName,
         photoURL: user.photoURL,
         email: user.email,

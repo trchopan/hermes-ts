@@ -95,9 +95,9 @@ import { ROOT_ACTIONS } from "@/store/root.store";
   name: "ChatUser"
 })
 export default class ChatUser extends Vue {
-  @Getter("$t")
+  @Getter
   public $t!: IMappedLanguage;
-  @State("user")
+  @State
   public user!: firebase.User;
   @State("usersList")
   public usersList!: IUser[] | null;

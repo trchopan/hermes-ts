@@ -13,7 +13,7 @@ import { AUTH_ROUTE } from "@/app/auth/auth.models";
   name: "AuthSignOut"
 })
 export default class AuthSignOut extends Vue {
-  @Getter("$t")
+  @Getter
   public $t!: IMappedLanguage;
 
   public async created() {

@@ -121,9 +121,9 @@ import { AUTH_SIGN_OUT_ROUTE } from "@/app/auth/auth.models";
   name: "ChatEditProfile"
 })
 export default class ChatEditProfile extends Vue {
-  @Getter("$t")
+  @Getter
   public $t!: IMappedLanguage;
-  @State("user")
+  @State
   public user!: firebase.User;
   public defaultProfileImage = DEFAULT_PROFILE_IMAGE;
   public dialogOpen: boolean = false;

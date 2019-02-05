@@ -83,7 +83,7 @@ export function reducer(
   name: "AppDrawer"
 })
 export default class AppDrawer extends Vue {
-  @Getter("$t")
+  @Getter
   public $t!: IMappedLanguage;
   @State("drawerOpen")
   public drawerOpen!: boolean;

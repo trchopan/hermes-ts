@@ -37,7 +37,7 @@ import { ROOT_ACTIONS } from "@/store/root.store";
   name: "AppErrorDialog"
 })
 export default class AppErrorDialog extends Vue {
-  @Getter("$t")
+  @Getter
   public $t!: IMappedLanguage;
   @State("error")
   public error!: IError | null;
