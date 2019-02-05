@@ -1,4 +1,12 @@
 import { AUTH_LANGUAGES } from "@/app/auth/auth.models";
+import { HOME_LANGUAGES } from "@/app/home/home.models";
+import { APP_LANGUAGES } from "@/app/core/app.models";
+
+export const COMBINED_LANGUAGES_MAP: ILanguageMap = {
+  ...APP_LANGUAGES,
+  ...AUTH_LANGUAGES,
+  ...HOME_LANGUAGES
+};
 
 export enum COUNTRY_CODE {
   vi = "vi",
@@ -32,12 +40,6 @@ export interface ILanguageMap {
 export interface IMappedLanguage {
   [key: string]: string;
 }
-
-export const NO_TRANSLATION = "(no translation)";
-
-export const COMBINED_LANGUAGES_MAP: ILanguageMap = {
-  ...AUTH_LANGUAGES
-};
 
 export interface IThemeSetting {
   value: string;

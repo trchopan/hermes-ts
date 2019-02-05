@@ -1,7 +1,7 @@
-import { ILanguageMap } from "@/plugins/translate";
+import { ILanguageMap } from "@/store/root.models";
 import { CHAT_ROUTE } from "@/app/chat/chat.routes";
 
-export const LANGUAGES_MAP: ILanguageMap = {
+export const APP_LANGUAGES: ILanguageMap = {
   home: {
     vi: "Trang chủ",
     en: "Home"

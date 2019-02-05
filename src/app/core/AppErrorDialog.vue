@@ -30,17 +30,15 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { State, Getter } from "vuex-class";
-import { IMappedLanguage } from "@/plugins/translate";
-import { ILanguageSetting, IError } from "@/store/root.models";
+import { ILanguageSetting, IError, IMappedLanguage } from "@/store/root.models";
 import { ROOT_ACTIONS } from "@/store/root.store";
-import { LANGUAGES_MAP } from "@/app/core/app.models";
 
 @Component({
   name: "AppErrorDialog"
 })
 export default class AppErrorDialog extends Vue {
-  @State("language")
-  public language!: ILanguageSetting;
+  @Getter("$t")
+  public $t!: IMappedLanguage;
   @State("error")
   public error!: IError | null;
 
@@ -52,10 +50,6 @@ export default class AppErrorDialog extends Vue {
     if (state === false) {
       this.$store.dispatch(ROOT_ACTIONS.clearError);
     }
-  }
-
-  get $t(): IMappedLanguage {
-    return this.$translate(LANGUAGES_MAP, this.language.value);
   }
 }
 </script>
