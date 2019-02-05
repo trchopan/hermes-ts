@@ -104,11 +104,10 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { State } from "vuex-class";
+import { State, Getter } from "vuex-class";
 import Component from "vue-class-component";
-import { ILanguageSetting, USERS_COLLECTION } from "@/store/root.models";
+import { USERS_COLLECTION, IMappedLanguage } from "@/store/root.models";
 import {
-  LANGUAGES_MAP,
   DEFAULT_PROFILE_IMAGE,
   PROFILE_IMAGES_LIST
 } from "@/app/chat/chat.models";
@@ -122,8 +121,8 @@ import { fireStore } from "@/firebase";
   name: "ChatEditProfile"
 })
 export default class ChatEditProfile extends Vue {
-  @State("language")
-  public language!: ILanguageSetting;
+  @Getter("$t")
+  public $t!: IMappedLanguage;
   @State("user")
   public user!: firebase.User;
   public defaultProfileImage = DEFAULT_PROFILE_IMAGE;
@@ -136,10 +135,6 @@ export default class ChatEditProfile extends Vue {
   public authSignOutRoute: string = AUTH_SIGN_OUT_ROUTE;
 
   private _displayName: string | null = null;
-
-  get $t() {
-    return this.$translate(LANGUAGES_MAP, this.language.value);
-  }
 
   get displayName(): string | null {
     return this.user.displayName;

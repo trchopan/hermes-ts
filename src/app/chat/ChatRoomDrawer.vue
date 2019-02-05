@@ -48,19 +48,15 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import { State } from "vuex-class";
-import { ILanguageSetting, IUser, IProfile } from "@/store/root.models";
+import { State, Getter } from "vuex-class";
+import { IUser, IProfile, IMappedLanguage } from "@/store/root.models";
 import {
-  LANGUAGES_MAP,
   CHATROOMS_COLLECTION,
   DEFAULT_PROFILE_IMAGE
 } from "@/app/chat/chat.models";
 import ChatAddContact from "@/app/chat/ChatAddContact.vue";
 import { fireStore } from "@/firebase";
-import {
-  CHAT_ROUTE,
-  CHAT_USER_ROUTE
-} from "@/app/chat/chat.routes";
+import { CHAT_ROUTE, CHAT_USER_ROUTE } from "@/app/chat/chat.routes";
 import { ROOT_ACTIONS } from "@/store/root.store";
 
 @Component({
@@ -70,6 +66,8 @@ import { ROOT_ACTIONS } from "@/store/root.store";
   }
 })
 export default class ChatRoomDrawer extends Vue {
+  @Getter("$t")
+  public $t!: IMappedLanguage;
   @State("user")
   public user!: firebase.User;
   @State("usersList")
@@ -77,12 +75,5 @@ export default class ChatRoomDrawer extends Vue {
   public chatUserRoute = `${CHAT_ROUTE}/${CHAT_USER_ROUTE.replace(":id", "")}`;
   public defaultProfileImage = DEFAULT_PROFILE_IMAGE;
   public rightDrawer: boolean = false;
-
-  @State("language")
-  public language!: ILanguageSetting;
-
-  get $t() {
-    return this.$translate(LANGUAGES_MAP, this.language.value);
-  }
 }
 </script>
