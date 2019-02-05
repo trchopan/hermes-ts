@@ -61,13 +61,13 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import { State } from "vuex-class";
+import { State, Getter } from "vuex-class";
 import {
-  ILanguageSetting,
   USERS_COLLECTION,
-  IProfile
+  IProfile,
+  IMappedLanguage
 } from "@/store/root.models";
-import { LANGUAGES_MAP, CHATROOMS_COLLECTION } from "@/app/chat/chat.models";
+import { CHATROOMS_COLLECTION } from "@/app/chat/chat.models";
 import { fireStore, fireFunctions } from "@/firebase";
 import { ITextFieldRule } from "@/app/shared/types";
 import { ROOT_ACTIONS } from "@/store/root.store";
@@ -78,8 +78,8 @@ import { PHONE_COUNTRY_CODE } from "@/app/auth/auth.models";
   name: "ChatAddContact"
 })
 export default class ChatAddContact extends Vue {
-  @State("language")
-  public language!: ILanguageSetting;
+  @Getter("$t")
+  public $t!: IMappedLanguage;
   @State("user")
   public user!: firebase.User;
   @State("userProfile")
@@ -89,10 +89,6 @@ export default class ChatAddContact extends Vue {
   public contact: string = "";
   public isEmailContact: boolean = true;
   public contactEmailRules: ITextFieldRule[] = [];
-
-  get $t() {
-    return this.$translate(LANGUAGES_MAP, this.language.value);
-  }
 
   public created() {
     this.contactEmailRules = [v => validateEmail(v) || this.$t.invalidEmail];

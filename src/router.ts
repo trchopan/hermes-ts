@@ -2,12 +2,13 @@ import Vue from "vue";
 import VueRouter, { NavigationGuard, Route, RouteRecord } from "vue-router";
 import { logger } from "@/app/shared/logger.helper";
 import homeRoutes from "@/app/home/home.routes";
-import authRoutes, { AUTH_ROUTE } from "@/app/auth/auth.routes";
+import authRoutes from "@/app/auth/auth.routes";
 import chatRoutes from "@/app/chat/chat.routes";
+import { AUTH_ROUTE } from "./app/auth/auth.models";
 
 const log = logger("[vue-router]", "#960000");
 export const checkMetaKey = (matched: RouteRecord[], key: string) =>
-  matched.some(record => record.meta[key]);
+  matched.some((record) => record.meta[key]);
 
 export const globalGuard = (store: any): NavigationGuard => (
   to: Route,

@@ -40,15 +40,13 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import { State } from "vuex-class";
+import { State, Getter } from "vuex-class";
 import {
-  ILanguageSetting,
   USERS_COLLECTION,
   parseProfile,
-  IUser
+  IUser,
+  IMappedLanguage
 } from "@/store/root.models";
-import { Watch } from "vue-property-decorator";
-import { LANGUAGES_MAP } from "@/app/chat/chat.models";
 import ChatRoomDrawer from "./ChatRoomDrawer.vue";
 import ChatEditProfile from "./ChatEditProfile.vue";
 import ChatInput from "./ChatInput.vue";
@@ -64,15 +62,11 @@ import { ROOT_ACTIONS } from "@/store/root.store";
   }
 })
 export default class Chat extends Vue {
-  @State("language")
-  public language!: ILanguageSetting;
+  @Getter("$t")
+  public $t!: IMappedLanguage;
   @State("user")
   public user!: firebase.User;
   public listUsersCallable = fireFunctions.httpsCallable("listUsers");
-
-  get $t() {
-    return this.$translate(LANGUAGES_MAP, this.language.value);
-  }
 
   public async created() {
     if (!this.user) {

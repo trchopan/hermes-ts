@@ -61,34 +61,32 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import { State } from "vuex-class";
-import { ILanguageSetting, LANGUAGE_SETTINGS } from "@/store/root.models";
-import { ILanguageMap } from "@/plugins/translate";
-import { LANGUAGES_MAP } from "@/app/auth/auth.models";
+import { State, Getter } from "vuex-class";
+import {
+  ILanguageSetting,
+  LANGUAGE_SETTINGS,
+  IMappedLanguage
+} from "@/store/root.models";
 import {
   AUTH_SIGN_UP_EMAIL_ROUTE,
   AUTH_SIGN_IN_EMAIL_ROUTE,
   AUTH_SIGN_IN_PHONE_ROUTE,
   AUTH_SIGN_OUT_ROUTE
-} from "@/app/auth/auth.routes";
+} from "@/app/auth/auth.models";
 import { fireAuth } from "@/firebase";
 
 @Component({
   name: "Auth"
 })
 export default class Auth extends Vue {
-  @State("language")
-  public language!: ILanguageSetting;
+  @Getter("$t")
+  public $t!: IMappedLanguage;
   @State("user")
   public user!: firebase.User;
   public signUpEmailRoute: string = AUTH_SIGN_UP_EMAIL_ROUTE;
   public signInEmailRoute: string = AUTH_SIGN_IN_EMAIL_ROUTE;
   public signInPhoneRoute: string = AUTH_SIGN_IN_PHONE_ROUTE;
   public signOutRoute: string = AUTH_SIGN_OUT_ROUTE;
-
-  get $t() {
-    return this.$translate(LANGUAGES_MAP, this.language.value);
-  }
 }
 </script>
 

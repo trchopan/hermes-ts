@@ -1,4 +1,19 @@
-import { COUNTRY_CODE } from "@/plugins/translate";
+import { AUTH_LANGUAGES } from "@/app/auth/auth.models";
+import { HOME_LANGUAGES } from "@/app/home/home.models";
+import { APP_LANGUAGES } from "@/app/core/app.models";
+import { CHAT_LANGUAGES } from "@/app/chat/chat.models";
+
+export const COMBINED_LANGUAGES_MAP: ILanguageMap = {
+  ...APP_LANGUAGES,
+  ...AUTH_LANGUAGES,
+  ...HOME_LANGUAGES,
+  ...CHAT_LANGUAGES
+};
+
+export enum COUNTRY_CODE {
+  vi = "vi",
+  en = "en"
+}
 
 export interface IError {
   message: string;
@@ -14,6 +29,19 @@ export const LANGUAGE_SETTINGS: ILanguageSetting[] = [
   { value: COUNTRY_CODE.vi, text: "🇻🇳 Tiếng Việt" },
   { value: COUNTRY_CODE.en, text: "🇬🇧 English" }
 ];
+
+export interface ILanguage {
+  vi: string;
+  en: string;
+}
+
+export interface ILanguageMap {
+  [key: string]: ILanguage;
+}
+
+export interface IMappedLanguage {
+  [key: string]: string;
+}
 
 export interface IThemeSetting {
   value: string;
@@ -32,6 +60,17 @@ export const parseProfile = (data: any): IProfile => ({
   contacts: data.contacts !== undefined ? data.contacts : []
 });
 
+export const parseUser = (user: any): IUser | null =>
+  user
+    ? {
+        uid: user.uid,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        email: user.email,
+        phoneNumber: user.phoneNumber
+      }
+    : null;
+
 export interface IProfile {
   init: boolean;
   contacts: string[];
@@ -39,10 +78,8 @@ export interface IProfile {
 
 export interface IUser {
   uid: string;
-  data: {
-    displayName: string;
-    photoURL: string;
-    email: string;
-    phoneNumber: string;
-  } | null;
+  displayName: string | null;
+  photoURL: string | null;
+  email: string | null;
+  phoneNumber: string | null;
 }

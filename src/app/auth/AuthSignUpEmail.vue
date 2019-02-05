@@ -3,9 +3,8 @@
     align-center
     justify-center
   >
-    <Recaptcha @ready="finishLoadingRecaptcha = true"/>
+    <Recaptcha/>
     <v-flex
-      v-if="finishLoadingRecaptcha"
       xs12
       sm6
       md4
@@ -83,31 +82,27 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import { State } from "vuex-class";
-import { LANGUAGES_MAP, IRecaptchaData } from "@/app/auth/auth.models";
+import { State, Getter } from "vuex-class";
 import { Watch } from "vue-property-decorator";
-import { ILanguageSetting } from "@/store/root.models";
+import { IMappedLanguage } from "@/store/root.models";
 import { validateEmail } from "@/app/shared/validate-email.helper";
 import { ITextFieldRule } from "@/app/shared/types";
-import { fireAuth, ReCaptchaVerifier } from "@/firebase";
+import { fireAuth } from "@/firebase";
 import Recaptcha from "@/app/auth/Recaptcha.vue";
-import { AUTH_SIGN_IN_EMAIL_ROUTE, AUTH_ROUTE } from "@/app/auth/auth.routes";
 import { ROOT_ACTIONS } from "@/store/root.store";
-import { CHAT_ROUTE } from "@/app/chat/chat.routes";
+import { AUTH_ROUTE, AUTH_SIGN_IN_EMAIL_ROUTE } from "@/app/auth/auth.models";
+import { CHAT_ROUTE } from "@/app/chat/chat.models";
 
 @Component({
   name: "AuthSignUpEmail",
   components: { Recaptcha }
 })
 export default class AuthSignUpEmail extends Vue {
-  @State("language")
-  public language!: ILanguageSetting;
-  @State("recaptcha")
-  public recaptcha!: IRecaptchaData;
+  @Getter("$t")
+  public $t!: IMappedLanguage;
   @State("user")
   public user!: firebase.User;
   public authRoute = AUTH_ROUTE;
-  public finishLoadingRecaptcha: boolean = false;
   public fromValid: boolean = true;
   public email: string = "";
   public password: string = "";
@@ -125,10 +120,6 @@ export default class AuthSignUpEmail extends Vue {
     if (this.user) {
       this.$router.replace(CHAT_ROUTE);
     }
-  }
-
-  get $t() {
-    return this.$translate(LANGUAGES_MAP, this.language.value);
   }
 
   public async submit() {

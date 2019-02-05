@@ -1,7 +1,9 @@
 // tslint:disable:max-line-length
-import { ILanguageMap } from "@/plugins/translate";
+import { ILanguageMap } from "@/store/root.models";
 
-export const LANGUAGES_MAP: ILanguageMap = {
+export const HOME_ROUTE = "/";
+
+export const HOME_LANGUAGES: ILanguageMap = {
   greeting: {
     vi: "Lời chào",
     en: "Greeting"

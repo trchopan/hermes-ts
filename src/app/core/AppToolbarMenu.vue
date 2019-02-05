@@ -55,21 +55,22 @@ import {
   LANGUAGE_SETTINGS,
   THEME_SETTINGS,
   IThemeSetting,
-  ILanguageSetting
+  IMappedLanguage,
+  ILanguage
 } from "@/store/root.models";
 import { ROOT_ACTIONS } from "@/store/root.store";
 import Component from "vue-class-component";
-import { State } from "vuex-class";
-import { IMappedLanguage } from "@/plugins/translate";
-import { LANGUAGES_MAP } from "@/app/core/app.models";
-import { AUTH_SIGN_OUT_ROUTE } from "@/app/auth/auth.routes";
+import { State, Getter } from "vuex-class";
+import { AUTH_SIGN_OUT_ROUTE } from "@/app/auth/auth.models";
 
 @Component({
   name: "AppToolbarMenu"
 })
 export default class AppToolbarMenu extends Vue {
+  @Getter("$t")
+  public $t!: IMappedLanguage;
   @State("language")
-  public language!: ILanguageSetting;
+  public language!: ILanguage;
   @State("theme")
   public theme!: IThemeSetting;
   @State("user")
@@ -80,9 +81,6 @@ export default class AppToolbarMenu extends Vue {
   public themeSettings = THEME_SETTINGS;
   public menuOpen = false;
 
-  get $t(): IMappedLanguage {
-    return this.$translate(LANGUAGES_MAP, this.language.value);
-  }
   public changeLanguage(language: string) {
     const foundLanguage = LANGUAGE_SETTINGS.find(x => x.value === language);
     this.$store.dispatch(ROOT_ACTIONS.changeLanguage, foundLanguage);

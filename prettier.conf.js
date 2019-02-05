@@ -8,5 +8,5 @@ module.exports = {
   semi: true,
   useTabs: false,
   proseWrap: "preserve",
-  arrowParens: "always"
+  arrowParens: "avoid"
 };

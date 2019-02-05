@@ -54,15 +54,10 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import { State } from "vuex-class";
-import { IMappedLanguage } from "@/plugins/translate";
+import { State, Getter } from "vuex-class";
 import { ROOT_ACTIONS } from "@/store/root.store";
-import { ILanguageSetting } from "@/store/root.models";
-import {
-  LANGUAGES_MAP,
-  IDrawerItem,
-  DRAWER_ITEMS
-} from "@/app/core/app.models";
+import { IMappedLanguage } from "@/store/root.models";
+import { IDrawerItem, DRAWER_ITEMS } from "@/app/core/app.models";
 
 export const mapper = (item: IDrawerItem, languageMap: IMappedLanguage) => ({
   ...item,
@@ -88,14 +83,11 @@ export function reducer(
   name: "AppDrawer"
 })
 export default class AppDrawer extends Vue {
-  @State("language")
-  public language!: ILanguageSetting;
+  @Getter("$t")
+  public $t!: IMappedLanguage;
   @State("drawerOpen")
   public drawerOpen!: boolean;
 
-  get $t(): IMappedLanguage {
-    return this.$translate(LANGUAGES_MAP, this.language.value);
-  }
   get drawerItems(): IDrawerItem[] {
     return reducer(DRAWER_ITEMS, this.$t);
   }

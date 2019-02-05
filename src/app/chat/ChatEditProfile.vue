@@ -104,26 +104,25 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { State } from "vuex-class";
+import { State, Getter } from "vuex-class";
 import Component from "vue-class-component";
-import { ILanguageSetting, USERS_COLLECTION } from "@/store/root.models";
+import { USERS_COLLECTION, IMappedLanguage } from "@/store/root.models";
 import {
-  LANGUAGES_MAP,
   DEFAULT_PROFILE_IMAGE,
   PROFILE_IMAGES_LIST
 } from "@/app/chat/chat.models";
 import { Watch } from "vue-property-decorator";
 import { ITextFieldRule } from "@/app/shared/types";
-import { AUTH_SIGN_OUT_ROUTE } from "@/app/auth/auth.routes";
 import { ROOT_ACTIONS } from "@/store/root.store";
-import { fireStore } from "@/firebase";
+import { fireStore, fireAuth } from "@/firebase";
+import { AUTH_SIGN_OUT_ROUTE } from "@/app/auth/auth.models";
 
 @Component({
   name: "ChatEditProfile"
 })
 export default class ChatEditProfile extends Vue {
-  @State("language")
-  public language!: ILanguageSetting;
+  @Getter("$t")
+  public $t!: IMappedLanguage;
   @State("user")
   public user!: firebase.User;
   public defaultProfileImage = DEFAULT_PROFILE_IMAGE;
@@ -136,10 +135,6 @@ export default class ChatEditProfile extends Vue {
   public authSignOutRoute: string = AUTH_SIGN_OUT_ROUTE;
 
   private _displayName: string | null = null;
-
-  get $t() {
-    return this.$translate(LANGUAGES_MAP, this.language.value);
-  }
 
   get displayName(): string | null {
     return this.user.displayName;
@@ -165,7 +160,10 @@ export default class ChatEditProfile extends Vue {
   }
 
   public async update() {
-    if ((this.$refs.editProfileForm as any).validate()) {
+    if (
+      (this.$refs.editProfileForm as any).validate() &&
+      fireAuth.currentUser
+    ) {
       try {
         this.$store.dispatch(
           ROOT_ACTIONS.changeLoadingMessage,
@@ -179,7 +177,7 @@ export default class ChatEditProfile extends Vue {
           .collection(USERS_COLLECTION)
           .doc(this.user.uid)
           .update(data);
-        await this.user.updateProfile(data);
+        await fireAuth.currentUser.updateProfile(data);
         this.$store.dispatch(ROOT_ACTIONS.finishLoading);
         this.dialogOpen = false;
       } catch (error) {

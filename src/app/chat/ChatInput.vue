@@ -28,33 +28,28 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import {
-  LANGUAGES_MAP,
   IChatContent,
   CHATROOMS_COLLECTION,
   CHATS_COLLECTION,
   parseChatDocName
 } from "@/app/chat/chat.models";
-import { State } from "vuex-class";
+import { State, Getter } from "vuex-class";
 import { fireStore } from "@/firebase";
 import { Prop } from "vue-property-decorator";
-import { ILanguageSetting } from "@/store/root.models";
+import { IMappedLanguage } from "@/store/root.models";
 import { ROOT_ACTIONS } from "@/store/root.store";
 
 @Component({
   name: "ChatInput"
 })
 export default class ChatInput extends Vue {
-  @State("language")
-  public language!: ILanguageSetting;
+  @Getter("$t")
+  public $t!: IMappedLanguage;
   @State("user")
   public user!: firebase.User;
   @Prop(String)
   public receiverId!: string;
   public message: string = "";
-
-  get $t() {
-    return this.$translate(LANGUAGES_MAP, this.language.value);
-  }
 
   public async sendMessage() {
     if (this.message && this.receiverId) {

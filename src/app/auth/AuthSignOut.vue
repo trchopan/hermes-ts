@@ -3,23 +3,18 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import { State } from "vuex-class";
-import { ILanguageSetting } from "@/store/root.models";
-import { LANGUAGES_MAP } from "@/app/auth/auth.models";
+import { State, Getter } from "vuex-class";
+import { IMappedLanguage } from "@/store/root.models";
 import { fireAuth } from "@/firebase";
 import { ROOT_ACTIONS } from "@/store/root.store";
-import { AUTH_ROUTE } from "@/app/auth/auth.routes";
+import { AUTH_ROUTE } from "@/app/auth/auth.models";
 
 @Component({
   name: "AuthSignOut"
 })
 export default class AuthSignOut extends Vue {
-  @State("language")
-  public language!: ILanguageSetting;
-
-  get $t() {
-    return this.$translate(LANGUAGES_MAP, this.language.value);
-  }
+  @Getter("$t")
+  public $t!: IMappedLanguage;
 
   public async created() {
     try {
