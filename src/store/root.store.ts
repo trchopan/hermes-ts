@@ -41,7 +41,6 @@ export interface RootState {
   error: IError | null;
 }
 
-// const rootStore: StoreOptions<RootState> = {
 export const initState: RootState = {
   localStorageStatus: false,
   theme: THEME_SETTINGS[0], // Light theme
