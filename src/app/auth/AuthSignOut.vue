@@ -7,7 +7,7 @@ import { State, Getter } from "vuex-class";
 import { IMappedLanguage } from "@/store/root.models";
 import { fireAuth } from "@/firebase";
 import { ROOT_ACTIONS } from "@/store/root.store";
-import { AUTH_ROUTE } from "@/app/auth/auth.routes";
+import { AUTH_ROUTE } from "@/app/auth/auth.models";
 
 @Component({
   name: "AuthSignOut"

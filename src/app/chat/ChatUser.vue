@@ -73,26 +73,30 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import { fireStore } from "@/firebase";
 import {
-  LANGUAGES_MAP,
   CHATROOMS_COLLECTION,
   CHATS_COLLECTION,
   IChatContent,
   parseChatDocName,
   parseChatContent,
-  DEFAULT_PROFILE_IMAGE
+  DEFAULT_PROFILE_IMAGE,
+  CHAT_ROUTE
 } from "@/app/chat/chat.models";
-import { State } from "vuex-class";
-import { ILanguageSetting, IUser, USERS_COLLECTION } from "@/store/root.models";
+import { State, Getter } from "vuex-class";
+import {
+  ILanguageSetting,
+  IUser,
+  USERS_COLLECTION,
+  IMappedLanguage
+} from "@/store/root.models";
 import { Watch } from "vue-property-decorator";
 import { ROOT_ACTIONS } from "@/store/root.store";
-import { CHAT_ROUTE } from "@/app/chat/chat.routes";
 
 @Component({
   name: "ChatUser"
 })
 export default class ChatUser extends Vue {
-  @State("language")
-  public language!: ILanguageSetting;
+  @Getter("$t")
+  public $t!: IMappedLanguage;
   @State("user")
   public user!: firebase.User;
   @State("usersList")
@@ -105,13 +109,9 @@ export default class ChatUser extends Vue {
   private chatContentsQuery: any = null;
   private receiverQuery: any = null;
 
-  get $t() {
-    return this.$translate(LANGUAGES_MAP, this.language.value);
-  }
-
   get receiverPhotoUrl(): string {
-    return this.receiver && this.receiver.data && this.receiver.data.photoURL
-      ? this.receiver.data.photoURL
+    return this.receiver && this.receiver.photoURL
+      ? this.receiver.photoURL
       : DEFAULT_PROFILE_IMAGE;
   }
 
@@ -121,7 +121,7 @@ export default class ChatUser extends Vue {
       .doc(this.$route.params.id)
       .onSnapshot(snapshot => {
         if (snapshot.exists) {
-          this.receiver = { uid: snapshot.id, data: snapshot.data() as any };
+          this.receiver = { uid: snapshot.id, ...(snapshot.data() as any) };
           if (this.usersList && this.receiver) {
             const receiverId = this.receiver.uid;
             const newUserlist = this.usersList;

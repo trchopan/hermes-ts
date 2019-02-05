@@ -3,9 +3,8 @@
     align-center
     justify-center
   >
-    <Recaptcha @ready="finishLoadingRecaptcha = true"/>
+    <Recaptcha @verifier="registerRecaptcha($event)"/>
     <v-flex
-      v-if="finishLoadingRecaptcha"
       xs12
       sm6
       md4
@@ -123,15 +122,14 @@ import { Watch } from "vue-property-decorator";
 import { IMappedLanguage } from "@/store/root.models";
 import {
   AUTH_LANGUAGES,
-  IRecaptchaData,
-  PHONE_COUNTRY_CODE
+  PHONE_COUNTRY_CODE,
+  AUTH_ROUTE
 } from "@/app/auth/auth.models";
 import Recaptcha from "@/app/auth/Recaptcha.vue";
 import { ITextFieldRule } from "@/app/shared/types";
 import { fireAuth } from "@/firebase";
 import { ROOT_ACTIONS } from "@/store/root.store";
-import { AUTH_ROUTE } from "@/app/auth/auth.routes";
-import { CHAT_ROUTE } from "@/app/chat/chat.routes";
+import { CHAT_ROUTE } from "@/app/chat/chat.models";
 
 @Component({
   name: "AuthSignInPhone",
@@ -140,12 +138,10 @@ import { CHAT_ROUTE } from "@/app/chat/chat.routes";
 export default class AuthSignInPhone extends Vue {
   @Getter("$t")
   public $t!: IMappedLanguage;
-  @State("recaptcha")
-  public recaptcha!: IRecaptchaData;
   @State("user")
   public user!: firebase.User;
+  public verifier!: firebase.auth.RecaptchaVerifier;
   public authRoute = AUTH_ROUTE;
-  public finishLoadingRecaptcha: boolean = false;
   public formValid: boolean = true;
   public phone: string = "";
   public phoneRules: ITextFieldRule[] = [];
@@ -166,6 +162,10 @@ export default class AuthSignInPhone extends Vue {
     }
   }
 
+  public registerRecaptcha(recaptchaVerifier: firebase.auth.RecaptchaVerifier) {
+    this.verifier = recaptchaVerifier;
+  }
+
   public async submit() {
     if ((this.$refs.signInForm as any).validate()) {
       const phoneNumber = PHONE_COUNTRY_CODE + this.phone.replace(/^0/, "");
@@ -177,7 +177,7 @@ export default class AuthSignInPhone extends Vue {
         );
         this.confirmationResult = await fireAuth.signInWithPhoneNumber(
           phoneNumber,
-          this.recaptcha.verifier
+          this.verifier
         );
         this.phoneNumberSubmited = true;
         this.$store.dispatch(ROOT_ACTIONS.finishLoading);

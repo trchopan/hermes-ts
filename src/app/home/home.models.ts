@@ -1,6 +1,7 @@
+// tslint:disable:max-line-length
 import { ILanguageMap } from "@/store/root.models";
 
-// tslint:disable:max-line-length
+export const HOME_ROUTE = "/";
 
 export const HOME_LANGUAGES: ILanguageMap = {
   greeting: {

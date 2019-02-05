@@ -3,9 +3,8 @@
     align-center
     justify-center
   >
-    <Recaptcha @ready="finishLoadingRecaptcha = true"/>
+    <Recaptcha/>
     <v-flex
-      v-if="finishLoadingRecaptcha"
       xs12
       sm6
       md4
@@ -55,7 +54,6 @@
               form="sign-up-form"
               color="secondary"
               type="submit"
-              :loading="loading"
             >{{ $t.signIn }}</v-btn>
           </v-card-actions>
         </v-form>
@@ -80,11 +78,10 @@ import Recaptcha from "@/app/auth/Recaptcha.vue";
 import { IMappedLanguage } from "@/store/root.models";
 import { ITextFieldRule } from "@/app/shared/types";
 import { validateEmail } from "@/app/shared/validate-email.helper";
-import { IRecaptchaData } from "@/app/auth/auth.models";
 import { fireAuth } from "@/firebase";
-import { AUTH_SIGN_UP_EMAIL_ROUTE, AUTH_ROUTE } from "@/app/auth/auth.routes";
 import { ROOT_ACTIONS } from "@/store/root.store";
-import { CHAT_ROUTE } from "@/app/chat/chat.routes";
+import { AUTH_ROUTE, AUTH_SIGN_UP_EMAIL_ROUTE } from "@/app/auth/auth.models";
+import { CHAT_ROUTE } from "@/app/chat/chat.models";
 
 @Component({
   name: "AuthSignInEmail",
@@ -93,28 +90,15 @@ import { CHAT_ROUTE } from "@/app/chat/chat.routes";
 export default class AuthSignInEmail extends Vue {
   @Getter("$t")
   public $t!: IMappedLanguage;
-  @State("recaptcha")
-  public recaptcha!: IRecaptchaData;
   @State("user")
   public user!: firebase.User;
   public authRoute = AUTH_ROUTE;
   public signUpEmailRoute = AUTH_SIGN_UP_EMAIL_ROUTE;
-  public finishLoadingRecaptcha: boolean = false;
   public fromValid: boolean = true;
   public email: string = "";
   public password: string = "";
   public emailRules: ITextFieldRule[] = [];
   public passwordRules: ITextFieldRule[] = [];
-
-  private _loading: boolean = false;
-
-  get loading(): boolean {
-    return !(this.recaptcha && !!this.recaptcha.verifier) || this._loading;
-  }
-
-  set loading(value: boolean) {
-    this._loading = value;
-  }
 
   public created() {
     this.emailRules = [v => validateEmail(v) || this.$t.invalidEmail];

@@ -60,6 +60,17 @@ export const parseProfile = (data: any): IProfile => ({
   contacts: data.contacts !== undefined ? data.contacts : []
 });
 
+export const parseUser = (user: any): IUser | null =>
+  user
+    ? {
+        uid: user.uid,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        email: user.email,
+        phoneNumber: user.phoneNumber
+      }
+    : null;
+
 export interface IProfile {
   init: boolean;
   contacts: string[];
@@ -67,10 +78,8 @@ export interface IProfile {
 
 export interface IUser {
   uid: string;
-  data: {
-    displayName: string;
-    photoURL: string;
-    email: string;
-    phoneNumber: string;
-  } | null;
+  displayName: string | null;
+  photoURL: string | null;
+  email: string | null;
+  phoneNumber: string | null;
 }

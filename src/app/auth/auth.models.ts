@@ -1,6 +1,12 @@
 // tslint:disable:max-line-length
 import { ILanguageMap } from "@/store/root.models";
 
+export const AUTH_ROUTE = "/auth";
+export const AUTH_SIGN_UP_EMAIL_ROUTE = "/sign-up-email";
+export const AUTH_SIGN_IN_EMAIL_ROUTE = "/sign-in-email";
+export const AUTH_SIGN_IN_PHONE_ROUTE = "/sign-in-phone";
+export const AUTH_SIGN_OUT_ROUTE = "/sign-out";
+
 export const AUTH_LANGUAGES: ILanguageMap = {
   auth: {
     vi: "Hệ thống xác thực tài khoản",
@@ -166,9 +172,3 @@ export const AUTH_LANGUAGES: ILanguageMap = {
 };
 
 export const PHONE_COUNTRY_CODE = "+84";
-
-export interface IRecaptchaData {
-  verifier: firebase.auth.RecaptchaVerifier;
-  widgetId: number;
-  token: string;
-}

@@ -1,5 +1,6 @@
 import { ILanguageMap } from "@/store/root.models";
-import { CHAT_ROUTE } from "@/app/chat/chat.routes";
+import { CHAT_ROUTE } from "@/app/chat/chat.models";
+import { HOME_ROUTE } from "@/app/home/home.models";
 
 export const APP_LANGUAGES: ILanguageMap = {
   home: {
@@ -52,12 +53,10 @@ export interface IDrawerItem {
 }
 
 export const DRAWER_ITEMS: IDrawerItem[] = [
-  { path: "/", name: "home", icon: "home" },
+  { path: HOME_ROUTE, name: "home", icon: "home" },
   {
     name: "playground",
     icon: "dashboard",
-    children: [
-      { path: CHAT_ROUTE, name: "chat" }
-    ]
+    children: [{ path: CHAT_ROUTE, name: "chat" }]
   }
 ];

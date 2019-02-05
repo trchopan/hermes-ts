@@ -58,8 +58,8 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import { Route } from "vue-router";
 import { SKILLS } from "./home.models";
-import { IMappedLanguage } from '@/store/root.models';
-import { Getter } from 'vuex-class';
+import { IMappedLanguage } from "@/store/root.models";
+import { Getter } from "vuex-class";
 
 @Component({
   name: "Home"

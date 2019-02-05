@@ -55,12 +55,13 @@ import {
   LANGUAGE_SETTINGS,
   THEME_SETTINGS,
   IThemeSetting,
-  IMappedLanguage
+  IMappedLanguage,
+  ILanguage
 } from "@/store/root.models";
 import { ROOT_ACTIONS } from "@/store/root.store";
 import Component from "vue-class-component";
 import { State, Getter } from "vuex-class";
-import { AUTH_SIGN_OUT_ROUTE } from "@/app/auth/auth.routes";
+import { AUTH_SIGN_OUT_ROUTE } from "@/app/auth/auth.models";
 
 @Component({
   name: "AppToolbarMenu"
@@ -68,6 +69,8 @@ import { AUTH_SIGN_OUT_ROUTE } from "@/app/auth/auth.routes";
 export default class AppToolbarMenu extends Vue {
   @Getter("$t")
   public $t!: IMappedLanguage;
+  @State("language")
+  public language!: ILanguage;
   @State("theme")
   public theme!: IThemeSetting;
   @State("user")

@@ -1,6 +1,10 @@
 // tslint:disable:max-line-length
 import { ILanguageMap } from "@/store/root.models";
 
+export const CHAT_ROUTE = "/chat";
+export const CHAT_ROOM_ROUTE = "room/:id";
+export const CHAT_USER_ROUTE = "user/:id";
+
 export const CHAT_LANGUAGES: ILanguageMap = {
   // Chat
   clickChatRoomIcon: {

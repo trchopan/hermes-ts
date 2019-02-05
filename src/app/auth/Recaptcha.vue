@@ -5,11 +5,10 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import { firebaseApp, ReCaptchaVerifier } from "@/firebase";
 import { ROOT_ACTIONS } from "@/store/root.store";
 import { Getter } from "vuex-class";
 import { IMappedLanguage } from "@/store/root.models";
-import { IRecaptchaData, AUTH_LANGUAGES } from "@/app/auth/auth.models";
+import { ReCaptchaVerifier } from "@/firebase";
 
 @Component({
   name: "Recaptcha"
@@ -17,9 +16,10 @@ import { IRecaptchaData, AUTH_LANGUAGES } from "@/app/auth/auth.models";
 export default class Recaptcha extends Vue {
   @Getter("$t")
   public $t!: IMappedLanguage;
+  public verifier!: firebase.auth.RecaptchaVerifier;
 
   public async mounted() {
-    const verifier = new ReCaptchaVerifier("recaptcha-container", {
+    this.verifier = new ReCaptchaVerifier("recaptcha-container", {
       size: "invisible"
     });
     this.$store.dispatch(
@@ -27,16 +27,10 @@ export default class Recaptcha extends Vue {
       this.$t.verifyRecaptcha
     );
     try {
-      const widgetId = await verifier.render();
-      const token = await verifier.verify();
-      const data: IRecaptchaData = {
-        verifier,
-        widgetId,
-        token
-      };
-      this.$store.dispatch(ROOT_ACTIONS.registerRecaptcha, data);
-      this.$emit("ready", true);
+      const widgetId = await this.verifier.render();
+      const token = await this.verifier.verify();
       this.$store.dispatch(ROOT_ACTIONS.finishLoading);
+      this.$emit("verifier", this.verifier);
     } catch (error) {
       error.message = this.$t.errorRegisterCaptcha;
       this.$store.dispatch(ROOT_ACTIONS.changeError, error);
@@ -44,7 +38,7 @@ export default class Recaptcha extends Vue {
   }
 
   public destroyed() {
-    this.$store.dispatch(ROOT_ACTIONS.registerRecaptcha, undefined);
+    this.verifier.clear();
   }
 }
 </script>

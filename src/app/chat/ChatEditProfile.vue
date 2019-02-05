@@ -113,9 +113,9 @@ import {
 } from "@/app/chat/chat.models";
 import { Watch } from "vue-property-decorator";
 import { ITextFieldRule } from "@/app/shared/types";
-import { AUTH_SIGN_OUT_ROUTE } from "@/app/auth/auth.routes";
 import { ROOT_ACTIONS } from "@/store/root.store";
-import { fireStore } from "@/firebase";
+import { fireStore, fireAuth } from "@/firebase";
+import { AUTH_SIGN_OUT_ROUTE } from "@/app/auth/auth.models";
 
 @Component({
   name: "ChatEditProfile"
@@ -160,7 +160,10 @@ export default class ChatEditProfile extends Vue {
   }
 
   public async update() {
-    if ((this.$refs.editProfileForm as any).validate()) {
+    if (
+      (this.$refs.editProfileForm as any).validate() &&
+      fireAuth.currentUser
+    ) {
       try {
         this.$store.dispatch(
           ROOT_ACTIONS.changeLoadingMessage,
@@ -174,7 +177,7 @@ export default class ChatEditProfile extends Vue {
           .collection(USERS_COLLECTION)
           .doc(this.user.uid)
           .update(data);
-        await this.user.updateProfile(data);
+        await fireAuth.currentUser.updateProfile(data);
         this.$store.dispatch(ROOT_ACTIONS.finishLoading);
         this.dialogOpen = false;
       } catch (error) {

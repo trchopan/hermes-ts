@@ -52,11 +52,12 @@ import { State, Getter } from "vuex-class";
 import { IUser, IProfile, IMappedLanguage } from "@/store/root.models";
 import {
   CHATROOMS_COLLECTION,
-  DEFAULT_PROFILE_IMAGE
+  DEFAULT_PROFILE_IMAGE,
+CHAT_ROUTE,
+CHAT_USER_ROUTE
 } from "@/app/chat/chat.models";
 import ChatAddContact from "@/app/chat/ChatAddContact.vue";
 import { fireStore } from "@/firebase";
-import { CHAT_ROUTE, CHAT_USER_ROUTE } from "@/app/chat/chat.routes";
 import { ROOT_ACTIONS } from "@/store/root.store";
 
 @Component({

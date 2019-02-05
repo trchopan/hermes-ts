@@ -11,7 +11,6 @@ import {
   COMBINED_LANGUAGES_MAP,
   IMappedLanguage
 } from "./root.models";
-import { IRecaptchaData } from "@/app/auth/auth.models";
 
 const log = logger("[rootStore]");
 const logError = logger("[rootStore]", "#ff3333");
@@ -21,7 +20,6 @@ export const ROOT_ACTIONS = {
   changeLanguage: "changeLanguage",
   changeTheme: "changeTheme",
   toggleDrawer: "toggleDrawer",
-  registerRecaptcha: "registerRecaptcha",
   changeUser: "changeUser",
   changeUserProfile: "changeUserProfile",
   changeUsersList: "changeUsersList",
@@ -36,8 +34,7 @@ export interface RootState {
   theme: IThemeSetting;
   drawerOpen: boolean;
   language: ILanguageSetting;
-  recaptcha: IRecaptchaData | undefined;
-  user: firebase.User | null;
+  user: IUser | null;
   userProfile: IProfile | null;
   usersList: IUser[] | null;
   loadingMessage: string | null;
@@ -50,7 +47,6 @@ export const initState: RootState = {
   theme: THEME_SETTINGS[0], // Light theme
   drawerOpen: false,
   language: LANGUAGE_SETTINGS[0], // Vietnamese
-  recaptcha: undefined,
   user: null,
   userProfile: null,
   usersList: null,
@@ -97,9 +93,7 @@ export const actions: ActionTree<RootState, RootState> = {
   [ROOT_ACTIONS.changeTheme]: ({ commit }, theme) =>
     commit("themeChanged", theme),
   [ROOT_ACTIONS.toggleDrawer]: ({ commit }) => commit("drawerToggled"),
-  [ROOT_ACTIONS.registerRecaptcha]: ({ commit }, data: IRecaptchaData) =>
-    commit("captchaTokenRegistered", data),
-  [ROOT_ACTIONS.changeUser]: ({ commit }, user: firebase.User) =>
+  [ROOT_ACTIONS.changeUser]: ({ commit }, user: IUser | null) =>
     commit("userChanged", user),
   [ROOT_ACTIONS.changeUserProfile]: ({ commit }, userProfile: IProfile) =>
     commit("userProfileChanged", userProfile),
@@ -140,11 +134,7 @@ export const mutations: MutationTree<RootState> = {
     state.drawerOpen = !state.drawerOpen;
     log("Drawer toggled", state.drawerOpen);
   },
-  captchaTokenRegistered(state, data: IRecaptchaData) {
-    state.recaptcha = data;
-    log("Captcha data registered", state.recaptcha);
-  },
-  userChanged(state, user: firebase.User) {
+  userChanged(state, user: IUser | null) {
     state.user = user;
     log("User changed", state.user);
   },
