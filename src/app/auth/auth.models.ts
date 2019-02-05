@@ -1,5 +1,5 @@
 // tslint:disable:max-line-length
-import { ILanguageMap } from "@/plugins/translate";
+import { ILanguageMap } from "@/store/root.models";
 
 export const AUTH_LANGUAGES: ILanguageMap = {
   auth: {

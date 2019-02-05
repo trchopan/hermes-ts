@@ -84,9 +84,9 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { State, Getter } from "vuex-class";
-import { AUTH_LANGUAGES, IRecaptchaData } from "@/app/auth/auth.models";
+import { IRecaptchaData } from "@/app/auth/auth.models";
 import { Watch } from "vue-property-decorator";
-import { ILanguageSetting, IMappedLanguage } from "@/store/root.models";
+import { IMappedLanguage } from "@/store/root.models";
 import { validateEmail } from "@/app/shared/validate-email.helper";
 import { ITextFieldRule } from "@/app/shared/types";
 import { fireAuth, ReCaptchaVerifier } from "@/firebase";

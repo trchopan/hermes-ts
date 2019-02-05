@@ -80,7 +80,7 @@ import Recaptcha from "@/app/auth/Recaptcha.vue";
 import { ILanguageSetting, IMappedLanguage } from "@/store/root.models";
 import { ITextFieldRule } from "@/app/shared/types";
 import { validateEmail } from "@/app/shared/validate-email.helper";
-import { AUTH_LANGUAGES, IRecaptchaData } from "@/app/auth/auth.models";
+import { IRecaptchaData } from "@/app/auth/auth.models";
 import { fireAuth } from "@/firebase";
 import { AUTH_SIGN_UP_EMAIL_ROUTE, AUTH_ROUTE } from "@/app/auth/auth.routes";
 import { ROOT_ACTIONS } from "@/store/root.store";
