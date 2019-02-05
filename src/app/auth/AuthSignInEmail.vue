@@ -77,7 +77,7 @@ import Component from "vue-class-component";
 import { State, Getter } from "vuex-class";
 import { Watch } from "vue-property-decorator";
 import Recaptcha from "@/app/auth/Recaptcha.vue";
-import { ILanguageSetting, IMappedLanguage } from "@/store/root.models";
+import { IMappedLanguage } from "@/store/root.models";
 import { ITextFieldRule } from "@/app/shared/types";
 import { validateEmail } from "@/app/shared/validate-email.helper";
 import { IRecaptchaData } from "@/app/auth/auth.models";

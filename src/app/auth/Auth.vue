@@ -67,7 +67,6 @@ import {
   LANGUAGE_SETTINGS,
   IMappedLanguage
 } from "@/store/root.models";
-import { ILanguageMap } from "@/plugins/translate";
 import {
   AUTH_SIGN_UP_EMAIL_ROUTE,
   AUTH_SIGN_IN_EMAIL_ROUTE,
@@ -82,8 +81,6 @@ import { fireAuth } from "@/firebase";
 export default class Auth extends Vue {
   @Getter("$t")
   public $t!: IMappedLanguage;
-  @State("language")
-  public language!: ILanguageSetting;
   @State("user")
   public user!: firebase.User;
   public signUpEmailRoute: string = AUTH_SIGN_UP_EMAIL_ROUTE;

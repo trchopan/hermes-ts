@@ -30,7 +30,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { State, Getter } from "vuex-class";
-import { ILanguageSetting, IError, IMappedLanguage } from "@/store/root.models";
+import { IError, IMappedLanguage } from "@/store/root.models";
 import { ROOT_ACTIONS } from "@/store/root.store";
 
 @Component({

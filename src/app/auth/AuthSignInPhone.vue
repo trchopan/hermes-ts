@@ -120,7 +120,7 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import { State, Getter } from "vuex-class";
 import { Watch } from "vue-property-decorator";
-import { ILanguageSetting, IMappedLanguage } from "@/store/root.models";
+import { IMappedLanguage } from "@/store/root.models";
 import {
   AUTH_LANGUAGES,
   IRecaptchaData,

@@ -55,7 +55,6 @@ import {
   LANGUAGE_SETTINGS,
   THEME_SETTINGS,
   IThemeSetting,
-  ILanguageSetting,
   IMappedLanguage
 } from "@/store/root.models";
 import { ROOT_ACTIONS } from "@/store/root.store";

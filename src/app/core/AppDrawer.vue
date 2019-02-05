@@ -56,11 +56,8 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import { State, Getter } from "vuex-class";
 import { ROOT_ACTIONS } from "@/store/root.store";
-import { ILanguageSetting, IMappedLanguage } from "@/store/root.models";
-import {
-  IDrawerItem,
-  DRAWER_ITEMS
-} from "@/app/core/app.models";
+import { IMappedLanguage } from "@/store/root.models";
+import { IDrawerItem, DRAWER_ITEMS } from "@/app/core/app.models";
 
 export const mapper = (item: IDrawerItem, languageMap: IMappedLanguage) => ({
   ...item,

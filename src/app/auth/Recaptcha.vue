@@ -7,9 +7,8 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import { firebaseApp, ReCaptchaVerifier } from "@/firebase";
 import { ROOT_ACTIONS } from "@/store/root.store";
-import { State, Getter } from "vuex-class";
-import { ILanguageSetting, IMappedLanguage } from "@/store/root.models";
-import { ILanguageMap } from "@/plugins/translate";
+import { Getter } from "vuex-class";
+import { IMappedLanguage } from "@/store/root.models";
 import { IRecaptchaData, AUTH_LANGUAGES } from "@/app/auth/auth.models";
 
 @Component({
@@ -18,8 +17,6 @@ import { IRecaptchaData, AUTH_LANGUAGES } from "@/app/auth/auth.models";
 export default class Recaptcha extends Vue {
   @Getter("$t")
   public $t!: IMappedLanguage;
-  @State("language")
-  public language!: ILanguageSetting;
 
   public async mounted() {
     const verifier = new ReCaptchaVerifier("recaptcha-container", {
