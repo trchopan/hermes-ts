@@ -2,34 +2,35 @@ import { IUser, USERS_COLLECTION, parseUser } from "@/store/root.models";
 import { IChatContent, CHATROOMS_COLLECTION } from "./chat.models";
 import { GetterTree, ActionTree, MutationTree } from "vuex";
 import { RootState } from "@/store/root.store";
-import { fireStore, fireFunctions } from "@/firebase";
-import { logger } from "../shared/logger.helper";
+import { fireStore } from "@/firebase";
 
-export const chatStoreNamespace = "chatStore";
-const log = logger(`[${chatStoreNamespace}]`, "#020099");
-const listUsersCallable = fireFunctions.httpsCallable("listUsers");
+export const chatStoreNamespace = "[chat]";
+// const listUsersCallable = fireFunctions.httpsCallable("listUsers");
 
 export const CHAT_ACTIONS = {
-  subscribeChatsList: `${chatStoreNamespace}/subscribeChatsList`,
-  subscribeContactList: `${chatStoreNamespace}/subscribeContactList`,
-  changeContactList: `${chatStoreNamespace}/changeContactList`
+  subscribeChatsList: "subscribeChatsList",
+  subscribeContactList: "subscribeContactList",
+  changeContactList: "changeContactLis"
 };
 
 const CHAT_MUTATIONS = {
-  contactChangedAtIndex: "contactChangedAtIndex"
+  contactAdded: "contactAdded",
+  contactListCleared: "contactListCleared"
 };
 
 interface ChatState {
-  contactsList: IUser[];
-  currentReceiverId: string | null;
+  contactIds: string[];
+  contactDetails: { [key: string]: IUser };
+  currentReceiverId: string;
   chatsList: any[];
   currentChat: IChatContent[];
   scrollChatBottomState: boolean;
 }
 
 const initState: ChatState = {
-  contactsList: [],
-  currentReceiverId: null,
+  contactIds: [],
+  contactDetails: {},
+  currentReceiverId: "",
   chatsList: [],
   currentChat: [],
   scrollChatBottomState: false
@@ -37,7 +38,8 @@ const initState: ChatState = {
 
 const getters: GetterTree<ChatState, RootState> = {
   currentReceiver: (state) =>
-    state.contactsList.find((x) => x.uid === state.currentReceiverId)
+    state.contactDetails ? state.contactDetails[state.currentReceiverId] : null,
+  contacts: (state) => Object.values(state.contactDetails)
 };
 
 const actions = (): ActionTree<ChatState, RootState> => {
@@ -47,7 +49,7 @@ const actions = (): ActionTree<ChatState, RootState> => {
   return {
     [CHAT_ACTIONS.subscribeContactList]: ({ commit, rootState }) => {
       if (!rootState.user) {
-        log("no user found");
+        // No user found
         return;
       }
       const userId = rootState.user.uid;
@@ -63,7 +65,6 @@ const actions = (): ActionTree<ChatState, RootState> => {
         .where(userId, "==", true)
         .onSnapshot((chatRoom) => {
           if (!chatRoom.empty) {
-            let keys: string[] = [];
             chatRoom.docs
               .sort((a, b) => {
                 if (a.data().timestamp && b.data().timestamp) {
@@ -72,22 +73,22 @@ const actions = (): ActionTree<ChatState, RootState> => {
                   return -9999999;
                 }
               })
-              .forEach((doc) => (keys = keys.concat(Object.keys(doc.data()))));
-
-            const contactIds = keys.filter((x) => x !== userId);
-            contactIds.forEach((id, index) => {
-              contactsListSnapshots[index] = fireStore
-                .collection(USERS_COLLECTION)
-                .doc(id)
-                .onSnapshot((user) => {
-                  if (user.exists) {
-                    commit(CHAT_MUTATIONS.contactChangedAtIndex, {
-                      index,
-                      user: parseUser(user.id, user.data())
-                    });
-                  }
-                });
-            });
+              .map((doc) => Object.keys(doc.data()))
+              .flat()
+              .filter((x) => x !== userId)
+              .forEach((id, index) => {
+                contactsListSnapshots[index] = fireStore
+                  .collection(USERS_COLLECTION)
+                  .doc(id)
+                  .onSnapshot((user) => {
+                    if (user.exists) {
+                      commit(
+                        CHAT_MUTATIONS.contactAdded,
+                        parseUser(user.id, user.data())
+                      );
+                    }
+                  });
+              });
           }
         });
     }
@@ -95,14 +96,16 @@ const actions = (): ActionTree<ChatState, RootState> => {
 };
 
 const mutations: MutationTree<ChatState> = {
-  [CHAT_MUTATIONS.contactChangedAtIndex](state, { index, user }) {
-    state.contactsList[index] = user;
-    log(CHAT_MUTATIONS.contactChangedAtIndex, index, user);
+  [CHAT_MUTATIONS.contactAdded](state, user: IUser) {
+    if (!state.contactDetails[user.uid]) {
+      state.contactIds.push(user.uid);
+    }
+    state.contactDetails = { ...state.contactDetails, [user.uid]: user };
   }
 };
 
 export default {
-  namespace: chatStoreNamespace,
+  namespaced: true,
   state: initState,
   getters,
   actions: actions(),
