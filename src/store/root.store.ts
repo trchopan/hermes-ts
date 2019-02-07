@@ -12,8 +12,7 @@ import {
   IMappedLanguage
 } from "./root.models";
 
-const log = logger("[rootStore]");
-const logError = logger("[rootStore]", "#ff3333");
+export const rootStoreNamespace = "[root]";
 
 export const ROOT_ACTIONS = {
   initializeApp: "initializeApp",
@@ -27,6 +26,18 @@ export const ROOT_ACTIONS = {
   finishLoading: "finishLoading",
   changeError: "changeError",
   clearError: "clearError"
+};
+
+export const ROOT_MUTATIONS = {
+  localStorageAvailable: "localStorageAvailable",
+  themeChanged: "themeChanged",
+  languageChanged: "languageChanged",
+  drawerToggled: "drawerToggled",
+  userChanged: "userChanged",
+  userProfileChanged: "userProfileChanged",
+  usersListChanged: "usersListChanged",
+  loadingMessageChanged: "loadingMessageChanged",
+  errorChanged: "errorChange"
 };
 
 export interface RootState {
@@ -73,7 +84,7 @@ export const getters: GetterTree<RootState, RootState> = {
 export const actions: ActionTree<RootState, RootState> = {
   [ROOT_ACTIONS.initializeApp]: ({ commit, dispatch }) => {
     if (window.localStorage !== undefined) {
-      commit("localStorageAvailable");
+      commit(ROOT_MUTATIONS.localStorageAvailable, true);
       const theme = localStorage.getItem("theme");
       if (theme) {
         dispatch(ROOT_ACTIONS.changeTheme, JSON.parse(theme));
@@ -83,78 +94,67 @@ export const actions: ActionTree<RootState, RootState> = {
         dispatch(ROOT_ACTIONS.changeLanguage, JSON.parse(language));
       }
     } else {
-      log("No Web Storage support");
+      commit(ROOT_MUTATIONS.localStorageAvailable, true);
     }
   },
   [ROOT_ACTIONS.changeLanguage]: ({ commit }, language: ILanguageSetting) => {
-    commit("languageChanged", language);
+    commit(ROOT_MUTATIONS.languageChanged, language);
   },
   [ROOT_ACTIONS.changeTheme]: ({ commit }, theme) =>
-    commit("themeChanged", theme),
-  [ROOT_ACTIONS.toggleDrawer]: ({ commit }) => commit("drawerToggled"),
+    commit(ROOT_MUTATIONS.themeChanged, theme),
+  [ROOT_ACTIONS.toggleDrawer]: ({ commit }) =>
+    commit(ROOT_MUTATIONS.drawerToggled),
   [ROOT_ACTIONS.changeUser]: ({ commit }, user: IUser | null) =>
-    commit("userChanged", user),
+    commit(ROOT_MUTATIONS.userChanged, user),
   [ROOT_ACTIONS.changeUserProfile]: ({ commit }, userProfile: IProfile) =>
-    commit("userProfileChanged", userProfile),
-  [ROOT_ACTIONS.changeUsersList]: ({ commit }, usersList: IUser[]) => {
-    commit("usersListChanged", usersList);
-  },
+    commit(ROOT_MUTATIONS.userProfileChanged, userProfile),
   [ROOT_ACTIONS.changeLoadingMessage]: ({ commit }, message: string | null) =>
-    commit("loadingMessageChanged", message),
+    commit(ROOT_MUTATIONS.loadingMessageChanged, message),
   [ROOT_ACTIONS.finishLoading]: ({ commit }) =>
-    commit("loadingMessageChanged", null),
+    commit(ROOT_MUTATIONS.loadingMessageChanged, null),
   [ROOT_ACTIONS.changeError]: ({ commit, dispatch }, error: IError | null) => {
     dispatch(ROOT_ACTIONS.finishLoading);
-    commit("errorChanged", error);
+    commit(ROOT_MUTATIONS.errorChanged, error);
   },
-  [ROOT_ACTIONS.clearError]: ({ commit }) => commit("errorChanged", null)
+  [ROOT_ACTIONS.clearError]: ({ commit }) =>
+    commit(ROOT_MUTATIONS.errorChanged, null)
 };
 
 export const mutations: MutationTree<RootState> = {
-  localStorageAvailable(state) {
-    state.localStorageStatus = true;
-    log("LocalStorage available");
+  [ROOT_MUTATIONS.localStorageAvailable](state, status) {
+    state.localStorageStatus = status;
   },
-  themeChanged(state, theme: IThemeSetting) {
+  [ROOT_MUTATIONS.themeChanged](state, theme: IThemeSetting) {
     state.theme = theme;
     if (state.localStorageStatus) {
       localStorage.setItem("theme", JSON.stringify(theme));
     }
-    log("Theme changed", theme);
   },
-  languageChanged(state, language: ILanguageSetting) {
+  [ROOT_MUTATIONS.languageChanged](state, language: ILanguageSetting) {
     state.language = language;
     if (state.localStorageStatus) {
       localStorage.setItem("language", JSON.stringify(language));
     }
-    log("Language changed", language);
   },
-  drawerToggled(state) {
+  [ROOT_MUTATIONS.drawerToggled](state) {
     state.drawerOpen = !state.drawerOpen;
-    log("Drawer toggled", state.drawerOpen);
   },
-  userChanged(state, user: IUser | null) {
+  [ROOT_MUTATIONS.userChanged](state, user: IUser | null) {
     state.user = user;
-    log("User changed", state.user);
   },
-  userProfileChanged(state, userProfile: IProfile) {
+  [ROOT_MUTATIONS.userProfileChanged](state, userProfile: IProfile) {
     state.userProfile = userProfile;
-    log("User profile changed", state.userProfile);
   },
-  usersListChanged(state, usersList: IUser[]) {
+  [ROOT_MUTATIONS.usersListChanged](state, usersList: IUser[]) {
     state.usersList = usersList;
-    log("Users list changed", state.usersList);
   },
-  loadingMessageChanged(state, message: string | null) {
+  [ROOT_MUTATIONS.loadingMessageChanged](state, message: string | null) {
     state.loadingMessage = message;
-    log("Loading message changed", state.loadingMessage);
   },
-  errorChanged(state, error: IError | null) {
-    state.error = error;
-    logError(
-      "Error changed",
-      state.error ? `${state.error.code}: ${state.error.message}` : null
-    );
+  [ROOT_MUTATIONS.errorChanged](state, error: IError | null) {
+    state.error = state.error
+      ? { code: state.error.code, message: state.error.message }
+      : null;
   }
 };
 
