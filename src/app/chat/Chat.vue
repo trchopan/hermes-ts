@@ -40,7 +40,7 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import { State, Getter } from "vuex-class";
+import { State, Getter, namespace } from "vuex-class";
 import {
   USERS_COLLECTION,
   parseProfile,
@@ -52,7 +52,10 @@ import ChatEditProfile from "./ChatEditProfile.vue";
 import ChatInput from "./ChatInput.vue";
 import { fireStore, fireFunctions } from "@/firebase";
 import { ROOT_ACTIONS } from "@/store/root.store";
-import { CHAT_ACTIONS } from "@/app/chat/chat.store";
+import { CHAT_ACTIONS, chatStoreNamespace } from "@/app/chat/chat.store";
+import { AUTH_ROUTE } from "@/app/auth/auth.models";
+
+const chatStore = namespace(chatStoreNamespace);
 
 @Component({
   name: "Chat",
@@ -66,14 +69,15 @@ export default class Chat extends Vue {
   @Getter
   public $t!: IMappedLanguage;
   @State
-  public user!: firebase.User;
-  public listUsersCallable = fireFunctions.httpsCallable("listUsers");
+  public user!: IUser;
+  @chatStore.Action(CHAT_ACTIONS.subscribeContactList)
+  public subscribeContactList!: () => void;
 
   public async created() {
     if (!this.user) {
-      this.$router.replace("/auth");
+      this.$router.replace(AUTH_ROUTE);
     } else {
-      this.$store.dispatch(CHAT_ACTIONS.subscribeContactList);
+      this.subscribeContactList();
     }
   }
 }
