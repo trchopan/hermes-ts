@@ -14,7 +14,7 @@ import { ReCaptchaVerifier } from "@/firebase";
   name: "Recaptcha"
 })
 export default class Recaptcha extends Vue {
-  @Getter("$t")
+  @Getter
   public $t!: IMappedLanguage;
   public verifier!: firebase.auth.RecaptchaVerifier;
 

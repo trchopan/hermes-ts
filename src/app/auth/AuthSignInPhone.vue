@@ -136,9 +136,9 @@ import { CHAT_ROUTE } from "@/app/chat/chat.models";
   components: { Recaptcha }
 })
 export default class AuthSignInPhone extends Vue {
-  @Getter("$t")
+  @Getter
   public $t!: IMappedLanguage;
-  @State("user")
+  @State
   public user!: firebase.User;
   public verifier!: firebase.auth.RecaptchaVerifier;
   public authRoute = AUTH_ROUTE;

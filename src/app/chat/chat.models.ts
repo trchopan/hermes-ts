@@ -90,17 +90,13 @@ export const CHAT_LANGUAGES: ILanguageMap = {
     vi: "Chủ phòng",
     en: "Owner"
   },
-  usersList: {
-    vi: "Danh sách người dùng",
-    en: "Users list"
+  contactsList: {
+    vi: "Danh bạ",
+    en: "Contacts list"
   },
   noName: {
     vi: "(Chưa có tên)",
     en: "(No name)"
-  },
-  errorGettingUsersList: {
-    vi: "Lỗi truy xuất Danh sách người dùng",
-    en: "Error getting Users list"
   },
   joined: {
     vi: "Tham gia",

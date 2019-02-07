@@ -43,9 +43,9 @@ import { ROOT_ACTIONS } from "@/store/root.store";
   name: "ChatInput"
 })
 export default class ChatInput extends Vue {
-  @Getter("$t")
+  @Getter
   public $t!: IMappedLanguage;
-  @State("user")
+  @State
   public user!: firebase.User;
   @Prop(String)
   public receiverId!: string;
