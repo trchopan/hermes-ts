@@ -6,7 +6,6 @@ describe("[helpers]logger", () => {
   const manualColor = "#ff3333";
   const expectManualFormat =
     "padding: 0 0.3rem;background: #ff3333; color: white;";
-  const message = "Log message";
   const obj1 = null;
   const obj2 = undefined;
   const obj3 = "string";
@@ -17,31 +16,29 @@ describe("[helpers]logger", () => {
   it("log only in development", () => {
     const log = logger(className);
     process.env.NODE_ENV = "development";
-    log(message, obj1, obj2, obj3);
+    log(obj1, obj2, obj3);
     expect(mockConsoleLog).toBeCalled();
     expect(mockConsoleLog).toBeCalledWith(
       "%c" + className,
       defaultFormat,
-      message,
       obj1,
       obj2,
       obj3
     );
     mockConsoleLog.mockReset();
     process.env.NODE_ENV = "production";
-    log(message, obj1, obj2, obj3);
+    log(obj1, obj2, obj3);
     expect(mockConsoleLog).not.toBeCalled();
   });
 
   it("log customed format", () => {
     const log = logger(className, manualColor);
     process.env.NODE_ENV = "development";
-    log(message, obj1, obj2, obj3);
+    log(obj1, obj2, obj3);
     expect(mockConsoleLog).toBeCalled();
     expect(mockConsoleLog).toBeCalledWith(
       "%c" + className,
       expectManualFormat,
-      message,
       obj1,
       obj2,
       obj3

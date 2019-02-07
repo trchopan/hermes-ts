@@ -4,7 +4,6 @@ export const MANUAL_LOGGER_FORMAT =
   "padding: 0 0.3rem;background: {color}; color: white;";
 
 export const logger = (className: string, color?: string) => (
-  message: string,
   ...objects: any[]
 ) => {
   if (process.env.NODE_ENV === "development") {
@@ -14,7 +13,6 @@ export const logger = (className: string, color?: string) => (
       color
         ? MANUAL_LOGGER_FORMAT.replace("{color}", color)
         : DEFAULT_LOGGER_FORMAT,
-      message,
       ...objects
     );
   }
