@@ -56,15 +56,14 @@ export function onAuthCreateHandler(user: UserRecord, context: EventContext) {
     });
 }
 
+/**
+ * Defensively program to split the batch in to chunks
+ */
 export async function handleDeleteChatRooms(
   chatRooms: FirebaseFirestore.QuerySnapshot,
   chunkSize: number,
   firestore: FirebaseFirestore.Firestore
 ) {
-  /**
-   * Defensively program to split the batch in to chunks
-   * Max write per chunk of firestore is 500
-   */
   const chatRoomDeleteBatchs: FirebaseFirestore.WriteBatch[] = [];
   let chatRoomIndex = 0;
   chatRooms.forEach((chatRoom) => {
