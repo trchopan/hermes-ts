@@ -1,5 +1,4 @@
 import { GetterTree, ActionTree, MutationTree } from "vuex";
-import { logger } from "@/app/shared/logger.helper";
 import {
   LANGUAGE_SETTINGS,
   THEME_SETTINGS,
@@ -9,8 +8,11 @@ import {
   IUser,
   IProfile,
   COMBINED_LANGUAGES_MAP,
-  IMappedLanguage
+  IMappedLanguage,
+  USERS_COLLECTION,
+  parseUser
 } from "./root.models";
+import { fireStore, fireFunctions } from "@/firebase";
 
 export const rootStoreNamespace = "[root]";
 
@@ -20,7 +22,7 @@ export const ROOT_ACTIONS = {
   changeTheme: "changeTheme",
   toggleDrawer: "toggleDrawer",
   changeUser: "changeUser",
-  changeUserProfile: "changeUserProfile",
+  editUser: "editUser",
   changeUsersList: "changeUsersList",
   changeLoadingMessage: "changeLoadingMessage",
   finishLoading: "finishLoading",
@@ -45,8 +47,8 @@ export interface RootState {
   theme: IThemeSetting;
   drawerOpen: boolean;
   language: ILanguageSetting;
+  isLoggedIn: boolean;
   user: IUser | null;
-  userProfile: IProfile | null;
   usersList: IUser[] | null;
   loadingMessage: string | null;
   error: IError | null;
@@ -57,8 +59,8 @@ export const initState: RootState = {
   theme: THEME_SETTINGS[0], // Light theme
   drawerOpen: false,
   language: LANGUAGE_SETTINGS[0], // Vietnamese
+  isLoggedIn: false,
   user: null,
-  userProfile: null,
   usersList: null,
   loadingMessage: null,
   error: null
@@ -81,7 +83,12 @@ export const getters: GetterTree<RootState, RootState> = {
     )
 };
 
-export const actions: ActionTree<RootState, RootState> = {
+export const actions = (
+  editUserCallable: firebase.functions.HttpsCallable
+): ActionTree<RootState, RootState> => {
+  let userProfileSnap = () => {};
+
+  return {
   [ROOT_ACTIONS.initializeApp]: ({ commit, dispatch }) => {
     if (window.localStorage !== undefined) {
       commit(ROOT_MUTATIONS.localStorageAvailable, true);
@@ -104,20 +111,64 @@ export const actions: ActionTree<RootState, RootState> = {
     commit(ROOT_MUTATIONS.themeChanged, theme),
   [ROOT_ACTIONS.toggleDrawer]: ({ commit }) =>
     commit(ROOT_MUTATIONS.drawerToggled),
-  [ROOT_ACTIONS.changeUser]: ({ commit }, user: IUser | null) =>
-    commit(ROOT_MUTATIONS.userChanged, user),
-  [ROOT_ACTIONS.changeUserProfile]: ({ commit }, userProfile: IProfile) =>
-    commit(ROOT_MUTATIONS.userProfileChanged, userProfile),
+    [ROOT_ACTIONS.changeUser]: (
+      { commit, rootGetters },
+      user: firebase.User | null
+    ) => {
+      if (!user) {
+        commit(ROOT_MUTATIONS.userChanged, null);
+      } else {
+        commit(ROOT_MUTATIONS.userChanged, parseUser(user.uid, user));
+        userProfileSnap();
+        userProfileSnap = fireStore
+          .collection(USERS_COLLECTION)
+          .doc(user.uid)
+          .onSnapshot((userSnap) => {
+            if (userSnap.exists) {
+              const parsedUser = parseUser(userSnap.id, userSnap.data());
+              commit(ROOT_MUTATIONS.userChanged, parsedUser);
+            } else {
+              const error = { message: rootGetters.$t.errorGettingUser };
+              commit(ROOT_ACTIONS.changeError, error);
+            }
+          });
+      }
+    },
+    [ROOT_ACTIONS.editUser]: async (
+      { commit, dispatch, rootState, rootGetters },
+      userProfile: IProfile
+    ) => {
+      if (!rootState.user) {
+        return;
+      }
+      try {
+        await editUserCallable(userProfile);
+        commit(ROOT_MUTATIONS.userChanged, {
+          ...rootState.user,
+          ...userProfile
+        });
+      } catch (error) {
+        error.message = rootGetters.$t.errorEditingUser;
+        dispatch(ROOT_ACTIONS.changeError, error);
+      }
+    },
   [ROOT_ACTIONS.changeLoadingMessage]: ({ commit }, message: string | null) =>
     commit(ROOT_MUTATIONS.loadingMessageChanged, message),
   [ROOT_ACTIONS.finishLoading]: ({ commit }) =>
     commit(ROOT_MUTATIONS.loadingMessageChanged, null),
-  [ROOT_ACTIONS.changeError]: ({ commit, dispatch }, error: IError | null) => {
+    [ROOT_ACTIONS.changeError]: (
+      { commit, dispatch },
+      error: IError | null
+    ) => {
     dispatch(ROOT_ACTIONS.finishLoading);
-    commit(ROOT_MUTATIONS.errorChanged, error);
+      commit(
+        ROOT_MUTATIONS.errorChanged,
+        error ? { code: error.code, message: error.message } : null
+      );
   },
   [ROOT_ACTIONS.clearError]: ({ commit }) =>
     commit(ROOT_MUTATIONS.errorChanged, null)
+};
 };
 
 export const mutations: MutationTree<RootState> = {
@@ -142,9 +193,6 @@ export const mutations: MutationTree<RootState> = {
   [ROOT_MUTATIONS.userChanged](state, user: IUser | null) {
     state.user = user;
   },
-  [ROOT_MUTATIONS.userProfileChanged](state, userProfile: IProfile) {
-    state.userProfile = userProfile;
-  },
   [ROOT_MUTATIONS.usersListChanged](state, usersList: IUser[]) {
     state.usersList = usersList;
   },
@@ -161,6 +209,6 @@ export const mutations: MutationTree<RootState> = {
 export default {
   state: initState,
   getters,
-  actions,
+  actions: actions(fireFunctions.httpsCallable("editUser")),
   mutations
 };
