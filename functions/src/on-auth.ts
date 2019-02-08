@@ -2,10 +2,13 @@ import * as admin from "firebase-admin";
 import { logger } from "./helpers";
 import { UserRecord } from "firebase-functions/lib/providers/auth";
 import { EventContext } from "firebase-functions";
-import { USERS_COLLECTIONS, CHATROOMS_COLLECTIONS } from "./collections";
+import {
+  USERS_COLLECTIONS,
+  CHATROOMS_COLLECTIONS,
+  BATCH_CHUNK_MAX
+} from "./collections";
 
 const log = logger("[onAuth]");
-const CHUNK_MAX = 490;
 
 export async function onAuthDeleteHandler(
   user: UserRecord,
@@ -23,7 +26,7 @@ export async function onAuthDeleteHandler(
     if (!chatRooms.empty) {
       const result = await handleDeleteChatRooms(
         chatRooms,
-        CHUNK_MAX,
+        BATCH_CHUNK_MAX,
         admin.firestore()
       );
 
