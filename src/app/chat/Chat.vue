@@ -41,12 +41,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { State, Getter, namespace } from "vuex-class";
-import {
-  USERS_COLLECTION,
-  parseProfile,
-  IUser,
-  IMappedLanguage
-} from "@/store/root.models";
+import { USERS_COLLECTION, IUser, IMappedLanguage } from "@/store/root.models";
 import ChatRoomDrawer from "./ChatRoomDrawer.vue";
 import ChatEditProfile from "./ChatEditProfile.vue";
 import ChatInput from "./ChatInput.vue";
