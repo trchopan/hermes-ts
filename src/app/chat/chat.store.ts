@@ -43,8 +43,8 @@ const getters: GetterTree<ChatState, RootState> = {
 };
 
 const actions = (): ActionTree<ChatState, RootState> => {
-  const contactsListSnapshots: Array<() => void> = [];
-  let activeChatsSnapshot: () => void;
+  const contactsListSnapshots: { [key: string]: () => void } = {};
+  let activeChatsSnapshot = () => {};
 
   return {
     [CHAT_ACTIONS.subscribeContactList]: ({ commit, rootState }) => {
@@ -53,13 +53,12 @@ const actions = (): ActionTree<ChatState, RootState> => {
         return;
       }
       const userId = rootState.user.uid;
-      if (activeChatsSnapshot !== undefined) {
-        activeChatsSnapshot();
-      }
-      if (contactsListSnapshots && Array.isArray(contactsListSnapshots)) {
-        contactsListSnapshots.forEach((snap) => snap());
-      }
 
+      Object.keys(contactsListSnapshots).forEach((key) =>
+        contactsListSnapshots[key]()
+      );
+      
+      activeChatsSnapshot();
       activeChatsSnapshot = fireStore
         .collection(CHATROOMS_COLLECTION)
         .where(userId, "==", true)
@@ -76,8 +75,8 @@ const actions = (): ActionTree<ChatState, RootState> => {
               .map((doc) => Object.keys(doc.data()))
               .flat()
               .filter((x) => x !== userId)
-              .forEach((id, index) => {
-                contactsListSnapshots[index] = fireStore
+              .forEach((id) => {
+                contactsListSnapshots[id] = fireStore
                   .collection(USERS_COLLECTION)
                   .doc(id)
                   .onSnapshot((user) => {
