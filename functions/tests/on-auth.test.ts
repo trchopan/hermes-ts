@@ -10,17 +10,7 @@ const test = functionsTest(PROJECT_CONFIG, SERVICE_KEY_PATH);
 describe("onAuth", () => {
   const onAuthCreateWrapped = test.wrap(onAuthCreate);
   const onAuthDeleteWrapped = test.wrap(onAuthDelete);
-  const stubUser = { uid: "stub-user-123" };
-  const stubUserProfile = {
-    displayName: "Test User",
-    photoURL: "test.jpg",
-    email: "user@example.com",
-    phoneNumber: "+0123456789"
-  };
-  const stubFirestoreProfile = {
-    ...stubUserProfile,
-    init: false
-  };
+  const stubUser = { uid: "stub-user-123", email: "user@example.com" };
   const userProfileDocRef = admin
     .firestore()
     .collection(USERS_COLLECTIONS)
@@ -28,7 +18,6 @@ describe("onAuth", () => {
   const chatRoomsColRef = admin.firestore().collection(CHATROOMS_COLLECTIONS);
 
   beforeAll(async () => {
-    await userProfileDocRef.set(stubFirestoreProfile);
     const batch = admin.firestore().batch();
     Array(50)
       .fill(1)
@@ -41,10 +30,13 @@ describe("onAuth", () => {
   });
 
   it("creates initial profile in firestore", async () => {
-    await onAuthCreateWrapped({ ...stubUser, ...stubUserProfile });
+    await onAuthCreateWrapped(stubUser);
     const snapUserProfile = await userProfileDocRef.get();
     expect(snapUserProfile.exists).toEqual(true);
-    expect(snapUserProfile.data()).toEqual(stubFirestoreProfile);
+    expect(snapUserProfile.data()).toEqual({
+      email: stubUser.email,
+      phoneNumber: null
+    });
   });
 
   it("deletes the profile and chats in firestore", async () => {
@@ -75,5 +67,6 @@ describe("onAuth", () => {
 
   afterAll(async () => {
     await userProfileDocRef.delete();
+    test.cleanup();
   });
 });
