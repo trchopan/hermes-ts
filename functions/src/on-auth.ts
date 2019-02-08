@@ -52,10 +52,7 @@ export function onAuthCreateHandler(user: UserRecord, context: EventContext) {
     .doc(user.uid)
     .set({
       email: user.email || null,
-      phoneNumber: user.phoneNumber || null,
-      displayName: user.displayName || null,
-      photoURL: user.photoURL || null,
-      init: false
+      phoneNumber: user.phoneNumber || null
     });
 }
 
