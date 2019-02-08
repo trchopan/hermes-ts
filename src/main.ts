@@ -21,10 +21,7 @@ router.beforeEach(globalGuard(store));
 
 let inited = false;
 fireAuth.onAuthStateChanged((user) => {
-  store.dispatch(
-    ROOT_ACTIONS.changeUser,
-    user ? parseUser(user.uid, user) : null
-  );
+  store.dispatch(ROOT_ACTIONS.changeUser, user);
   if (!inited) {
     init();
   }

@@ -56,11 +56,11 @@ export const THEME_SETTINGS: IThemeSetting[] = [
 export const USERS_COLLECTION = "users";
 
 export const parseUser = (uid: string, user: any): IUser => ({
-        uid,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-        email: user.email,
-        phoneNumber: user.phoneNumber
+  uid,
+  displayName: user.displayName,
+  photoURL: user.photoURL,
+  email: user.email,
+  phoneNumber: user.phoneNumber
 });
 
 export interface IProfile {

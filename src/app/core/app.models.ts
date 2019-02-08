@@ -42,6 +42,14 @@ export const APP_LANGUAGES: ILanguageMap = {
   signOut: {
     vi: "Đăng xuất",
     en: "Sign Out"
+  },
+  errorGettingUser: {
+    vi: "Lỗi truy cập thông tin của bạn",
+    en: "Error when getting your information"
+  },
+  errorEditingUser: {
+    vi: "Lỗi thay đổi thông tin của bạn",
+    en: "Error when editing your information"
   }
 };
 
