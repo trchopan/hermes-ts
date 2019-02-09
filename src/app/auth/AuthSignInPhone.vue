@@ -127,9 +127,9 @@ import {
 } from "@/app/auth/auth.models";
 import Recaptcha from "@/app/auth/Recaptcha.vue";
 import { ITextFieldRule } from "@/app/shared/types";
-import { fireAuth } from "@/firebase";
 import { ROOT_ACTIONS } from "@/store/root.store";
 import { CHAT_ROUTE } from "@/app/chat/chat.models";
+import { firebaseApp } from "@/firebase";
 
 @Component({
   name: "AuthSignInPhone",
@@ -175,10 +175,9 @@ export default class AuthSignInPhone extends Vue {
           ROOT_ACTIONS.changeLoadingMessage,
           this.$t.sendingVerificationCode
         );
-        this.confirmationResult = await fireAuth.signInWithPhoneNumber(
-          phoneNumber,
-          this.verifier
-        );
+        this.confirmationResult = await firebaseApp
+          .auth()
+          .signInWithPhoneNumber(phoneNumber, this.verifier);
         this.phoneNumberSubmited = true;
         this.$store.dispatch(ROOT_ACTIONS.finishLoading);
       } catch (error) {

@@ -22,10 +22,12 @@ describe("[rootStore]", () => {
   let store: Store<RootState>;
   const mockUser: IUser = {
     uid: "abc123",
-    displayName: "tester",
-    photoURL: "photo.jpg",
     email: "test@example.com",
-    phoneNumber: ""
+    phoneNumber: null
+  };
+  const mockProfile: IProfile = {
+    displayName: "tester",
+    photoURL: "photo.jpg"
   };
   const state: any = {
     user: mockUser,
@@ -36,13 +38,51 @@ describe("[rootStore]", () => {
   };
 
   const editUserCallable = jest.fn().mockRejectedValue({ code: "error" });
+  const stubFirestore = {
+    collection: jest
+      .fn()
+      .mockImplementationOnce(() => ({
+        doc: () => ({
+          onSnapshot: (cb: any) => {
+            cb({
+              exists: false
+            });
+          }
+        })
+      }))
+      .mockImplementationOnce(() => ({
+        doc: () => ({
+          onSnapshot: (cb: any) => {
+            cb({
+              exists: true,
+              data: () => mockProfile
+            });
+          }
+        })
+      }))
+  } as any;
 
   beforeAll(() => {
     store = new Vuex.Store({
       state,
       getters,
-      actions: actions(editUserCallable),
+      actions: actions(stubFirestore, editUserCallable),
       mutations
+    });
+  });
+
+  it("changeUser and parse profile correctly", () => {
+    store.dispatch(ROOT_ACTIONS.changeUser, null);
+    expect(store.state.user).toEqual(null);
+    store.dispatch(ROOT_ACTIONS.changeUser, mockUser);
+    expect(store.state.error).toBeTruthy();
+    expect(store.state.error!.message).toEqual(
+      store.getters.$t.errorGettingUser
+    );
+    store.dispatch(ROOT_ACTIONS.changeUser, mockUser);
+    expect(store.state.user).toEqual({
+      ...mockUser,
+      ...mockProfile
     });
   });
 

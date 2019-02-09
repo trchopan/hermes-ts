@@ -78,10 +78,10 @@ import Recaptcha from "@/app/auth/Recaptcha.vue";
 import { IMappedLanguage } from "@/store/root.models";
 import { ITextFieldRule } from "@/app/shared/types";
 import { validateEmail } from "@/app/shared/validate-email.helper";
-import { fireAuth } from "@/firebase";
 import { ROOT_ACTIONS } from "@/store/root.store";
 import { AUTH_ROUTE, AUTH_SIGN_UP_EMAIL_ROUTE } from "@/app/auth/auth.models";
 import { CHAT_ROUTE } from "@/app/chat/chat.models";
+import { firebaseApp } from "@/firebase";
 
 @Component({
   name: "AuthSignInEmail",
@@ -117,7 +117,9 @@ export default class AuthSignInEmail extends Vue {
           ROOT_ACTIONS.changeLoadingMessage,
           this.$t.signingIn
         );
-        await fireAuth.signInWithEmailAndPassword(this.email, this.password);
+        await firebaseApp
+          .auth()
+          .signInWithEmailAndPassword(this.email, this.password);
         this.$store.dispatch(ROOT_ACTIONS.finishLoading);
         this.$router.replace(CHAT_ROUTE);
       } catch (error) {

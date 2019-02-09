@@ -173,38 +173,32 @@ export const CHATROOMS_COLLECTION = "chatrooms";
 export const CHATS_COLLECTION = "chats";
 
 export interface IChatRoom {
-  id: string;
-  name: string;
-  owner: string;
+  id?: string;
   participants: string[];
+  timestamp: number;
 }
 
 export interface IChatContent {
-  _id?: string;
+  id?: string;
   senderId: string;
   message: string;
   timestamp: number;
   delivered: boolean;
 }
 
-export const parseChatDocName = (id1: string, id2: string) =>
+export const parseChatRoom = (id: string, data: any): IChatRoom => ({
+  id,
+  participants: data.participants || [],
+  timestamp: data.timestamp || 0
+});
+
+export const parseChatDocName = (id1: string, id2: string): string =>
   id1 > id2 ? `${id1}_${id2}` : `${id2}_${id1}`;
 
-export function parseChatContent(id: string, data: any): IChatContent | null {
-  if (
-    data.senderId !== undefined &&
-    data.timestamp !== undefined &&
-    data.message !== undefined &&
-    data.delivered !== undefined
-  ) {
-    return {
-      _id: id,
-      senderId: data.senderId,
-      timestamp: data.timestamp,
-      message: data.message,
-      delivered: data.delivered
-    };
-  } else {
-    return null;
-  }
-}
+export const parseChatContent = (id: string, data: any): IChatContent => ({
+  id,
+  senderId: data.senderId,
+  timestamp: data.timestamp,
+  message: data.message,
+  delivered: data.delivered
+});

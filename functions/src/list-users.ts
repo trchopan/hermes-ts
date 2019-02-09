@@ -1,7 +1,6 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import { CallableContext } from "firebase-functions/lib/providers/https";
-import { USERS_COLLECTIONS } from "./collections";
 import { logger } from "./helpers";
 
 const log = logger("[listUsers]");
@@ -21,19 +20,13 @@ export async function listUsersHandler(
   }
 
   try {
-    const docRefs = data.users.map(userId =>
-      admin
-        .firestore()
-        .collection(USERS_COLLECTIONS)
-        .doc(userId)
-    );
-    const results = await admin.firestore().getAll(...docRefs);
-    return {
-      users: results.map(snapshot => ({
-        uid: snapshot.id,
-        data: snapshot.exists ? snapshot.data() : null
-      }))
-    };
+    const userRecs = data.users.map((userId) => admin.auth().getUser(userId));
+    const result = await Promise.all(userRecs);
+    return result.map((user) => ({
+      uid: user.uid,
+      email: user.email || null,
+      phoneNumber: user.phoneNumber || null
+    }));
   } catch (error) {
     log("ERROR listUser", error.code, error.message);
     throw new functions.https.HttpsError("not-found");

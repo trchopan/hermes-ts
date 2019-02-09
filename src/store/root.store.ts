@@ -10,9 +10,10 @@ import {
   COMBINED_LANGUAGES_MAP,
   IMappedLanguage,
   USERS_COLLECTION,
-  parseUser
+  parseUser,
+  parseProfile
 } from "./root.models";
-import { fireStore, fireFunctions } from "@/firebase";
+import { firebaseApp } from "@/firebase";
 
 export const rootStoreNamespace = "[root]";
 
@@ -23,7 +24,6 @@ export const ROOT_ACTIONS = {
   toggleDrawer: "toggleDrawer",
   changeUser: "changeUser",
   editUser: "editUser",
-  changeUsersList: "changeUsersList",
   changeLoadingMessage: "changeLoadingMessage",
   finishLoading: "finishLoading",
   changeError: "changeError",
@@ -36,8 +36,6 @@ export const ROOT_MUTATIONS = {
   languageChanged: "languageChanged",
   drawerToggled: "drawerToggled",
   userChanged: "userChanged",
-  userProfileChanged: "userProfileChanged",
-  usersListChanged: "usersListChanged",
   loadingMessageChanged: "loadingMessageChanged",
   errorChanged: "errorChange"
 };
@@ -49,7 +47,6 @@ export interface RootState {
   language: ILanguageSetting;
   isLoggedIn: boolean;
   user: IUser | null;
-  usersList: IUser[] | null;
   loadingMessage: string | null;
   error: IError | null;
 }
@@ -61,7 +58,6 @@ export const initState: RootState = {
   language: LANGUAGE_SETTINGS[0], // Vietnamese
   isLoggedIn: false,
   user: null,
-  usersList: null,
   loadingMessage: null,
   error: null
 };
@@ -84,9 +80,10 @@ export const getters: GetterTree<RootState, RootState> = {
 };
 
 export const actions = (
+  firestore: firebase.firestore.Firestore,
   editUserCallable: firebase.functions.HttpsCallable
 ): ActionTree<RootState, RootState> => {
-  let userProfileSnap = () => {};
+  let userProfileSnap: any;
 
   return {
     [ROOT_ACTIONS.initializeApp]: ({ commit, dispatch }) => {
@@ -112,24 +109,31 @@ export const actions = (
     [ROOT_ACTIONS.toggleDrawer]: ({ commit }) =>
       commit(ROOT_MUTATIONS.drawerToggled),
     [ROOT_ACTIONS.changeUser]: (
-      { commit, rootGetters },
+      { commit, dispatch, rootGetters },
       user: firebase.User | null
     ) => {
       if (!user) {
         commit(ROOT_MUTATIONS.userChanged, null);
       } else {
-        commit(ROOT_MUTATIONS.userChanged, parseUser(user.uid, user));
-        userProfileSnap();
-        userProfileSnap = fireStore
+        const parsedUser = parseUser(user.uid, user);
+        commit(ROOT_MUTATIONS.userChanged, parsedUser);
+        if (userProfileSnap !== undefined) {
+          userProfileSnap();
+        }
+        userProfileSnap = firestore
           .collection(USERS_COLLECTION)
           .doc(user.uid)
-          .onSnapshot((userSnap) => {
-            if (userSnap.exists) {
-              const parsedUser = parseUser(userSnap.id, userSnap.data());
-              commit(ROOT_MUTATIONS.userChanged, parsedUser);
+          .onSnapshot((userProfile) => {
+            console.log("woot", userProfile);
+            if (userProfile.exists) {
+              const parsedProfile = parseProfile(userProfile.data());
+              commit(ROOT_MUTATIONS.userChanged, {
+                ...parsedUser,
+                ...parsedProfile
+              });
             } else {
               const error = { message: rootGetters.$t.errorGettingUser };
-              commit(ROOT_ACTIONS.changeError, error);
+              dispatch(ROOT_ACTIONS.changeError, error);
             }
           });
       }
@@ -193,9 +197,6 @@ export const mutations: MutationTree<RootState> = {
   [ROOT_MUTATIONS.userChanged](state, user: IUser | null) {
     state.user = user;
   },
-  [ROOT_MUTATIONS.usersListChanged](state, usersList: IUser[]) {
-    state.usersList = usersList;
-  },
   [ROOT_MUTATIONS.loadingMessageChanged](state, message: string | null) {
     state.loadingMessage = message;
   },
@@ -207,6 +208,9 @@ export const mutations: MutationTree<RootState> = {
 export default {
   state: initState,
   getters,
-  actions: actions(fireFunctions.httpsCallable("editUser")),
+  actions: actions(
+    firebaseApp.firestore(),
+    firebaseApp.functions().httpsCallable("editUser")
+  ),
   mutations
 };

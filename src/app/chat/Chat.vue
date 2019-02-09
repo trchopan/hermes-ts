@@ -65,14 +65,14 @@ export default class Chat extends Vue {
   public $t!: IMappedLanguage;
   @State
   public user!: IUser;
-  @chatStore.Action(CHAT_ACTIONS.subscribeContactList)
-  public subscribeContactList!: () => void;
+  @chatStore.Action(CHAT_ACTIONS.subscribeChatList)
+  public subscribeChatList!: () => void;
 
   public async created() {
     if (!this.user) {
       this.$router.replace(AUTH_ROUTE);
     } else {
-      this.subscribeContactList();
+      this.subscribeChatList();
     }
   }
 }

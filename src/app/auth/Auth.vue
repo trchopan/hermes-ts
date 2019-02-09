@@ -73,7 +73,6 @@ import {
   AUTH_SIGN_IN_PHONE_ROUTE,
   AUTH_SIGN_OUT_ROUTE
 } from "@/app/auth/auth.models";
-import { fireAuth } from "@/firebase";
 
 @Component({
   name: "Auth"

@@ -87,11 +87,11 @@ import { Watch } from "vue-property-decorator";
 import { IMappedLanguage } from "@/store/root.models";
 import { validateEmail } from "@/app/shared/validate-email.helper";
 import { ITextFieldRule } from "@/app/shared/types";
-import { fireAuth } from "@/firebase";
 import Recaptcha from "@/app/auth/Recaptcha.vue";
 import { ROOT_ACTIONS } from "@/store/root.store";
 import { AUTH_ROUTE, AUTH_SIGN_IN_EMAIL_ROUTE } from "@/app/auth/auth.models";
 import { CHAT_ROUTE } from "@/app/chat/chat.models";
+import { firebaseApp } from "@/firebase";
 
 @Component({
   name: "AuthSignUpEmail",
@@ -129,10 +129,9 @@ export default class AuthSignUpEmail extends Vue {
           ROOT_ACTIONS.changeLoadingMessage,
           this.$t.signingUp
         );
-        await fireAuth.createUserWithEmailAndPassword(
-          this.email,
-          this.password
-        );
+        await firebaseApp
+          .auth()
+          .createUserWithEmailAndPassword(this.email, this.password);
         this.$store.dispatch(ROOT_ACTIONS.finishLoading);
         this.$router.replace(CHAT_ROUTE);
       } catch (error) {

@@ -34,10 +34,10 @@ import {
   parseChatDocName
 } from "@/app/chat/chat.models";
 import { State, Getter } from "vuex-class";
-import { fireStore } from "@/firebase";
 import { Prop } from "vue-property-decorator";
 import { IMappedLanguage } from "@/store/root.models";
 import { ROOT_ACTIONS } from "@/store/root.store";
+import { firebaseApp } from "@/firebase";
 
 @Component({
   name: "ChatInput"
@@ -61,7 +61,8 @@ export default class ChatInput extends Vue {
         delivered: false
       };
       try {
-        const result = await fireStore
+        const result = await firebaseApp
+          .firestore()
           .collection(CHATROOMS_COLLECTION)
           .doc(chatDocName)
           .collection(CHATS_COLLECTION)

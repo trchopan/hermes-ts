@@ -55,12 +55,15 @@ export const THEME_SETTINGS: IThemeSetting[] = [
 
 export const USERS_COLLECTION = "users";
 
-export const parseUser = (uid: string, user: any): IUser => ({
+export const parseUser = (uid: string, data: any): IUser => ({
   uid,
-  displayName: user.displayName,
-  photoURL: user.photoURL,
-  email: user.email,
-  phoneNumber: user.phoneNumber
+  email: data.email || null,
+  phoneNumber: data.phoneNumber || null
+});
+
+export const parseProfile = (data: any): IProfile => ({
+  displayName: data.displayName || null,
+  photoURL: data.photoURL || null
 });
 
 export interface IProfile {
@@ -70,8 +73,8 @@ export interface IProfile {
 
 export interface IUser {
   uid: string;
-  displayName: string | null;
-  photoURL: string | null;
   email: string | null;
   phoneNumber: string | null;
+  displayName?: string | null;
+  photoURL?: string | null;
 }

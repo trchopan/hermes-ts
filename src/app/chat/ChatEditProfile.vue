@@ -114,7 +114,6 @@ import {
 import { Watch } from "vue-property-decorator";
 import { ITextFieldRule } from "@/app/shared/types";
 import { ROOT_ACTIONS } from "@/store/root.store";
-import { fireStore, fireAuth } from "@/firebase";
 import { AUTH_SIGN_OUT_ROUTE } from "@/app/auth/auth.models";
 
 @Component({
@@ -160,10 +159,7 @@ export default class ChatEditProfile extends Vue {
   }
 
   public async update() {
-    if (
-      (this.$refs.editProfileForm as any).validate() &&
-      fireAuth.currentUser
-    ) {
+    if ((this.$refs.editProfileForm as any).validate()) {
       try {
         this.$store.dispatch(
           ROOT_ACTIONS.changeLoadingMessage,
@@ -173,11 +169,11 @@ export default class ChatEditProfile extends Vue {
           displayName: this._displayName || this.user.displayName,
           photoURL: this.selectedImage
         };
-        await fireStore
-          .collection(USERS_COLLECTION)
-          .doc(this.user.uid)
-          .update(data);
-        await fireAuth.currentUser.updateProfile(data);
+        // await fireStore
+        //   .collection(USERS_COLLECTION)
+        //   .doc(this.user.uid)
+        //   .update(data);
+        // await fireAuth.currentUser.updateProfile(data);
         this.$store.dispatch(ROOT_ACTIONS.finishLoading);
         this.dialogOpen = false;
       } catch (error) {

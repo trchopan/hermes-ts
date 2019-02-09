@@ -107,16 +107,6 @@ export default class ChatAddContact extends Vue {
             ? { email: this.contact }
             : { phoneNumber: PHONE_COUNTRY_CODE + this.contact }
         );
-        const newProfileContacts = this.userProfile.contacts;
-        newProfileContacts.push(result.data.user);
-        await fireStore
-          .collection(USERS_COLLECTION)
-          .doc(this.user.uid)
-          .update({ contacts: newProfileContacts });
-        this.$store.dispatch(ROOT_ACTIONS.changeUserProfile, {
-          ...this.userProfile,
-          contacts: newProfileContacts
-        });
         this.$store.dispatch(ROOT_ACTIONS.finishLoading);
       } catch (error) {
         error.message = "Something wrong";
