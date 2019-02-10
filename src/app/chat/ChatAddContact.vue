@@ -61,18 +61,21 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import { State, Getter } from "vuex-class";
+import { State, Getter, namespace, Action } from "vuex-class";
 import {
   USERS_COLLECTION,
   IProfile,
   IMappedLanguage
 } from "@/store/root.models";
 import { CHATROOMS_COLLECTION } from "@/app/chat/chat.models";
-import { fireStore, fireFunctions } from "@/firebase";
 import { ITextFieldRule } from "@/app/shared/types";
 import { ROOT_ACTIONS } from "@/store/root.store";
 import { validateEmail } from "@/app/shared/validate-email.helper";
 import { PHONE_COUNTRY_CODE } from "@/app/auth/auth.models";
+import { firebaseApp } from "@/firebase";
+import { chatStoreNamespace, CHAT_ACTIONS } from "@/app/chat/chat.store";
+
+const chatStore = namespace(chatStoreNamespace);
 
 @Component({
   name: "ChatAddContact"
@@ -80,10 +83,8 @@ import { PHONE_COUNTRY_CODE } from "@/app/auth/auth.models";
 export default class ChatAddContact extends Vue {
   @Getter
   public $t!: IMappedLanguage;
-  @State
-  public user!: firebase.User;
-  @State("userProfile")
-  public userProfile!: IProfile;
+  @chatStore.Action(CHAT_ACTIONS.addContact)
+  public addContact!: (data: any) => Promise<boolean>;
   public dialogOpen: boolean = false;
   public formValid: boolean = false;
   public contact: string = "";
@@ -95,23 +96,13 @@ export default class ChatAddContact extends Vue {
   }
 
   public async searchContact() {
-    if ((this.$refs.findContactForm as any).validate() && this.user) {
-      try {
-        this.$store.dispatch(
-          ROOT_ACTIONS.changeLoadingMessage,
-          this.$t.creatingChatRoom
-        );
-        const findUserCallable = fireFunctions.httpsCallable("findUser");
-        const result = await findUserCallable(
-          this.isEmailContact
-            ? { email: this.contact }
-            : { phoneNumber: PHONE_COUNTRY_CODE + this.contact }
-        );
-        this.$store.dispatch(ROOT_ACTIONS.finishLoading);
-      } catch (error) {
-        error.message = "Something wrong";
-        this.$store.dispatch(ROOT_ACTIONS.changeError, error);
-      } finally {
+    if ((this.$refs.findContactForm as any).validate()) {
+      const contactData = this.isEmailContact
+        ? { email: this.contact }
+        : { phoneNumber: PHONE_COUNTRY_CODE + this.contact };
+
+      const success = await this.addContact(contactData);
+      if (success) {
         this.dialogOpen = false;
         (this.$refs.findContactForm as any).reset();
       }

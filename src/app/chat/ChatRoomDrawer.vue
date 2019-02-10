@@ -48,18 +48,16 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import { State, Getter, namespace } from "vuex-class";
-import { IUser, IProfile, IMappedLanguage } from "@/store/root.models";
-import {
-  CHATROOMS_COLLECTION,
-  DEFAULT_PROFILE_IMAGE,
-  CHAT_ROUTE,
-  CHAT_USER_ROUTE
-} from "@/app/chat/chat.models";
+import { Getter, namespace } from "vuex-class";
 import ChatAddContact from "@/app/chat/ChatAddContact.vue";
-import { fireStore } from "@/firebase";
-import { ROOT_ACTIONS } from "@/store/root.store";
 import { chatStoreNamespace } from "@/app/chat/chat.store";
+import {
+  IChatRoom,
+  CHAT_ROUTE,
+  CHAT_USER_ROUTE,
+  DEFAULT_PROFILE_IMAGE
+} from "@/app/chat/chat.models";
+import { IMappedLanguage, IProfile } from "@/store/root.models";
 
 const chatStore = namespace(chatStoreNamespace);
 
@@ -73,7 +71,7 @@ export default class ChatRoomDrawer extends Vue {
   @Getter
   public $t!: IMappedLanguage;
   @chatStore.Getter
-  public contacts!: IUser[];
+  public contacts!: IProfile[];
   public chatUserRoute = `${CHAT_ROUTE}/${CHAT_USER_ROUTE.replace(":id", "")}`;
   public defaultProfileImage = DEFAULT_PROFILE_IMAGE;
   public rightDrawer: boolean = false;

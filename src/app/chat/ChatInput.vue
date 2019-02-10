@@ -17,7 +17,6 @@
         solo
         append-icon="send"
         class="chat-input-field"
-        :disabled="!receiverId"
         @click:append="sendMessage()"
       ></v-text-field>
     </v-form>
@@ -31,13 +30,16 @@ import {
   IChatContent,
   CHATROOMS_COLLECTION,
   CHATS_COLLECTION,
-  parseChatDocName
+  parseChatDocName,
+  IChatRoom
 } from "@/app/chat/chat.models";
-import { State, Getter } from "vuex-class";
-import { Prop } from "vue-property-decorator";
+import { State, Getter, namespace } from "vuex-class";
 import { IMappedLanguage } from "@/store/root.models";
 import { ROOT_ACTIONS } from "@/store/root.store";
 import { firebaseApp } from "@/firebase";
+import { chatStoreNamespace } from "@/app/chat/chat.store";
+
+const chatStore = namespace(chatStoreNamespace);
 
 @Component({
   name: "ChatInput"
@@ -47,13 +49,12 @@ export default class ChatInput extends Vue {
   public $t!: IMappedLanguage;
   @State
   public user!: firebase.User;
-  @Prop(String)
-  public receiverId!: string;
+  @chatStore.State
+  public selectedChatRoom!: IChatRoom;
   public message: string = "";
 
   public async sendMessage() {
-    if (this.message && this.receiverId) {
-      const chatDocName = parseChatDocName(this.user.uid, this.receiverId);
+    if (this.message) {
       const chatContent: IChatContent = {
         senderId: this.user.uid,
         message: this.message,
@@ -64,7 +65,7 @@ export default class ChatInput extends Vue {
         const result = await firebaseApp
           .firestore()
           .collection(CHATROOMS_COLLECTION)
-          .doc(chatDocName)
+          .doc(this.selectedChatRoom.id)
           .collection(CHATS_COLLECTION)
           .add(chatContent);
 

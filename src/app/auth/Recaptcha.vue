@@ -16,12 +16,12 @@ import firebase from "firebase/app";
 export default class Recaptcha extends Vue {
   @Getter
   public $t!: IMappedLanguage;
-  public verifier: firebase.auth.RecaptchaVerifier = new firebase.auth.RecaptchaVerifier(
-    "recaptcha-container",
-    { size: "invisible" }
-  );
+  public verifier!: firebase.auth.RecaptchaVerifier;
 
   public async mounted() {
+    this.verifier = new firebase.auth.RecaptchaVerifier("recaptcha-container", {
+      size: "invisible"
+    });
     this.$store.dispatch(
       ROOT_ACTIONS.changeLoadingMessage,
       this.$t.verifyRecaptcha

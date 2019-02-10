@@ -9,7 +9,7 @@ import { ROOT_ACTIONS } from "@/store/root.store";
 import { firebaseApp } from "./firebase";
 
 Vue.config.productionTip = false;
-Vue.config.devtools = false;
+// Vue.config.devtools = false;
 
 // tslint:disable-next-line:no-console
 console.log(`version %c${process.env.VUE_APP_VERSION}`, "color: #ed1d24;");

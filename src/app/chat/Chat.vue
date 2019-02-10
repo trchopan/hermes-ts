@@ -31,7 +31,7 @@
       class="mt-2"
     >
       <ChatEditProfile class="mr-2"/>
-      <ChatInput :receiverId="$route.params.id"/>
+      <ChatInput/>
       <ChatRoomDrawer class="d-inline-block"/>
     </v-layout>
   </v-layout>
@@ -41,14 +41,12 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { State, Getter, namespace } from "vuex-class";
-import { USERS_COLLECTION, IUser, IMappedLanguage } from "@/store/root.models";
+import { CHAT_ACTIONS, chatStoreNamespace } from "@/app/chat/chat.store";
+import { AUTH_ROUTE } from "@/app/auth/auth.models";
 import ChatRoomDrawer from "./ChatRoomDrawer.vue";
 import ChatEditProfile from "./ChatEditProfile.vue";
 import ChatInput from "./ChatInput.vue";
-import { fireStore, fireFunctions } from "@/firebase";
-import { ROOT_ACTIONS } from "@/store/root.store";
-import { CHAT_ACTIONS, chatStoreNamespace } from "@/app/chat/chat.store";
-import { AUTH_ROUTE } from "@/app/auth/auth.models";
+import { IMappedLanguage, IUser } from "@/store/root.models";
 
 const chatStore = namespace(chatStoreNamespace);
 
@@ -64,11 +62,11 @@ export default class Chat extends Vue {
   @Getter
   public $t!: IMappedLanguage;
   @State
-  public user!: IUser;
+  public user!: IUser | null;
   @chatStore.Action(CHAT_ACTIONS.subscribeChatList)
-  public subscribeChatList!: () => void;
+  public subscribeChatList!: () => Promise<void>;
 
-  public async created() {
+  public created() {
     if (!this.user) {
       this.$router.replace(AUTH_ROUTE);
     } else {

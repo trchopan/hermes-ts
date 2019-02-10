@@ -4,23 +4,7 @@
     column
   >
     <v-layout
-      v-if="loadingChat"
-      justify-center
-      align-center
-      column
-      fill-height
-    >
-      <v-progress-circular
-        indeterminate
-        :width="3"
-        :size="62"
-        color="primary"
-        class="ma-3"
-      ></v-progress-circular>
-      <p>{{ $t.loadingChat }}</p>
-    </v-layout>
-    <v-layout
-      v-if="!loadingChat && chatContents.length === 0"
+      v-if="chatContent.length === 0"
       justify-center
       align-center
       column
@@ -31,7 +15,7 @@
     </v-layout>
     <v-flex v-else>
       <v-layout
-        v-for="chat in chatContents"
+        v-for="chat in chatContent"
         :key="'chat-' + chat.timestamp"
         align-center
       >
@@ -71,29 +55,36 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import { State, Getter } from "vuex-class";
-import {
-  ILanguageSetting,
-  IUser,
-  USERS_COLLECTION,
-  IMappedLanguage
-} from "@/store/root.models";
-import { Watch } from "vue-property-decorator";
-import { ROOT_ACTIONS } from "@/store/root.store";
+import { State, Getter, namespace } from "vuex-class";
+import { chatStoreNamespace, CHAT_ACTIONS } from "@/app/chat/chat.store";
+import { IMappedLanguage, IUser, ILanguageSetting } from "@/store/root.models";
+import { IChatContent, IChatRoom, CHAT_ROUTE } from "@/app/chat/chat.models";
+
+const chatStore = namespace(chatStoreNamespace);
 
 @Component({
   name: "ChatUser"
 })
 export default class ChatUser extends Vue {
+  @State
+  public user!: IUser | null;
+  @State
+  public language!: ILanguageSetting;
+  @chatStore.State
+  public chatRooms!: IChatRoom[];
   @Getter
   public $t!: IMappedLanguage;
+  @chatStore.State
+  public chatContent!: IChatContent[];
+  @chatStore.Action(CHAT_ACTIONS.selectChatRoom)
+  public selectChatRoom!: (receiverId: string) => void;
 
   public created() {
-
-  }
-
-  public destroyed() {
-
+    if (this.chatRooms.length === 0) {
+      this.$router.replace(CHAT_ROUTE);
+    } else {
+      this.selectChatRoom(this.$route.params.id);
+    }
   }
 
   public scrollDown() {

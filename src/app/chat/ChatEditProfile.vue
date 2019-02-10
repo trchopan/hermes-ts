@@ -115,6 +115,7 @@ import { Watch } from "vue-property-decorator";
 import { ITextFieldRule } from "@/app/shared/types";
 import { ROOT_ACTIONS } from "@/store/root.store";
 import { AUTH_SIGN_OUT_ROUTE } from "@/app/auth/auth.models";
+import { firebaseApp } from "@/firebase";
 
 @Component({
   name: "ChatEditProfile"
@@ -169,11 +170,11 @@ export default class ChatEditProfile extends Vue {
           displayName: this._displayName || this.user.displayName,
           photoURL: this.selectedImage
         };
-        // await fireStore
-        //   .collection(USERS_COLLECTION)
-        //   .doc(this.user.uid)
-        //   .update(data);
-        // await fireAuth.currentUser.updateProfile(data);
+        await firebaseApp
+          .firestore()
+          .collection(USERS_COLLECTION)
+          .doc(this.user.uid)
+          .update(data);
         this.$store.dispatch(ROOT_ACTIONS.finishLoading);
         this.dialogOpen = false;
       } catch (error) {

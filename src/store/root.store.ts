@@ -37,7 +37,8 @@ export const ROOT_MUTATIONS = {
   drawerToggled: "drawerToggled",
   userChanged: "userChanged",
   loadingMessageChanged: "loadingMessageChanged",
-  errorChanged: "errorChange"
+  errorChanged: "errorChange",
+  messageLogged: "messageLogged"
 };
 
 export interface RootState {
@@ -124,9 +125,8 @@ export const actions = (
           .collection(USERS_COLLECTION)
           .doc(user.uid)
           .onSnapshot((userProfile) => {
-            console.log("woot", userProfile);
             if (userProfile.exists) {
-              const parsedProfile = parseProfile(userProfile.data());
+              const parsedProfile = parseProfile(user.uid, userProfile.data());
               commit(ROOT_MUTATIONS.userChanged, {
                 ...parsedUser,
                 ...parsedProfile
@@ -202,6 +202,9 @@ export const mutations: MutationTree<RootState> = {
   },
   [ROOT_MUTATIONS.errorChanged](state, error: IError | null) {
     state.error = error;
+  },
+  [ROOT_MUTATIONS.messageLogged](_, message) {
+    return;
   }
 };
 

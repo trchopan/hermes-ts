@@ -9,7 +9,7 @@ const typeColor: { [key: string]: string } = {
 };
 
 export const loggerPlugin = (store: Store<RootState>) => {
-  store.subscribe((mutation: MutationPayload) => {
+  store.subscribe((mutation: MutationPayload, state: RootState) => {
     const match = mutation.type.match(/^(.*)\/(.*)/);
     const mutationName = match ? match[1] : rootStoreNamespace;
     const actionType = match ? match[2] : mutation.type;

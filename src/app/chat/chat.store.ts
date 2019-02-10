@@ -1,104 +1,252 @@
-import { IUser } from "@/store/root.models";
+import { parseProfile, IProfile } from "@/store/root.models";
 import {
   IChatContent,
   CHATROOMS_COLLECTION,
   parseChatRoom,
-  IChatRoom
+  IChatRoom,
+  CHATS_COLLECTION
 } from "./chat.models";
 import { GetterTree, ActionTree, MutationTree } from "vuex";
-import { RootState } from "@/store/root.store";
-import { fireStore } from "@/firebase";
+import { RootState, ROOT_ACTIONS } from "@/store/root.store";
+import { firebaseApp } from "@/firebase";
 
 export const chatStoreNamespace = "[chat]";
 // const listUsersCallable = fireFunctions.httpsCallable("listUsers");
 
 export const CHAT_ACTIONS = {
   subscribeChatList: "subscribeChatList",
-  changeContactList: "changeContactLis"
+  subscribeChatContent: "subscribeChatContent",
+  selectChatRoom: "selectChatRoom",
+  addContact: "addContact"
 };
 
 const CHAT_MUTATIONS = {
-  chatListCleared: "chatListCleared",
+  chatRoomSelected: "chatRoomSelected",
+  chatRoomsCleared: "chatRoomsCleared",
+  chatRoomAdded: "chatRoomAdded",
+  chatRoomModified: "chatRoomModified",
+  chatRoomRemoved: "chatRoomRemoved",
+  chatsCleared: "chatsCleared",
   chatAdded: "chatAdded",
+  chatModified: "chatModified",
   chatRemoved: "chatRemoved"
 };
 
 interface ChatState {
-  contactDetails: { [key: string]: IUser };
   currentReceiverId: string;
-  chatsList: { [key: string]: IChatRoom };
-  currentChat: IChatContent[];
+  selectedChatRoom: IChatRoom | null;
+  chatRooms: IChatRoom[];
+  chatContent: IChatContent[];
   scrollChatBottomState: boolean;
 }
 
 const initState: ChatState = {
-  contactDetails: {},
   currentReceiverId: "",
-  chatsList: {},
-  currentChat: [],
+  selectedChatRoom: null,
+  chatRooms: [],
+  chatContent: [],
   scrollChatBottomState: false
 };
 
-const getters: GetterTree<ChatState, RootState> = {
-  currentReceiver: (state) =>
-    state.contactDetails ? state.contactDetails[state.currentReceiverId] : null,
-  contacts: (state) => Object.values(state.contactDetails)
+const chatGetters: GetterTree<ChatState, RootState> = {
+  contacts: (state) =>
+    state.chatRooms.map((chatRoom) => chatRoom.participants).flat()
 };
 
-const actions = (): ActionTree<ChatState, RootState> => {
-  let activeChatsSnapshot = () => {};
+const chatActions = (
+  firestore: firebase.firestore.Firestore,
+  findUser: firebase.functions.HttpsCallable
+): ActionTree<ChatState, RootState> => {
+  let chatRoomsSnapshot: any;
+  let chatContentSnapshot: any;
 
   return {
     [CHAT_ACTIONS.subscribeChatList]: ({ commit, rootState }) => {
-      if (!rootState.user) {
-        // No user found
-        return;
+      commit(CHAT_MUTATIONS.chatRoomsCleared);
+      if (chatRoomsSnapshot !== undefined) {
+        chatRoomsSnapshot();
       }
-      const userId = rootState.user.uid;
 
-      commit(CHAT_MUTATIONS.chatListCleared);
-      activeChatsSnapshot();
-
-      activeChatsSnapshot = fireStore
+      const userId = rootState.user!.uid; // null state is checked in Chat
+      chatRoomsSnapshot = firebaseApp
+        .firestore()
         .collection(CHATROOMS_COLLECTION)
         .where("participants", "array-contains", userId)
         .orderBy("timestamp", "desc")
         .onSnapshot((chatRoom) => {
           if (!chatRoom.empty) {
-            chatRoom.docChanges().forEach((docChange) => {
+            chatRoom.docChanges().forEach(async (docChange) => {
+              const parsedChatRoom =
+                docChange.type !== "removed"
+                  ? await parseChatRoom(
+                      userId,
+                      docChange.doc,
+                      firebaseApp,
+                      parseProfile
+                    )
+                  : null;
               switch (docChange.type) {
                 case "added":
+                  commit(CHAT_MUTATIONS.chatRoomAdded, {
+                    index: docChange.newIndex,
+                    data: parsedChatRoom
+                  });
+                  break;
                 case "modified":
-                  const id = docChange.doc.id;
-                  const data = docChange.doc.data();
-                  commit(CHAT_MUTATIONS.chatAdded, parseChatRoom(id, data));
+                  commit(CHAT_MUTATIONS.chatRoomModified, {
+                    index: docChange.newIndex,
+                    data: chatRoom
+                  });
                   break;
                 case "removed":
-                  commit(CHAT_MUTATIONS.chatRemoved, docChange.doc.id);
+                  commit(CHAT_MUTATIONS.chatRoomRemoved, {
+                    index: docChange.oldIndex
+                  });
                   break;
                 default:
-                  return;
+                  break;
               }
             });
           }
         });
+    },
+    [CHAT_ACTIONS.addContact]: async (
+      { getters, dispatch, rootState, rootGetters },
+      contactData: any
+    ): Promise<boolean> => {
+      try {
+        dispatch(
+          ROOT_ACTIONS.changeLoadingMessage,
+          rootGetters.$t.creatingChatRoom,
+          { root: true }
+        );
+        const result = await findUser(contactData);
+        const foundContact = (getters.contacts as IProfile[]).find(
+          (x) => x.uid === result.data.user
+        );
+        if (foundContact) {
+          const error = { message: rootGetters.$t.contactAlreadyAdded };
+          dispatch(ROOT_ACTIONS.changeError, error, { root: true });
+          return false;
+        } else {
+          const userId = rootState.user!.uid; // null state is checked in Chat
+          await firestore.collection(CHATROOMS_COLLECTION).add({
+            participants: [userId, result.data.user],
+            timestamp: Date.now()
+          });
+          dispatch(ROOT_ACTIONS.finishLoading, null, { root: true });
+          return true;
+        }
+      } catch (error) {
+        error = { message: rootGetters.$t.notFoundUser };
+        dispatch(ROOT_ACTIONS.changeError, error, { root: true });
+        return false;
+      }
+    },
+    [CHAT_ACTIONS.selectChatRoom]: (
+      { state, commit, dispatch, rootGetters },
+      receiverId: string
+    ) => {
+      const foundChatRoom = state.chatRooms.find((chatRoom) =>
+        chatRoom.participants.some((x) => x.uid === receiverId)
+      );
+
+      if (!foundChatRoom) {
+        const error = { message: rootGetters.$t.errorReadingChatContent };
+        dispatch(ROOT_ACTIONS.changeError, error, { root: true });
+        return;
+      } else {
+        commit(CHAT_MUTATIONS.chatRoomSelected, foundChatRoom);
+        commit(CHAT_MUTATIONS.chatsCleared);
+        if (chatContentSnapshot !== undefined) {
+          chatContentSnapshot();
+        }
+        chatContentSnapshot = firestore
+          .collection(CHATROOMS_COLLECTION)
+          .doc(foundChatRoom.id)
+          .collection(CHATS_COLLECTION)
+          .orderBy("timestamp")
+          .onSnapshot((chatSnap) => {
+            if (!chatSnap.empty) {
+              chatSnap.docChanges().forEach((docChange) => {
+                switch (docChange.type) {
+                  case "added":
+                    commit(CHAT_MUTATIONS.chatAdded, {
+                      id: docChange.newIndex,
+                      data: docChange.doc.data()
+                    });
+                    break;
+                  case "modified":
+                    commit(CHAT_MUTATIONS.chatModified, {
+                      id: docChange.newIndex,
+                      data: docChange.doc.data()
+                    });
+                    break;
+                  case "removed":
+                    commit(CHAT_MUTATIONS.chatRemoved, {
+                      id: docChange.oldIndex
+                    });
+                    break;
+                  default:
+                    break;
+                }
+              });
+            }
+          });
+      }
     }
   };
 };
 
-const mutations: MutationTree<ChatState> = {
-  [CHAT_MUTATIONS.chatListCleared](state) {
-    state.chatsList = {};
+const chatMutations: MutationTree<ChatState> = {
+  [CHAT_MUTATIONS.chatRoomsCleared](state) {
+    state.chatRooms = [];
   },
-  [CHAT_MUTATIONS.chatAdded](state, chat: IChatRoom) {
-    state.chatsList = { ...state.chatsList, [chat.id]: chat };
+  [CHAT_MUTATIONS.chatRoomAdded](
+    state,
+    payload: { index: number; data: IChatRoom }
+  ) {
+    state.chatRooms.splice(payload.index, 0, payload.data);
+  },
+  [CHAT_MUTATIONS.chatRoomModified](
+    state,
+    payload: { index: number; data: IChatRoom }
+  ) {
+    state.chatRooms.splice(payload.index, 1, payload.data);
+  },
+  [CHAT_MUTATIONS.chatRoomRemoved](state, payload: { index: number }) {
+    state.chatRooms.splice(payload.index, 1);
+  },
+  [CHAT_MUTATIONS.chatsCleared](state) {
+    state.chatContent = [];
+  },
+  [CHAT_MUTATIONS.chatAdded](
+    state,
+    payload: { index: number; data: IChatContent }
+  ) {
+    state.chatContent.splice(payload.index, 0, payload.data);
+  },
+  [CHAT_MUTATIONS.chatModified](
+    state,
+    payload: { index: number; data: IChatContent }
+  ) {
+    state.chatContent.splice(payload.index, 1, payload.data);
+  },
+  [CHAT_MUTATIONS.chatRemoved](state, payload: { index: number }) {
+    state.chatContent.splice(payload.index, 1);
+  },
+  [CHAT_MUTATIONS.chatRoomSelected](state, chatRoom: IChatRoom | null) {
+    state.selectedChatRoom = chatRoom;
   }
 };
 
 export default {
   namespaced: true,
   state: initState,
-  getters,
-  actions: actions(),
-  mutations
+  getters: chatGetters,
+  actions: chatActions(
+    firebaseApp.firestore(),
+    firebaseApp.functions().httpsCallable("findUser")
+  ),
+  mutations: chatMutations
 };

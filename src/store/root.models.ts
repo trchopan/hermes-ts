@@ -61,12 +61,14 @@ export const parseUser = (uid: string, data: any): IUser => ({
   phoneNumber: data.phoneNumber || null
 });
 
-export const parseProfile = (data: any): IProfile => ({
+export const parseProfile = (uid: string, data: any): IProfile => ({
+  uid,
   displayName: data.displayName || null,
   photoURL: data.photoURL || null
 });
 
 export interface IProfile {
+  uid?: string;
   displayName: string;
   photoURL: string;
 }

@@ -1,5 +1,5 @@
 // tslint:disable:max-line-length
-import { ILanguageMap } from "@/store/root.models";
+import { ILanguageMap, USERS_COLLECTION, IProfile } from "@/store/root.models";
 
 export const CHAT_ROUTE = "/chat";
 export const CHAT_ROOM_ROUTE = "room/:id";
@@ -112,6 +112,14 @@ export const CHAT_LANGUAGES: ILanguageMap = {
     vi: "Email không hợp lệ",
     en: "Invalid email"
   },
+  contactAlreadyAdded: {
+    vi: "Tài khoản đã có trong danh bạ",
+    en: "This account is already in your contact"
+  },
+  notFoundUser: {
+    vi: "Không tìm thấy tài khoản",
+    en: "User account cannot be found"
+  },
   // End of ChatAddContact
   // ChatUser
   loadingChat: {
@@ -173,8 +181,8 @@ export const CHATROOMS_COLLECTION = "chatrooms";
 export const CHATS_COLLECTION = "chats";
 
 export interface IChatRoom {
-  id?: string;
-  participants: string[];
+  id: string;
+  participants: IProfile[];
   timestamp: number;
 }
 
@@ -186,11 +194,30 @@ export interface IChatContent {
   delivered: boolean;
 }
 
-export const parseChatRoom = (id: string, data: any): IChatRoom => ({
-  id,
-  participants: data.participants || [],
-  timestamp: data.timestamp || 0
-});
+export const parseChatRoom = async (
+  userId: string,
+  doc: firebase.firestore.QueryDocumentSnapshot,
+  firebaseApp: firebase.app.App,
+  profileParser: (id: string, data: any) => IProfile
+): Promise<IChatRoom> => {
+  const participants = doc.data().participants as string[];
+  const promises = participants.filter((id) => id !== userId).map((id) =>
+    firebaseApp
+      .firestore()
+      .collection(USERS_COLLECTION)
+      .doc(id)
+      .get()
+  );
+  const results = await Promise.all(promises);
+  const chatRoomParticipants = results.map((snap) =>
+    profileParser(snap.id, snap.data())
+  );
+  return {
+    id: doc.id,
+    participants: chatRoomParticipants,
+    timestamp: doc.data().timestamp
+  };
+};
 
 export const parseChatDocName = (id1: string, id2: string): string =>
   id1 > id2 ? `${id1}_${id2}` : `${id2}_${id1}`;

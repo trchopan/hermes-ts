@@ -9,5 +9,5 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   ...rootStore,
   modules: { [chatStoreNamespace]: chatStore },
-  plugins: [loggerPlugin]
+  plugins: process.env.NODE_ENV === "development" ? [loggerPlugin] : []
 });
