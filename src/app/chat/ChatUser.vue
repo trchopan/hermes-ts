@@ -49,6 +49,20 @@
         </v-card>
       </v-layout>
     </v-flex>
+    <v-fab-transition>
+      <v-btn
+        v-if="showScrollDown"
+        fab
+        fixed
+        right
+        bottom
+        color="primary"
+        class="ma-5"
+        @click="scrollDown()"
+      >
+        <v-icon>arrow_downward</v-icon>
+      </v-btn>
+    </v-fab-transition>
   </v-layout>
 </template>
 
@@ -60,6 +74,7 @@ import { chatStoreNamespace, CHAT_ACTIONS } from "@/app/chat/chat.store";
 import { IMappedLanguage, IUser, ILanguageSetting } from "@/store/root.models";
 import { IChatContent, IChatRoom, CHAT_ROUTE } from "@/app/chat/chat.models";
 import { Watch } from "vue-property-decorator";
+import { debounce } from "@/app/shared/debounce.helper";
 
 const chatStore = namespace(chatStoreNamespace);
 
@@ -82,6 +97,8 @@ export default class ChatUser extends Vue {
   @chatStore.Action(CHAT_ACTIONS.selectChatRoom)
   public selectChatRoom!: (receiverId: string) => void;
 
+  public showScrollDown: boolean = false;
+
   get receiverPhotoUrl(): string {
     return this.selectedChatRoom
       ? this.selectedChatRoom.participants[0].photoURL
@@ -94,6 +111,20 @@ export default class ChatUser extends Vue {
     } else {
       this.selectChatRoom(this.$route.params.id);
     }
+  }
+
+  public mounted() {
+    (this.$refs.chatView as any).addEventListener(
+      "scroll",
+      debounce(this.scrollHandler, 200)
+    );
+  }
+
+  public beforeDestroyed() {
+    (this.$refs.chatView as any).removeEventListener(
+      "scroll",
+      this.scrollHandler
+    );
   }
 
   @Watch("chatContent")
@@ -109,6 +140,12 @@ export default class ChatUser extends Vue {
         behavior: "smooth"
       });
     }, 200);
+  }
+
+  public scrollHandler(event: any) {
+    this.showScrollDown =
+      event.target.scrollHeight >
+      event.target.offsetHeight + event.target.scrollTop + 100;
   }
 }
 </script>
