@@ -83,5 +83,10 @@ export default class Chat extends Vue {
 .chat-view {
   height: 0;
   overflow-y: scroll;
+  -ms-overflow-style: none;
+  overflow: -moz-scrollbars-none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 </style>
