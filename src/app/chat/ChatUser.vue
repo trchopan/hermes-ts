@@ -16,7 +16,7 @@
     <v-flex v-else>
       <v-layout
         v-for="chat in chatContent"
-        :key="'chat-' + chat.timestamp"
+        :key="'chat-' + chat.id"
         align-center
       >
         <v-spacer v-if="chat.senderId === user.uid"></v-spacer>
@@ -59,6 +59,7 @@ import { State, Getter, namespace } from "vuex-class";
 import { chatStoreNamespace, CHAT_ACTIONS } from "@/app/chat/chat.store";
 import { IMappedLanguage, IUser, ILanguageSetting } from "@/store/root.models";
 import { IChatContent, IChatRoom, CHAT_ROUTE } from "@/app/chat/chat.models";
+import { Watch } from "vue-property-decorator";
 
 const chatStore = namespace(chatStoreNamespace);
 
@@ -76,8 +77,16 @@ export default class ChatUser extends Vue {
   public $t!: IMappedLanguage;
   @chatStore.State
   public chatContent!: IChatContent[];
+  @chatStore.State
+  public selectedChatRoom!: IChatRoom | null;
   @chatStore.Action(CHAT_ACTIONS.selectChatRoom)
   public selectChatRoom!: (receiverId: string) => void;
+
+  get receiverPhotoUrl(): string {
+    return this.selectedChatRoom
+      ? this.selectedChatRoom.participants[0].photoURL
+      : "";
+  }
 
   public created() {
     if (this.chatRooms.length === 0) {
@@ -87,12 +96,19 @@ export default class ChatUser extends Vue {
     }
   }
 
+  @Watch("chatContent")
+  public onChatContentChange(newVal: IChatContent[], olVal: IChatContent[]) {
+    this.scrollDown();
+  }
+
   public scrollDown() {
-    const chatView = this.$refs.chatView as any;
-    chatView.scroll({
-      top: chatView.scrollHeight,
-      behavior: "smooth"
-    });
+    setTimeout(() => {
+      const chatView = this.$refs.chatView as any;
+      chatView.scroll({
+        top: chatView.scrollHeight,
+        behavior: "smooth"
+      });
+    }, 200);
   }
 }
 </script>

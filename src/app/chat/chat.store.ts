@@ -4,7 +4,8 @@ import {
   CHATROOMS_COLLECTION,
   parseChatRoom,
   IChatRoom,
-  CHATS_COLLECTION
+  CHATS_COLLECTION,
+  parseChatContent
 } from "./chat.models";
 import { GetterTree, ActionTree, MutationTree } from "vuex";
 import { RootState, ROOT_ACTIONS } from "@/store/root.store";
@@ -144,7 +145,7 @@ const chatActions = (
       }
     },
     [CHAT_ACTIONS.selectChatRoom]: (
-      { state, commit, dispatch, rootGetters },
+      { state, commit, dispatch, rootGetters, rootState },
       receiverId: string
     ) => {
       const foundChatRoom = state.chatRooms.find((chatRoom) =>
@@ -158,41 +159,38 @@ const chatActions = (
       } else {
         commit(CHAT_MUTATIONS.chatRoomSelected, foundChatRoom);
         commit(CHAT_MUTATIONS.chatsCleared);
-        if (chatContentSnapshot !== undefined) {
-          chatContentSnapshot();
-        }
-        chatContentSnapshot = firestore
+
+        const chatsColRef = firestore
           .collection(CHATROOMS_COLLECTION)
           .doc(foundChatRoom.id)
           .collection(CHATS_COLLECTION)
-          .orderBy("timestamp")
-          .onSnapshot((chatSnap) => {
-            if (!chatSnap.empty) {
-              chatSnap.docChanges().forEach((docChange) => {
-                switch (docChange.type) {
-                  case "added":
-                    commit(CHAT_MUTATIONS.chatAdded, {
-                      id: docChange.newIndex,
-                      data: docChange.doc.data()
-                    });
-                    break;
-                  case "modified":
-                    commit(CHAT_MUTATIONS.chatModified, {
-                      id: docChange.newIndex,
-                      data: docChange.doc.data()
-                    });
-                    break;
-                  case "removed":
-                    commit(CHAT_MUTATIONS.chatRemoved, {
-                      id: docChange.oldIndex
-                    });
-                    break;
-                  default:
-                    break;
+          .orderBy("timestamp", "desc");
+
+        if (chatContentSnapshot !== undefined) {
+          chatContentSnapshot();
+        }
+
+        chatContentSnapshot = chatsColRef.limit(15).onSnapshot((snap) => {
+          snap.docChanges().forEach(async (change) => {
+            const data = parseChatContent(change.doc.id, change.doc.data());
+            switch (change.type) {
+              case "added":
+                commit(CHAT_MUTATIONS.chatAdded, {
+                  index: change.newIndex,
+                  data
+                });
+                if (!data.delivered && data.senderId !== rootState.user!.uid) {
+                  await change.doc.ref.update({ delivered: true });
                 }
-              });
+                break;
+              case "modified":
+                commit(CHAT_MUTATIONS.chatModified, data);
+                break;
+              default:
+                break;
             }
           });
+        });
       }
     }
   };
@@ -224,13 +222,21 @@ const chatMutations: MutationTree<ChatState> = {
     state,
     payload: { index: number; data: IChatContent }
   ) {
-    state.chatContent.splice(payload.index, 0, payload.data);
+    if (payload.index === 0) {
+      state.chatContent.push(payload.data);
+    } else {
+      state.chatContent.splice(
+        state.chatContent.length - payload.index,
+        0,
+        payload.data
+      );
+    }
   },
-  [CHAT_MUTATIONS.chatModified](
-    state,
-    payload: { index: number; data: IChatContent }
-  ) {
-    state.chatContent.splice(payload.index, 1, payload.data);
+  [CHAT_MUTATIONS.chatModified](state, data: IChatContent) {
+    const foundIndex = state.chatContent.findIndex((x) => x.id === data.id);
+    if (foundIndex >= 0) {
+      state.chatContent.splice(foundIndex, 1, data);
+    }
   },
   [CHAT_MUTATIONS.chatRemoved](state, payload: { index: number }) {
     state.chatContent.splice(payload.index, 1);
