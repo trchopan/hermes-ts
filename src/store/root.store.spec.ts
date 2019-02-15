@@ -1,21 +1,20 @@
 import { createLocalVue } from "@vue/test-utils";
 import Vuex, { Store } from "vuex";
 import {
-  getters,
-  actions,
-  mutations,
-  RootState,
-  ROOT_ACTIONS
-} from "./root.store";
-import {
   COMBINED_LANGUAGES_MAP,
   COUNTRY_CODE,
   IProfile,
   IUser
 } from "./root.models";
+import {
+  RootState,
+  actions,
+  getters,
+  mutations,
+  ROOT_ACTIONS
+} from "./root.store";
 
 const localVue = createLocalVue();
-
 localVue.use(Vuex);
 
 describe("[rootStore]", () => {
@@ -44,7 +43,7 @@ describe("[rootStore]", () => {
       .mockImplementationOnce(() => ({
         doc: () => ({
           onSnapshot: (cb: any) => {
-            cb({
+            return cb({
               exists: false
             });
           }
@@ -53,7 +52,7 @@ describe("[rootStore]", () => {
       .mockImplementationOnce(() => ({
         doc: () => ({
           onSnapshot: (cb: any) => {
-            cb({
+            return cb({
               exists: true,
               data: () => mockProfile
             });

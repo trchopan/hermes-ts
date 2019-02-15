@@ -13,7 +13,6 @@ import {
   parseUser,
   parseProfile
 } from "./root.models";
-import { firebaseApp } from "@/firebase";
 
 export const rootStoreNamespace = "[root]";
 
@@ -46,7 +45,6 @@ export interface RootState {
   theme: IThemeSetting;
   drawerOpen: boolean;
   language: ILanguageSetting;
-  isLoggedIn: boolean;
   user: IUser | null;
   loadingMessage: string | null;
   error: IError | null;
@@ -57,7 +55,6 @@ export const initState: RootState = {
   theme: THEME_SETTINGS[0], // Light theme
   drawerOpen: false,
   language: LANGUAGE_SETTINGS[0], // Vietnamese
-  isLoggedIn: false,
   user: null,
   loadingMessage: null,
   error: null
@@ -208,12 +205,12 @@ export const mutations: MutationTree<RootState> = {
   }
 };
 
-export default {
+export const rootStore = (
+  firestore: firebase.firestore.Firestore,
+  editUserCallable: firebase.functions.HttpsCallable
+) => ({
   state: initState,
   getters,
-  actions: actions(
-    firebaseApp.firestore(),
-    firebaseApp.functions().httpsCallable("editUser")
-  ),
+  actions: actions(firestore, editUserCallable),
   mutations
-};
+});
