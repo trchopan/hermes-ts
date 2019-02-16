@@ -5,7 +5,7 @@ import { findUserHandler } from "./find-user";
 import { listUsersHandler } from "./list-users";
 import { editUserHandler } from "./edit-user";
 
-admin.initializeApp(functions.config().firebase);
+admin.initializeApp();
 const firestore = admin.firestore();
 firestore.settings({ timestampsInSnapshots: true });
 
